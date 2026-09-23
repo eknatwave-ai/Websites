@@ -84,7 +84,7 @@ const setBestButton=document.getElementById('setBestButton');
 const bestPanelValue=document.getElementById('bestPanelValue');
 const bestPanelSub=document.getElementById('bestPanelSub');
 const GRID=20,CELL=canvas.width/GRID;
-let snake=[],food={x:8,y:10},bonus=null,bonusTimer=0;
+let snake=[],food={x:8,y:10},bonus=null,bonusTimer=0,superFood=null,superTimer=0;
 let direction='right',nextDirection='right';
 let score=0,best=+(localStorage.getItem('snakeBest')||0),level=1;
 let gameOver=false,winFlag=false,paused=false;
@@ -107,19 +107,27 @@ function resetGame(){
   snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];
   direction='right';nextDirection='right';
   score=0;level=1;gameOver=false;winFlag=false;paused=false;
-  particles=[];bonus=null;bonusTimer=0;
+  particles=[];bonus=null;bonusTimer=0;superFood=null;superTimer=0;
   scoreSpan.textContent='0';levelSpan.textContent='1';
   statusDiv.textContent='Управляй змейкой — собирай яблоки';
   generateFood();drawGame();startLoop();
 }
 
+function isOccupied(x,y){
+  if(snake.some(s=>s.x===x&&s.y===y))return true;
+  if(food&&food.x===x&&food.y===y)return true;
+  if(bonus&&bonus.x===x&&bonus.y===y)return true;
+  if(superFood&&superFood.x===x&&superFood.y===y)return true;
+  return false;
+}
+
 function generateFood(){
   for(let i=0;i<500;i++){
     const fx=Math.floor(Math.random()*GRID),fy=Math.floor(Math.random()*GRID);
-    if(!snake.some(s=>s.x===fx&&s.y===fy)&&!(bonus&&bonus.x===fx&&bonus.y===fy)){food={x:fx,y:fy};return}
+    if(!isOccupied(fx,fy)){food={x:fx,y:fy};return}
   }
   for(let y=0;y<GRID;y++)for(let x=0;x<GRID;x++){
-    if(!snake.some(s=>s.x===x&&s.y===y)&&!(bonus&&bonus.x===x&&bonus.y===y)){food={x,y};return}
+    if(!isOccupied(x,y)){food={x,y};return}
   }
   winFlag=true;gameOver=true;statusDiv.textContent='🎉 Победа! Ты заполнил всё поле!';
 }
@@ -127,14 +135,20 @@ function generateFood(){
 function spawnBonus(){
   for(let i=0;i<200;i++){
     const bx=Math.floor(Math.random()*GRID),by=Math.floor(Math.random()*GRID);
-    if(!snake.some(s=>s.x===bx&&s.y===by)&&!(food.x===bx&&food.y===by)){
-      bonus={x:bx,y:by};bonusTimer=60;return;
-    }
+    if(!isOccupied(bx,by)){bonus={x:bx,y:by};bonusTimer=60;return}
   }
 }
 
-function addParticles(x,y,color){
-  for(let i=0;i<12;i++){
+function spawnSuperFood(){
+  for(let i=0;i<200;i++){
+    const sx=Math.floor(Math.random()*GRID),sy=Math.floor(Math.random()*GRID);
+    if(!isOccupied(sx,sy)){superFood={x:sx,y:sy};superTimer=90;return}
+  }
+}
+
+function addParticles(x,y,color,count){
+  const n=count||12;
+  for(let i=0;i<n;i++){
     particles.push({x,y,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,life:1,color});
   }
 }
@@ -159,6 +173,27 @@ function drawGame(){
     ctx.fillStyle='#ffd700';ctx.beginPath();ctx.arc(bx,by,CELL*.35*pulse,0,Math.PI*2);ctx.fill();
     ctx.fillStyle='#fff8b0';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('★',bx,by+1);
+    ctx.shadowBlur=0;ctx.shadowColor='transparent';
+  }
+  if(superFood){
+    const sx=superFood.x*CELL+CELL/2,sy=superFood.y*CELL+CELL/2;
+    const pulse=1+Math.sin(Date.now()/90)*.2;
+    const rot=Date.now()/400;
+    ctx.save();
+    ctx.translate(sx,sy);ctx.rotate(rot);
+    ctx.shadowColor='#ff66ff';ctx.shadowBlur=22;
+    const g=ctx.createRadialGradient(0,0,2,0,0,CELL*.55);
+    g.addColorStop(0,'#ffffff');g.addColorStop(.4,'#ff88ff');g.addColorStop(1,'#a020c0');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+      const a=-Math.PI/2+i*Math.PI*2/5;
+      const r1=CELL*.5*pulse,r2=CELL*.22*pulse;
+      ctx.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);
+      ctx.lineTo(Math.cos(a+Math.PI/5)*r2,Math.sin(a+Math.PI/5)*r2);
+    }
+    ctx.closePath();ctx.fill();
+    ctx.restore();
     ctx.shadowBlur=0;ctx.shadowColor='transparent';
   }
   snake.forEach((seg,idx)=>{
@@ -201,6 +236,13 @@ function drawGame(){
   }
 }
 
+function growSnake(count){
+  const tail=snake[snake.length-1];
+  for(let i=0;i<count;i++){
+    snake.push({x:tail.x,y:tail.y});
+  }
+}
+
 function stepGame(){
   if(gameOver||paused)return;
   direction=nextDirection;
@@ -219,7 +261,9 @@ function stepGame(){
   }
   const willEat=(nh.x===food.x&&nh.y===food.y);
   const willBonus=(bonus&&nh.x===bonus.x&&nh.y===bonus.y);
-  const body=willEat||willBonus?snake:snake.slice(0,-1);
+  const willSuper=(superFood&&nh.x===superFood.x&&nh.y===superFood.y);
+  const willGrow=willEat||willBonus||willSuper;
+  const body=willGrow?snake:snake.slice(0,-1);
   if(body.some(s=>s.x===nh.x&&s.y===nh.y)){
     gameOver=true;statusDiv.textContent='🌀 Столкновение с собой!';
     addParticles(nh.x*CELL+CELL/2,nh.y*CELL+CELL/2,'#ff5e5e');
@@ -234,6 +278,7 @@ function stepGame(){
     const newLevel=Math.floor(score/5)+1;
     if(newLevel>level){level=newLevel;levelSpan.textContent=level;statusDiv.textContent='⚡ Уровень '+level+'!';restartLoop()}
     if(score%3===0&&!bonus)spawnBonus();
+    if(score%7===0&&!superFood)spawnSuperFood();
     generateFood();
     if(gameOver){drawGame();return}
   }else if(willBonus){
@@ -243,10 +288,20 @@ function stepGame(){
     bonus=null;bonusTimer=0;
     const newLevel=Math.floor(score/5)+1;
     if(newLevel>level){level=newLevel;levelSpan.textContent=level;restartLoop()}
+  }else if(willSuper){
+    const growCount=snake.length;
+    growSnake(growCount);
+    score+=10;scoreSpan.textContent=score;
+    addParticles(nh.x*CELL+CELL/2,nh.y*CELL+CELL/2,'#ff88ff',24);
+    statusDiv.textContent='💜 СУПЕР-ЯБЛОКО! Змейка удвоена! +10';
+    superFood=null;superTimer=0;
+    const newLevel=Math.floor(score/5)+1;
+    if(newLevel>level){level=newLevel;levelSpan.textContent=level;restartLoop()}
   }else{
     snake.pop();
   }
   if(bonus){bonusTimer--;if(bonusTimer<=0)bonus=null}
+  if(superFood){superTimer--;if(superTimer<=0)superFood=null}
   particles=particles.filter(p=>{
     p.x+=p.vx;p.y+=p.vy;p.vy+=.15;p.life-=.03;return p.life>0;
   });
