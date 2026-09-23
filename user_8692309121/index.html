@@ -3,87 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nebula — цифровая студия</title>
+<title>Космический Гид</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a12;--fg:#e8e8f0;--ac:#7c5cff;--ac2:#00e0c6;--mut:#8a8aa0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;line-height:1.6}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(124,92,255,.15),transparent 50%),radial-gradient(circle at 80% 70%,rgba(0,224,198,.12),transparent 50%);pointer-events:none;z-index:0}
-nav{position:fixed;top:0;width:100%;padding:1.2rem 5%;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);background:rgba(10,10,18,.7);z-index:100;border-bottom:1px solid rgba(255,255,255,.05)}
-.logo{font-size:1.4rem;font-weight:700;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1px}
-nav ul{display:flex;gap:2rem;list-style:none}
-nav a{color:var(--mut);text-decoration:none;font-size:.95rem;transition:.3s;position:relative}
-nav a:hover{color:var(--fg)}
-nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:.3s}
-nav a:hover::after{width:100%}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 5%;position:relative;z-index:1}
-.hero h1{font-size:clamp(2.5rem,7vw,5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;background:linear-gradient(135deg,#fff 30%,var(--ac) 70%,var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;animation:up 1s ease}
-.hero p{font-size:clamp(1rem,2vw,1.25rem);color:var(--mut);max-width:600px;margin-bottom:2.5rem;animation:up 1s ease .2s backwards}
-.btn{padding:1rem 2.5rem;border-radius:50px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;text-decoration:none;font-weight:600;transition:.3s;box-shadow:0 10px 30px rgba(124,92,255,.3);animation:up 1s ease .4s backwards;border:none;cursor:pointer;font-size:1rem}
-.btn:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(124,92,255,.5)}
-@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-section{padding:6rem 5%;position:relative;z-index:1}
-.title{text-align:center;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:3rem;font-weight:700}
-.title span{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;max-width:1200px;margin:0 auto}
-.card{padding:2.5rem 2rem;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);transition:.4s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));transform:scaleX(0);transform-origin:left;transition:.4s}
-.card:hover{transform:translateY(-8px);background:rgba(255,255,255,.06);border-color:rgba(124,92,255,.3)}
-.card:hover::before{transform:scaleX(1)}
-.icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1.5rem}
-.card h3{font-size:1.3rem;margin-bottom:.8rem}
-.card p{color:var(--mut);font-size:.95rem}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2rem;max-width:900px;margin:0 auto;text-align:center}
-.stat h4{font-size:clamp(2rem,5vw,3rem);background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
-.stat p{color:var(--mut);font-size:.9rem;text-transform:uppercase;letter-spacing:2px}
-.cta{text-align:center;padding:5rem 5%;background:linear-gradient(135deg,rgba(124,92,255,.1),rgba(0,224,198,.1));border-radius:30px;max-width:1000px;margin:0 auto}
-.cta h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:1rem}
-.cta p{color:var(--mut);margin-bottom:2rem}
-footer{text-align:center;padding:3rem 5%;color:var(--mut);font-size:.9rem;border-top:1px solid rgba(255,255,255,.05);margin-top:4rem}
-@media(max-width:768px){nav ul{display:none}}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0ff;overflow-x:hidden}
+.stars{position:fixed;inset:0;background:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(2px 2px at 60% 70%,#fff,transparent),radial-gradient(1px 1px at 80% 10%,#fff,transparent),radial-gradient(1px 1px at 40% 90%,#fff,transparent),radial-gradient(2px 2px at 10% 60%,#aaf,transparent),radial-gradient(1px 1px at 90% 50%,#fff,transparent);background-size:200% 200%;animation:tw 8s infinite alternate;z-index:0}
+@keyframes tw{0%{opacity:.6}100%{opacity:1}}
+header{position:relative;z-index:1;padding:80px 20px 60px;text-align:center;background:linear-gradient(180deg,rgba(30,20,80,.6),transparent)}
+h1{font-size:clamp(2rem,6vw,4rem);background:linear-gradient(90deg,#7af,#f7a,#af7);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:16px;letter-spacing:2px}
+header p{font-size:1.1rem;color:#aab;max-width:600px;margin:0 auto}
+nav{position:sticky;top:0;z-index:10;background:rgba(10,10,30,.85);backdrop-filter:blur(10px);padding:14px;text-align:center;border-bottom:1px solid rgba(120,120,255,.2)}
+nav a{color:#9af;text-decoration:none;margin:0 14px;font-weight:500;transition:.3s;font-size:.95rem}
+nav a:hover{color:#fff;text-shadow:0 0 10px #7af}
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:30px}
+.card{background:linear-gradient(145deg,rgba(40,30,90,.7),rgba(20,15,50,.7));border:1px solid rgba(120,120,255,.25);border-radius:16px;padding:26px;transition:.4s;cursor:pointer}
+.card:hover{transform:translateY(-6px);border-color:#7af;box-shadow:0 10px 40px rgba(120,120,255,.3)}
+.card h3{color:#9cf;margin-bottom:10px;font-size:1.25rem}
+.card p{color:#aab;line-height:1.6;font-size:.95rem}
+.icon{font-size:2.2rem;margin-bottom:12px;display:block}
+section{margin:60px 0}
+section h2{font-size:1.8rem;color:#cdf;margin-bottom:20px;border-left:4px solid #7af;padding-left:14px}
+.timeline{border-left:2px solid rgba(120,120,255,.3);padding-left:24px;margin-top:20px}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-item::before{content:'';position:absolute;left:-31px;top:6px;width:12px;height:12px;border-radius:50%;background:#7af;box-shadow:0 0 12px #7af}
+.tl-item h4{color:#9cf;margin-bottom:6px}
+.tl-item p{color:#aab;font-size:.9rem;line-height:1.5}
+footer{position:relative;z-index:1;text-align:center;padding:40px 20px;color:#667;border-top:1px solid rgba(120,120,255,.15);margin-top:60px}
+.btn{display:inline-block;margin-top:20px;padding:12px 32px;background:linear-gradient(90deg,#7af,#a7f);color:#fff;text-decoration:none;border-radius:30px;font-weight:600;transition:.3s;border:none;cursor:pointer}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(120,120,255,.6)}
+@media(max-width:600px){nav a{margin:0 8px;font-size:.85rem}header{padding:50px 16px 40px}}
 </style>
 </head>
 <body>
-<nav>
-<div class="logo">◆ NEBULA</div>
-<ul>
-<li><a href="#services">Услуги</a></li>
-<li><a href="#stats">О нас</a></li>
-<li><a href="#contact">Контакты</a></li>
-</ul>
-</nav>
-<header class="hero">
-<h1>Создаём цифровое<br>будущее</h1>
-<p>Мы — студия дизайна и разработки, превращающая идеи в элегантные цифровые продукты, которые вдохновляют.</p>
-<a href="#contact" class="btn">Начать проект</a>
+<div class="stars"></div>
+<header>
+<h1>Космический Гид</h1>
+<p>Открой для себя тайны Вселенной — от ближайших планет до далёких галактик</p>
+<a href="#planets" class="btn">Начать путешествие</a>
 </header>
-<section id="services">
-<h2 class="title">Наши <span>услуги</span></h2>
+<nav>
+<a href="#planets">Планеты</a>
+<a href="#facts">Факты</a>
+<a href="#history">История</a>
+</nav>
+<main>
+<section id="planets">
+<h2>Планеты Солнечной системы</h2>
 <div class="grid">
-<div class="card"><div class="icon">🎨</div><h3>UI/UX Дизайн</h3><p>Интуитивные интерфейсы, которые пользователи полюбят с первого взгляда.</p></div>
-<div class="card"><div class="icon">⚡</div><h3>Веб-разработка</h3><p>Быстрые и надёжные сайты на современных технологиях и фреймворках.</p></div>
-<div class="card"><div class="icon">📱</div><h3>Мобильные приложения</h3><p>Кроссплатформенные решения для iOS и Android с нативным опытом.</p></div>
-<div class="card"><div class="icon">🚀</div><h3>Брендинг</h3><p>Создаём айдентику, которая выделяет вас среди конкурентов.</p></div>
-<div class="card"><div class="icon">📊</div><h3>Аналитика</h3><p>Данные и метрики, помогающие принимать верные решения.</p></div>
-<div class="card"><div class="icon">🔒</div><h3>Безопасность</h3><p>Защита данных и соответствие современным стандартам.</p></div>
+<div class="card"><span class="icon">☿</span><h3>Меркурий</h3><p>Самая близкая к Солнцу планета. Год длится всего 88 земных суток, а температура колеблется от -180°C до +430°C.</p></div>
+<div class="card"><span class="icon">♀</span><h3>Венера</h3><p>Самая горячая планета с плотной атмосферой из CO₂. Давление на поверхности в 92 раза выше земного.</p></div>
+<div class="card"><span class="icon">🌍</span><h3>Земля</h3><p>Единственная известная планета с жизнью. 71% поверхности покрыто водой, а атмосфера защищает от радиации.</p></div>
+<div class="card"><span class="icon">♂</span><h3>Марс</h3><p>Красная планета с крупнейшим вулканом Олимп (21 км). Здесь находятся полярные ледяные шапки.</p></div>
+<div class="card"><span class="icon">♃</span><h3>Юпитер</h3><p>Газовый гигант с Большим Красным Пятном — штормом, который бушует более 350 лет.</p></div>
+<div class="card"><span class="icon">♄</span><h3>Сатурн</h3><p>Обладатель великолепных колец из льда и камня. Плотность планеты меньше плотности воды.</p></div>
 </div>
 </section>
-<section id="stats">
-<h2 class="title">Наши <span>достижения</span></h2>
-<div class="stats">
-<div class="stat"><h4>250+</h4><p>Проектов</p></div>
-<div class="stat"><h4>98%</h4><p>Довольных клиентов</p></div>
-<div class="stat"><h4>12</h4><p>Лет опыта</p></div>
-<div class="stat"><h4>40</h4><p>Специалистов</p></div>
+<section id="facts">
+<h2>Удивительные факты</h2>
+<div class="grid">
+<div class="card"><span class="icon">💫</span><h3>Свет от Солнца</h3><p>Доходит до Земли за 8 минут 20 секунд. Мы видим Солнце таким, каким оно было в прошлом.</p></div>
+<div class="card"><span class="icon">🌌</span><h3>Млечный Путь</h3><p>Содержит от 100 до 400 миллиардов звёзд. Диаметр галактики — около 100 000 световых лет.</p></div>
+<div class="card"><span class="icon">⚫</span><h3>Чёрные дыры</h3><p>Объекты с гравитацией настолько сильной, что даже свет не может покинуть их пределы.</p></div>
 </div>
 </section>
-<section id="contact">
-<div class="cta">
-<h2>Готовы начать?</h2>
-<p>Расскажите о своей идее — мы поможем воплотить её в жизнь.</p>
-<a href="mailto:hello@nebula.studio" class="btn">Связаться с нами</a>
+<section id="history">
+<h2>История освоения космоса</h2>
+<div class="timeline">
+<div class="tl-item"><h4>1957 — Спутник-1</h4><p>Первый искусственный спутник Земли, запущенный СССР. Начало космической эры.</p></div>
+<div class="tl-item"><h4>1961 — Юрий Гагарин</h4><p>Первый человек в космосе. Полёт длился 108 минут на корабле «Восток-1».</p></div>
+<div class="tl-item"><h4>1969 — Аполлон-11</h4><p>Нил Армстронг стал первым человеком, ступившим на поверхность Луны.</p></div>
+<div class="tl-item"><h4>1998 — МКС</h4><p>Начало строительства Международной космической станции на орбите Земли.</p></div>
+<div class="tl-item"><h4>2021 — Джеймс Уэбб</h4><p>Запуск мощнейшего космического телескопа для изучения ранней Вселенной.</p></div>
 </div>
 </section>
-<footer>© 2025 Nebula Studio. Все права защищены.</footer>
+</main>
+<footer>© 2024 Космический Гид — Путешествие сквозь звёзды</footer>
 </body>
 </html>
