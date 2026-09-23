@@ -19,7 +19,7 @@ body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14
 .restart-btn:active{transform:translateY(5px);box-shadow:0 1px 0 #0a121c,0 5px 10px rgba(0,0,0,.5)}
 .restart-btn:hover{background:#264a64;color:#fff}
 .canvas-wrap{position:relative;border-radius:28px;overflow:hidden;box-shadow:0 0 0 2px #1e3a4e,0 20px 30px -5px #000}
-canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;background:#0b141c;margin:0 auto}
+canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;background:#0b141c;margin:0 auto;touch-action:none}
 .controls{display:flex;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap}
 .arrow{background:#1b2d3b;border:none;width:66px;height:66px;border-radius:26px;font-size:2rem;font-weight:700;color:#b1d9f0;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 0 #0b131b,0 10px 16px rgba(0,0,0,.5);cursor:pointer;transition:all .06s ease;border:1px solid #3b5e78;user-select:none}
 .arrow:active{transform:translateY(6px);box-shadow:0 2px 0 #0b131b,0 6px 12px rgba(0,0,0,.5)}
@@ -128,7 +128,7 @@ canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;bac
 </div>
 <div class="shop-note">Оплата через <b>Telegram Stars</b> · Баланс: <b id="shopBalance">0</b> ⭐</div>
 </div>
-<div class="hint">WASD / стрелки · пробел — рестарт · P — пауза</div>
+<div class="hint">WASD / стрелки · пробел — рестарт · P — пауза · свайп на телефоне</div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -444,6 +444,4 @@ function stepGame(){
     if(score%3===0&&!bonus)spawnBonus();
     if(score%7===0&&!superFood)spawnSuperFood();
     generateFood();
-    if(gameOver){drawGame();return}
-  }else if(willBonus){
-    score+=5
+    if(gameOver){drawGame();return
