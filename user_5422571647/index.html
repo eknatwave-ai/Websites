@@ -3,92 +3,258 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Змейка</title>
+<title>Космический Защитник</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);font-family:'Segoe UI',sans-serif;color:#fff;gap:20px;padding:20px}
-h1{font-size:2rem;background:linear-gradient(90deg,#00d4ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px}
-.info{display:flex;gap:30px;font-size:1.1rem}
-.info span{color:#00d4ff;font-weight:bold}
-canvas{background:#0a0a1a;border-radius:12px;box-shadow:0 0 30px rgba(0,212,255,.3),0 0 60px rgba(123,47,247,.2);border:2px solid rgba(0,212,255,.3)}
-.overlay{position:absolute;display:none;flex-direction:column;align-items:center;gap:15px;background:rgba(10,10,26,.95);padding:30px 50px;border-radius:16px;border:2px solid #00d4ff;box-shadow:0 0 40px rgba(0,212,255,.5)}
-.overlay.show{display:flex}
-.overlay h2{font-size:1.8rem;color:#00d4ff}
-.overlay p{color:#aaa}
-button{padding:12px 30px;font-size:1rem;font-weight:bold;color:#fff;background:linear-gradient(90deg,#00d4ff,#7b2ff7);border:none;border-radius:8px;cursor:pointer;transition:.3s;letter-spacing:1px}
-button:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(0,212,255,.6)}
-.wrap{position:relative;display:flex;align-items:center;justify-content:center}
-.controls{display:grid;grid-template-columns:repeat(3,60px);grid-template-rows:repeat(2,60px);gap:8px;margin-top:10px}
-.controls button{padding:0;font-size:1.5rem;background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.4)}
-.controls button:hover{background:rgba(0,212,255,.35)}
-.controls .up{grid-column:2}
-.controls .left{grid-column:1;grid-row:2}
-.controls .down{grid-column:2;grid-row:2}
-.controls .right{grid-column:3;grid-row:2}
-@media(min-width:700px){.controls{display:none}}
+body{background:#0a0a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif;overflow:hidden}
+#game{position:relative;width:800px;height:600px;background:radial-gradient(ellipse at center,#1a1a3a 0%,#0a0a1a 100%);border-radius:12px;box-shadow:0 0 60px rgba(100,100,255,.3),inset 0 0 100px rgba(0,0,50,.5);overflow:hidden;cursor:crosshair}
+canvas{display:block;position:absolute;top:0;left:0}
+#hud{position:absolute;top:0;left:0;width:100%;padding:15px 20px;display:flex;justify-content:space-between;color:#fff;font-size:16px;pointer-events:none;z-index:10;text-shadow:0 0 10px rgba(100,200,255,.8)}
+#hud div{background:rgba(0,0,30,.6);padding:8px 16px;border-radius:20px;border:1px solid rgba(100,200,255,.3);backdrop-filter:blur(5px)}
+#lives{color:#ff4466}
+#score{color:#44ff88}
+#level{color:#ffaa44}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(0,0,20,.85);z-index:20;backdrop-filter:blur(8px);transition:opacity .3s}
+#overlay.hidden{opacity:0;pointer-events:none}
+#overlay h1{color:#66ccff;font-size:48px;margin-bottom:20px;text-shadow:0 0 30px rgba(100,200,255,.8);letter-spacing:3px}
+#overlay p{color:#aabbdd;font-size:18px;margin-bottom:30px;text-align:center;line-height:1.6;max-width:500px}
+#overlay button{background:linear-gradient(135deg,#3366ff,#66ccff);color:#fff;border:none;padding:15px 50px;font-size:20px;border-radius:30px;cursor:pointer;font-weight:bold;letter-spacing:2px;transition:all .3s;box-shadow:0 0 30px rgba(100,200,255,.5)}
+#overlay button:hover{transform:scale(1.05);box-shadow:0 0 50px rgba(100,200,255,.8)}
+#overlay .final{color:#ffcc44;font-size:24px;margin-bottom:15px}
+#overlay .stats{color:#88aacc;font-size:16px;margin-bottom:25px}
 </style>
 </head>
 <body>
-<h1>🐍 ЗМЕЙКА</h1>
-<div class="info">Счёт: <span id="score">0</span> Рекорд: <span id="best">0</span></div>
-<div class="wrap">
-<canvas id="c" width="400" height="400"></canvas>
-<div class="overlay show" id="ov">
-<h2 id="ovt">Змейка</h2>
-<p id="ovp">Управление: стрелки или WASD</p>
-<button id="btn">Играть</button>
+<div id="game">
+<canvas id="c" width="800" height="600"></canvas>
+<div id="hud">
+<div id="lives">❤❤❤</div>
+<div id="score">Очки: 0</div>
+<div id="level">Уровень: 1</div>
 </div>
+<div id="overlay">
+<h1>КОСМИЧЕСКИЙ ЗАЩИТНИК</h1>
+<p>Управляй кораблём мышью или стрелками.<br>Стреляй пробелом или кликом.<br>Уничтожай врагов, собирай бонусы, выживай!</p>
+<button id="startBtn">НАЧАТЬ ИГРУ</button>
 </div>
-<div class="controls">
-<button class="up" data-d="up">▲</button>
-<button class="left" data-d="left">◀</button>
-<button class="down" data-d="down">▼</button>
-<button class="right" data-d="right">▶</button>
 </div>
 <script>
-const c=document.getElementById('c'),x=c.getContext('2d'),S=20,N=20;
-const sc=document.getElementById('score'),bs=document.getElementById('best'),ov=document.getElementById('ov'),ovt=document.getElementById('ovt'),ovp=document.getElementById('ovp'),btn=document.getElementById('btn');
-let snake,dir,nd,food,score,best=+localStorage.getItem('snakeBest')||0,run=false,timer,speed;
-bs.textContent=best;
-function init(){snake=[{x:10,y:10}];dir={x:1,y:0};nd={x:1,y:0};score=0;speed=140;sc.textContent=0;placeFood();}
-function placeFood(){let ok;do{food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)};ok=!snake.some(s=>s.x===food.x&&s.y===food.y)}while(!ok)}
+const c=document.getElementById('c'),x=c.getContext('2d'),W=800,H=600;
+const overlay=document.getElementById('overlay'),startBtn=document.getElementById('startBtn');
+const livesEl=document.getElementById('lives'),scoreEl=document.getElementById('score'),levelEl=document.getElementById('level');
+let keys={},mouse={x:W/2,y:H-80,down:false};
+let player,enemies,bullets,particles,stars,powerups,score,lives,level,gameOver,spawnTimer,shootTimer,frame,combo,comboTimer;
+const stars3=[];
+for(let i=0;i<150;i++)stars3.push({x:Math.random()*W,y:Math.random()*H,z:Math.random()*3+1,s:Math.random()*2+.5});
+function init(){
+player={x:W/2,y:H-80,w:36,h:36,speed:6,invuln:0,shield:0,rapid:0,triple:0};
+enemies=[];bullets=[];particles=[];powerups=[];
+score=0;lives=3;level=1;gameOver=false;spawnTimer=0;shootTimer=0;frame=0;combo=0;comboTimer=0;
+updateHUD();
+}
+function updateHUD(){
+livesEl.textContent='❤'.repeat(Math.max(0,lives));
+scoreEl.textContent='Очки: '+score;
+levelEl.textContent='Уровень: '+level;
+}
+function spawnEnemy(){
+const types=['basic','fast','tank','zigzag'];
+let t=types[Math.floor(Math.random()*Math.min(types.length,1+Math.floor(level/2)))];
+let e={type:t,x:Math.random()*(W-60)+30,y:-40,vx:0,vy:0,w:30,h:30,hp:1,color:'#ff4466',angle:0,phase:Math.random()*Math.PI*2};
+if(t==='basic'){e.vy=1.5+level*.15;e.hp=1;e.color='#ff4466';e.w=30;e.h=30}
+if(t==='fast'){e.vy=3+level*.2;e.hp=1;e.color='#ffaa22';e.w=24;e.h=24}
+if(t==='tank'){e.vy=.8+level*.1;e.hp=4+Math.floor(level/2);e.color='#aa44ff';e.w=44;e.h=44}
+if(t==='zigzag'){e.vy=1.8+level*.15;e.hp=2;e.color='#44ffaa';e.w=28;e.h=28;e.zig=true}
+enemies.push(e);
+}
+function spawnPowerup(x,y){
+const types=['shield','rapid','triple','life'];
+let t=types[Math.floor(Math.random()*types.length)];
+powerups.push({x,y,vy:1.5,type:t,w:24,h:24,angle:0});
+}
+function shoot(){
+if(shootTimer>0)return;
+let rate=player.rapid>0?6:12;
+shootTimer=rate;
+if(player.triple>0){
+bullets.push({x:player.x,y:player.y-20,vx:0,vy:-9,dmg:1});
+bullets.push({x:player.x,y:player.y-20,vx:-2.5,vy:-8.5,dmg:1});
+bullets.push({x:player.x,y:player.y-20,vx:2.5,vy:-8.5,dmg:1});
+}else{
+bullets.push({x:player.x,y:player.y-20,vx:0,vy:-9,dmg:1});
+}
+}
+function explode(x,y,color,n){
+for(let i=0;i<n;i++){
+let a=Math.random()*Math.PI*2,s=Math.random()*5+1;
+particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color,size:Math.random()*4+2});
+}
+}
+function update(){
+frame++;
+if(gameOver)return;
+if(player.invuln>0)player.invuln--;
+if(player.shield>0)player.shield--;
+if(player.rapid>0)player.rapid--;
+if(player.triple>0)player.triple--;
+if(comboTimer>0){comboTimer--;if(comboTimer===0)combo=0}
+let dx=0,dy=0;
+if(keys['ArrowLeft']||keys['a']||keys['A'])dx-=1;
+if(keys['ArrowRight']||keys['d']||keys['D'])dx+=1;
+if(keys['ArrowUp']||keys['w']||keys['W'])dy-=1;
+if(keys['ArrowDown']||keys['s']||keys['S'])dy+=1;
+if(dx||dy){let l=Math.hypot(dx,dy);player.x+=dx/l*player.speed;player.y+=dy/l*player.speed}
+else{player.x+=(mouse.x-player.x)*.15;player.y+=(mouse.y-player.y)*.15}
+player.x=Math.max(20,Math.min(W-20,player.x));
+player.y=Math.max(40,Math.min(H-20,player.y));
+if(keys[' ']||mouse.down)shoot();
+if(shootTimer>0)shootTimer--;
+spawnTimer--;
+if(spawnTimer<=0){spawnEnemy();spawnTimer=Math.max(20,60-level*4)}
+for(let i=bullets.length-1;i>=0;i--){
+let b=bullets[i];b.x+=b.vx;b.y+=b.vy;
+if(b.y<-20||b.x<-20||b.x>W+20){bullets.splice(i,1);continue}
+for(let j=enemies.length-1;j>=0;j--){
+let e=enemies[j];
+if(Math.abs(b.x-e.x)<e.w/2+4&&Math.abs(b.y-e.y)<e.h/2+4){
+e.hp-=b.dmg;bullets.splice(i,1);
+explode(b.x,b.y,e.color,4);
+if(e.hp<=0){
+combo++;comboTimer=90;
+let pts=10*Math.min(combo,5);
+score+=pts;
+explode(e.x,e.y,e.color,15);
+if(Math.random()<.12)spawnPowerup(e.x,e.y);
+enemies.splice(j,1);
+updateHUD();
+}
+break;
+}
+}
+}
+for(let i=enemies.length-1;i>=0;i--){
+let e=enemies[i];
+e.y+=e.vy;
+if(e.zig){e.phase+=.08;e.x+=Math.sin(e.phase)*2.5}
+e.angle+=.05;
+if(e.y>H+50){enemies.splice(i,1);continue}
+if(player.invuln<=0&&Math.abs(e.x-player.x)<e.w/2+player.w/2-6&&Math.abs(e.y-player.y)<e.h/2+player.h/2-6){
+if(player.shield>0){player.shield=0;explode(e.x,e.y,'#44aaff',20);enemies.splice(i,1);player.invuln=60}
+else{lives--;player.invuln=120;explode(player.x,player.y,'#ff4466',25);updateHUD();
+if(lives<=0){gameOver=true;showGameOver()}
+}
+}
+}
+for(let i=powerups.length-1;i>=0;i--){
+let p=powerups[i];p.y+=p.vy;p.angle+=.1;
+if(p.y>H+30){powerups.splice(i,1);continue}
+if(Math.abs(p.x-player.x)<30&&Math.abs(p.y-player.y)<30){
+if(p.type==='shield')player.shield=600;
+if(p.type==='rapid')player.rapid=400;
+if(p.type==='triple')player.triple=400;
+if(p.type==='life'){lives=Math.min(5,lives+1);updateHUD()}
+explode(p.x,p.y,'#44ffaa',10);
+powerups.splice(i,1);
+}
+}
+for(let i=particles.length-1;i>=0;i--){
+let p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.96;p.vy*=.96;p.life-=.02;
+if(p.life<=0)particles.splice(i,1);
+}
+let newLevel=1+Math.floor(score/500);
+if(newLevel>level){level=newLevel;updateHUD()}
+}
+function drawShip(x,y,invuln,shield){
+x.save();x.translate(player.x,player.y);
+if(invuln>0&&Math.floor(frame/4)%2===0){x.globalAlpha=.3}
+x.shadowBlur=20;x.shadowColor='#66ccff';
+x.fillStyle='#66ccff';
+x.beginPath();x.moveTo(0,-22);x.lineTo(-16,14);x.lineTo(-8,10);x.lineTo(0,16);x.lineTo(8,10);x.lineTo(16,14);x.closePath();x.fill();
+x.fillStyle='#aaddff';
+x.beginPath();x.moveTo(0,-14);x.lineTo(-6,6);x.lineTo(0,10);x.lineTo(6,6);x.closePath();x.fill();
+x.shadowBlur=0;
+if(shield>0){
+x.strokeStyle='rgba(68,170,255,'+(0.5+Math.sin(frame*.1)*.3)+')';
+x.lineWidth=3;x.beginPath();x.arc(0,0,30,0,Math.PI*2);x.stroke();
+}
+x.restore();
+}
 function draw(){
-x.fillStyle='#0a0a1a';x.fillRect(0,0,c.width,c.height);
-x.strokeStyle='rgba(0,212,255,.06)';x.lineWidth=1;
-for(let i=1;i<N;i++){x.beginPath();x.moveTo(i*S,0);x.lineTo(i*S,c.height);x.stroke();x.beginPath();x.moveTo(0,i*S);x.lineTo(c.width,i*S);x.stroke()}
-x.fillStyle='#ff3366';x.shadowColor='#ff3366';x.shadowBlur=15;
-x.beginPath();x.arc(food.x*S+S/2,food.y*S+S/2,S/2-2,0,7);x.fill();
+x.clearRect(0,0,W,H);
+for(let s of stars3){
+s.y+=s.z*.5;
+if(s.y>H){s.y=0;s.x=Math.random()*W}
+x.fillStyle='rgba(200,220,255,'+(s.z/4)+')';
+x.fillRect(s.x,s.y,s.s,s.s);
+}
+for(let p of particles){
+x.globalAlpha=p.life;
+x.fillStyle=p.color;x.shadowBlur=10;x.shadowColor=p.color;
+x.beginPath();x.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);x.fill();
+}
+x.globalAlpha=1;x.shadowBlur=0;
+for(let b of bullets){
+x.shadowBlur=15;x.shadowColor='#66ffcc';
+x.fillStyle='#66ffcc';
+x.beginPath();x.arc(b.x,b.y,4,0,Math.PI*2);x.fill();
+}
 x.shadowBlur=0;
-snake.forEach((s,i)=>{
-const t=i/snake.length;
-x.fillStyle=i===0?'#00d4ff':`hsl(${190+t*80},100%,${60-t*20}%)`;
-x.shadowColor=x.fillStyle;x.shadowBlur=i===0?15:5;
-x.beginPath();x.roundRect(s.x*S+1,s.y*S+1,S-2,S-2,i===0?8:5);x.fill();
-});
+for(let e of enemies){
+x.save();x.translate(e.x,e.y);x.rotate(e.angle);
+x.shadowBlur=15;x.shadowColor=e.color;
+x.fillStyle=e.color;
+if(e.type==='tank'){
+x.fillRect(-e.w/2,-e.h/2,e.w,e.h);
+x.fillStyle='#fff';x.fillRect(-e.w/4,-e.h/4,e.w/2,e.h/2);
+}else if(e.type==='fast'){
+x.beginPath();x.moveTo(0,-e.h/2);x.lineTo(e.w/2,e.h/2);x.lineTo(-e.w/2,e.h/2);x.closePath();x.fill();
+}else{
+x.beginPath();
+for(let i=0;i<6;i++){let a=i/6*Math.PI*2;let px=Math.cos(a)*e.w/2,py=Math.sin(a)*e.h/2;i?x.lineTo(px,py):x.moveTo(px,py)}
+x.closePath();x.fill();
+}
+x.restore();
+}
 x.shadowBlur=0;
+for(let p of powerups){
+x.save();x.translate(p.x,p.y);x.rotate(p.angle);
+let col=p.type==='shield'?'#44aaff':p.type==='rapid'?'#ffaa22':p.type==='triple'?'#ff44aa':'#44ff88';
+x.shadowBlur=20;x.shadowColor=col;x.fillStyle=col;
+x.beginPath();x.arc(0,0,12,0,Math.PI*2);x.fill();
+x.fillStyle='#fff';x.font='bold 14px sans-serif';x.textAlign='center';x.textBaseline='middle';
+let sym=p.type==='shield'?'S':p.type==='rapid'?'R':p.type==='triple'?'T':'+';
+x.fillText(sym,0,1);
+x.restore();
 }
-function step(){
-dir=nd;
-const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
-if(h.x<0||h.x>=N||h.y<0||h.y>=N||snake.some(s=>s.x===h.x&&s.y===h.y)){gameOver();return}
-snake.unshift(h);
-if(h.x===food.x&&h.y===food.y){score++;sc.textContent=score;if(score%5===0&&speed>60)speed-=10;placeFood()}else snake.pop();
-draw();
+x.shadowBlur=0;
+if(!gameOver)drawShip();
+if(combo>1){
+x.fillStyle='rgba(255,200,50,'+Math.min(1,comboTimer/60)+')';
+x.font='bold 28px sans-serif';x.textAlign='center';
+x.fillText('x'+combo+' КОМБО!',W/2,80);
 }
-function loop(){if(!run)return;step();timer=setTimeout(loop,speed)}
-function start(){init();run=true;ov.classList.remove('show');draw();clearTimeout(timer);loop()}
-function gameOver(){run=false;clearTimeout(timer);if(score>best){best=score;localStorage.setItem('snakeBest',best);bs.textContent=best}ovt.textContent='Игра окончена';ovp.textContent='Счёт: '+score;btn.textContent='Заново';ov.classList.add('show')}
-btn.onclick=start;
-const keys={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
-function setDir(d){
-if(d==='up'&&dir.y!==1)nd={x:0,y:-1};
-else if(d==='down'&&dir.y!==-1)nd={x:0,y:1};
-else if(d==='left'&&dir.x!==1)nd={x:-1,y:0};
-else if(d==='right'&&dir.x!==-1)nd={x:1,y:0};
 }
-document.addEventListener('keydown',e=>{const d=keys[e.key];if(d){e.preventDefault();setDir(d)}});
-document.querySelectorAll('.controls button').forEach(b=>b.onclick=()=>setDir(b.dataset.d));
-init();draw();
+function loop(){update();draw();requestAnimationFrame(loop)}
+function showGameOver(){
+overlay.classList.remove('hidden');
+overlay.innerHTML='<h1>ИГРА ОКОНЧЕНА</h1><div class="final">Очки: '+score+'</div><div class="stats">Уровень: '+level+'</div><button id="restartBtn">ИГРАТЬ СНОВА</button>';
+document.getElementById('restartBtn').onclick=startGame;
+}
+function startGame(){
+overlay.classList.add('hidden');
+init();
+}
+startBtn.onclick=startGame;
+document.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' ')e.preventDefault()});
+document.addEventListener('keyup',e=>{keys[e.key]=false});
+c.addEventListener('mousemove',e=>{let r=c.getBoundingClientRect();mouse.x=(e.clientX-r.left)*(W/r.width);mouse.y=(e.clientY-r.top)*(H/r.height)});
+c.addEventListener('mousedown',e=>{mouse.down=true;e.preventDefault()});
+c.addEventListener('mouseup',()=>{mouse.down=false});
+c.addEventListener('mouseleave',()=>{mouse.down=false});
+c.addEventListener('touchstart',e=>{e.preventDefault();let r=c.getBoundingClientRect();let t=e.touches[0];mouse.x=(t.clientX-r.left)*(W/r.width);mouse.y=(t.clientY-r.top)*(H/r.height);mouse.down=true},{passive:false});
+c.addEventListener('touchmove',e=>{e.preventDefault();let r=c.getBoundingClientRect();let t=e.touches[0];mouse.x=(t.clientX-r.left)*(W/r.width);mouse.y=(t.clientY-r.top)*(H/r.height)},{passive:false});
+c.addEventListener('touchend',e=>{e.preventDefault();mouse.down=false},{passive:false});
+init();loop();
 </script>
 </body>
 </html>
