@@ -3,81 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Космический Гид</title>
+<title>Змейка</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0ff;overflow-x:hidden}
-.stars{position:fixed;inset:0;background:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(2px 2px at 60% 70%,#fff,transparent),radial-gradient(1px 1px at 80% 10%,#fff,transparent),radial-gradient(1px 1px at 40% 90%,#fff,transparent),radial-gradient(2px 2px at 10% 60%,#aaf,transparent),radial-gradient(1px 1px at 90% 50%,#fff,transparent);background-size:200% 200%;animation:tw 8s infinite alternate;z-index:0}
-@keyframes tw{0%{opacity:.6}100%{opacity:1}}
-header{position:relative;z-index:1;padding:80px 20px 60px;text-align:center;background:linear-gradient(180deg,rgba(30,20,80,.6),transparent)}
-h1{font-size:clamp(2rem,6vw,4rem);background:linear-gradient(90deg,#7af,#f7a,#af7);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:16px;letter-spacing:2px}
-header p{font-size:1.1rem;color:#aab;max-width:600px;margin:0 auto}
-nav{position:sticky;top:0;z-index:10;background:rgba(10,10,30,.85);backdrop-filter:blur(10px);padding:14px;text-align:center;border-bottom:1px solid rgba(120,120,255,.2)}
-nav a{color:#9af;text-decoration:none;margin:0 14px;font-weight:500;transition:.3s;font-size:.95rem}
-nav a:hover{color:#fff;text-shadow:0 0 10px #7af}
-main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:30px}
-.card{background:linear-gradient(145deg,rgba(40,30,90,.7),rgba(20,15,50,.7));border:1px solid rgba(120,120,255,.25);border-radius:16px;padding:26px;transition:.4s;cursor:pointer}
-.card:hover{transform:translateY(-6px);border-color:#7af;box-shadow:0 10px 40px rgba(120,120,255,.3)}
-.card h3{color:#9cf;margin-bottom:10px;font-size:1.25rem}
-.card p{color:#aab;line-height:1.6;font-size:.95rem}
-.icon{font-size:2.2rem;margin-bottom:12px;display:block}
-section{margin:60px 0}
-section h2{font-size:1.8rem;color:#cdf;margin-bottom:20px;border-left:4px solid #7af;padding-left:14px}
-.timeline{border-left:2px solid rgba(120,120,255,.3);padding-left:24px;margin-top:20px}
-.tl-item{position:relative;margin-bottom:28px}
-.tl-item::before{content:'';position:absolute;left:-31px;top:6px;width:12px;height:12px;border-radius:50%;background:#7af;box-shadow:0 0 12px #7af}
-.tl-item h4{color:#9cf;margin-bottom:6px}
-.tl-item p{color:#aab;font-size:.9rem;line-height:1.5}
-footer{position:relative;z-index:1;text-align:center;padding:40px 20px;color:#667;border-top:1px solid rgba(120,120,255,.15);margin-top:60px}
-.btn{display:inline-block;margin-top:20px;padding:12px 32px;background:linear-gradient(90deg,#7af,#a7f);color:#fff;text-decoration:none;border-radius:30px;font-weight:600;transition:.3s;border:none;cursor:pointer}
-.btn:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(120,120,255,.6)}
-@media(max-width:600px){nav a{margin:0 8px;font-size:.85rem}header{padding:50px 16px 40px}}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);font-family:'Segoe UI',sans-serif;overflow:hidden}
+.game{text-align:center;padding:20px}
+h1{color:#e94560;font-size:2.5rem;margin-bottom:15px;text-shadow:0 0 20px rgba(233,69,96,.5);letter-spacing:3px}
+canvas{border:3px solid #e94560;border-radius:12px;box-shadow:0 0 30px rgba(233,69,96,.4),inset 0 0 30px rgba(0,0,0,.5);background:#0a0a1a;display:block;margin:0 auto}
+.info{display:flex;justify-content:space-between;margin:15px auto 0;max-width:400px;color:#fff;font-size:1.1rem}
+.score,.best{background:rgba(233,69,96,.15);padding:8px 20px;border-radius:20px;border:1px solid rgba(233,69,96,.3)}
+.score span,.best span{color:#e94560;font-weight:bold}
+.overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,26,.95);padding:30px 50px;border-radius:15px;border:2px solid #e94560;text-align:center;display:none}
+.overlay.show{display:block}
+.overlay h2{color:#e94560;margin-bottom:15px;font-size:1.8rem}
+.overlay p{color:#aaa;margin-bottom:20px}
+.btn{background:#e94560;color:#fff;border:none;padding:12px 35px;border-radius:25px;font-size:1.1rem;cursor:pointer;transition:.3s;font-weight:bold;letter-spacing:1px}
+.btn:hover{background:#ff6b81;transform:scale(1.05);box-shadow:0 0 20px rgba(233,69,96,.6)}
+.controls{color:#666;margin-top:15px;font-size:.9rem}
 </style>
 </head>
 <body>
-<div class="stars"></div>
-<header>
-<h1>Космический Гид</h1>
-<p>Открой для себя тайны Вселенной — от ближайших планет до далёких галактик</p>
-<a href="#planets" class="btn">Начать путешествие</a>
-</header>
-<nav>
-<a href="#planets">Планеты</a>
-<a href="#facts">Факты</a>
-<a href="#history">История</a>
-</nav>
-<main>
-<section id="planets">
-<h2>Планеты Солнечной системы</h2>
-<div class="grid">
-<div class="card"><span class="icon">☿</span><h3>Меркурий</h3><p>Самая близкая к Солнцу планета. Год длится всего 88 земных суток, а температура колеблется от -180°C до +430°C.</p></div>
-<div class="card"><span class="icon">♀</span><h3>Венера</h3><p>Самая горячая планета с плотной атмосферой из CO₂. Давление на поверхности в 92 раза выше земного.</p></div>
-<div class="card"><span class="icon">🌍</span><h3>Земля</h3><p>Единственная известная планета с жизнью. 71% поверхности покрыто водой, а атмосфера защищает от радиации.</p></div>
-<div class="card"><span class="icon">♂</span><h3>Марс</h3><p>Красная планета с крупнейшим вулканом Олимп (21 км). Здесь находятся полярные ледяные шапки.</p></div>
-<div class="card"><span class="icon">♃</span><h3>Юпитер</h3><p>Газовый гигант с Большим Красным Пятном — штормом, который бушует более 350 лет.</p></div>
-<div class="card"><span class="icon">♄</span><h3>Сатурн</h3><p>Обладатель великолепных колец из льда и камня. Плотность планеты меньше плотности воды.</p></div>
+<div class="game">
+<h1>ЗМЕЙКА</h1>
+<canvas id="c" width="400" height="400"></canvas>
+<div class="info">
+<div class="score">Счёт: <span id="s">0</span></div>
+<div class="best">Рекорд: <span id="b">0</span></div>
 </div>
-</section>
-<section id="facts">
-<h2>Удивительные факты</h2>
-<div class="grid">
-<div class="card"><span class="icon">💫</span><h3>Свет от Солнца</h3><p>Доходит до Земли за 8 минут 20 секунд. Мы видим Солнце таким, каким оно было в прошлом.</p></div>
-<div class="card"><span class="icon">🌌</span><h3>Млечный Путь</h3><p>Содержит от 100 до 400 миллиардов звёзд. Диаметр галактики — около 100 000 световых лет.</p></div>
-<div class="card"><span class="icon">⚫</span><h3>Чёрные дыры</h3><p>Объекты с гравитацией настолько сильной, что даже свет не может покинуть их пределы.</p></div>
+<div class="controls">Управление: стрелки или WASD</div>
 </div>
-</section>
-<section id="history">
-<h2>История освоения космоса</h2>
-<div class="timeline">
-<div class="tl-item"><h4>1957 — Спутник-1</h4><p>Первый искусственный спутник Земли, запущенный СССР. Начало космической эры.</p></div>
-<div class="tl-item"><h4>1961 — Юрий Гагарин</h4><p>Первый человек в космосе. Полёт длился 108 минут на корабле «Восток-1».</p></div>
-<div class="tl-item"><h4>1969 — Аполлон-11</h4><p>Нил Армстронг стал первым человеком, ступившим на поверхность Луны.</p></div>
-<div class="tl-item"><h4>1998 — МКС</h4><p>Начало строительства Международной космической станции на орбите Земли.</p></div>
-<div class="tl-item"><h4>2021 — Джеймс Уэбб</h4><p>Запуск мощнейшего космического телескопа для изучения ранней Вселенной.</p></div>
+<div class="overlay" id="o">
+<h2 id="ot">Игра окончена</h2>
+<p id="op">Ваш счёт: 0</p>
+<button class="btn" id="rb">Заново</button>
 </div>
-</section>
-</main>
-<footer>© 2024 Космический Гид — Путешествие сквозь звёзды</footer>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),S=20,N=20;
+let sn,dir,nd,food,sc,bs=+localStorage.getItem('snakeBest')||0,run,sp,lt;
+document.getElementById('b').textContent=bs;
+function init(){sn=[{x:10,y:10}];dir={x:1,y:0};nd={x:1,y:0};sc=0;sp=150;run=true;food=rf();document.getElementById('s').textContent=0;document.getElementById('o').classList.remove('show');lt=0;requestAnimationFrame(loop)}
+function rf(){let f;do{f={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(sn.some(s=>s.x===f.x&&s.y===f.y));return f}
+function loop(t){if(!run)return;if(t-lt>sp){lt=t;upd()}drw();requestAnimationFrame(loop)}
+function upd(){dir=nd;let h={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
+if(h.x<0||h.x>=N||h.y<0||h.y>=N||sn.some(s=>s.x===h.x&&s.y===h.y)){go();return}
+sn.unshift(h);
+if(h.x===food.x&&h.y===food.y){sc+=10;document.getElementById('s').textContent=sc;if(sc>bs){bs=sc;localStorage.setItem('snakeBest',bs);document.getElementById('b').textContent=bs}food=rf();if(sp>60)sp-=3}else sn.pop()}
+function drw(){x.fillStyle='#0a0a1a';x.fillRect(0,0,c.width,c.height);
+x.strokeStyle='rgba(233,69,96,.08)';x.lineWidth=1;
+for(let i=0;i<=N;i++){x.beginPath();x.moveTo(i*S,0);x.lineTo(i*S,c.height);x.stroke();x.beginPath();x.moveTo(0,i*S);x.lineTo(c.width,i*S);x.stroke()}
+x.fillStyle='#e94560';x.shadowColor='#e94560';x.shadowBlur=15;
+x.beginPath();x.arc(food.x*S+S/2,food.y*S+S/2,S/2-2,0,Math.PI*2);x.fill();
+x.shadowBlur=0;
+sn.forEach((s,i)=>{let r=1-i/(sn.length+5);x.fillStyle=i===0?'#ff6b81':`rgba(233,69,96,${r})`;x.shadowColor='#e94560';x.shadowBlur=i===0?15:5;
+x.beginPath();x.roundRect(s.x*S+1,s.y*S+1,S-2,S-2,5);x.fill()});
+x.shadowBlur=0}
+function go(){run=false;document.getElementById('ot').textContent='Игра окончена';document.getElementById('op').textContent='Ваш счёт: '+sc;document.getElementById('o').classList.add('show')}
+document.addEventListener('keydown',e=>{let k=e.key.toLowerCase();
+if((k==='arrowup'||k==='w')&&dir.y!==1)nd={x:0,y:-1};
+else if((k==='arrowdown'||k==='s')&&dir.y!==-1)nd={x:0,y:1};
+else if((k==='arrowleft'||k==='a')&&dir.x!==1)nd={x:-1,y:0};
+else if((k==='arrowright'||k==='d')&&dir.x!==-1)nd={x:1,y:0};
+if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()});
+document.getElementById('rb').onclick=init;
+init();
+</script>
 </body>
 </html>
