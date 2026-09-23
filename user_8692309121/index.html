@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nebula — цифровая студия</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--fg:#e8e8f0;--ac:#7c5cff;--ac2:#00e0c6;--mut:#8a8aa0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(124,92,255,.15),transparent 50%),radial-gradient(circle at 80% 70%,rgba(0,224,198,.12),transparent 50%);pointer-events:none;z-index:0}
+nav{position:fixed;top:0;width:100%;padding:1.2rem 5%;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);background:rgba(10,10,18,.7);z-index:100;border-bottom:1px solid rgba(255,255,255,.05)}
+.logo{font-size:1.4rem;font-weight:700;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1px}
+nav ul{display:flex;gap:2rem;list-style:none}
+nav a{color:var(--mut);text-decoration:none;font-size:.95rem;transition:.3s;position:relative}
+nav a:hover{color:var(--fg)}
+nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:.3s}
+nav a:hover::after{width:100%}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 5%;position:relative;z-index:1}
+.hero h1{font-size:clamp(2.5rem,7vw,5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;background:linear-gradient(135deg,#fff 30%,var(--ac) 70%,var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;animation:up 1s ease}
+.hero p{font-size:clamp(1rem,2vw,1.25rem);color:var(--mut);max-width:600px;margin-bottom:2.5rem;animation:up 1s ease .2s backwards}
+.btn{padding:1rem 2.5rem;border-radius:50px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;text-decoration:none;font-weight:600;transition:.3s;box-shadow:0 10px 30px rgba(124,92,255,.3);animation:up 1s ease .4s backwards;border:none;cursor:pointer;font-size:1rem}
+.btn:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(124,92,255,.5)}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+section{padding:6rem 5%;position:relative;z-index:1}
+.title{text-align:center;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:3rem;font-weight:700}
+.title span{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;max-width:1200px;margin:0 auto}
+.card{padding:2.5rem 2rem;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);transition:.4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--ac),var(--ac2));transform:scaleX(0);transform-origin:left;transition:.4s}
+.card:hover{transform:translateY(-8px);background:rgba(255,255,255,.06);border-color:rgba(124,92,255,.3)}
+.card:hover::before{transform:scaleX(1)}
+.icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1.5rem}
+.card h3{font-size:1.3rem;margin-bottom:.8rem}
+.card p{color:var(--mut);font-size:.95rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2rem;max-width:900px;margin:0 auto;text-align:center}
+.stat h4{font-size:clamp(2rem,5vw,3rem);background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.stat p{color:var(--mut);font-size:.9rem;text-transform:uppercase;letter-spacing:2px}
+.cta{text-align:center;padding:5rem 5%;background:linear-gradient(135deg,rgba(124,92,255,.1),rgba(0,224,198,.1));border-radius:30px;max-width:1000px;margin:0 auto}
+.cta h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:1rem}
+.cta p{color:var(--mut);margin-bottom:2rem}
+footer{text-align:center;padding:3rem 5%;color:var(--mut);font-size:.9rem;border-top:1px solid rgba(255,255,255,.05);margin-top:4rem}
+@media(max-width:768px){nav ul{display:none}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">◆ NEBULA</div>
+<ul>
+<li><a href="#services">Услуги</a></li>
+<li><a href="#stats">О нас</a></li>
+<li><a href="#contact">Контакты</a></li>
+</ul>
+</nav>
+<header class="hero">
+<h1>Создаём цифровое<br>будущее</h1>
+<p>Мы — студия дизайна и разработки, превращающая идеи в элегантные цифровые продукты, которые вдохновляют.</p>
+<a href="#contact" class="btn">Начать проект</a>
+</header>
+<section id="services">
+<h2 class="title">Наши <span>услуги</span></h2>
+<div class="grid">
+<div class="card"><div class="icon">🎨</div><h3>UI/UX Дизайн</h3><p>Интуитивные интерфейсы, которые пользователи полюбят с первого взгляда.</p></div>
+<div class="card"><div class="icon">⚡</div><h3>Веб-разработка</h3><p>Быстрые и надёжные сайты на современных технологиях и фреймворках.</p></div>
+<div class="card"><div class="icon">📱</div><h3>Мобильные приложения</h3><p>Кроссплатформенные решения для iOS и Android с нативным опытом.</p></div>
+<div class="card"><div class="icon">🚀</div><h3>Брендинг</h3><p>Создаём айдентику, которая выделяет вас среди конкурентов.</p></div>
+<div class="card"><div class="icon">📊</div><h3>Аналитика</h3><p>Данные и метрики, помогающие принимать верные решения.</p></div>
+<div class="card"><div class="icon">🔒</div><h3>Безопасность</h3><p>Защита данных и соответствие современным стандартам.</p></div>
+</div>
+</section>
+<section id="stats">
+<h2 class="title">Наши <span>достижения</span></h2>
+<div class="stats">
+<div class="stat"><h4>250+</h4><p>Проектов</p></div>
+<div class="stat"><h4>98%</h4><p>Довольных клиентов</p></div>
+<div class="stat"><h4>12</h4><p>Лет опыта</p></div>
+<div class="stat"><h4>40</h4><p>Специалистов</p></div>
+</div>
+</section>
+<section id="contact">
+<div class="cta">
+<h2>Готовы начать?</h2>
+<p>Расскажите о своей идее — мы поможем воплотить её в жизнь.</p>
+<a href="mailto:hello@nebula.studio" class="btn">Связаться с нами</a>
+</div>
+</section>
+<footer>© 2025 Nebula Studio. Все права защищены.</footer>
+</body>
+</html>
