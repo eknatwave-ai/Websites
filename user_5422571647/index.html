@@ -272,9 +272,11 @@ function stepGame(){
   }
   snake.unshift(nh);
   if(willEat){
+    const growCount=snake.length-1;
+    growSnake(growCount);
     score++;scoreSpan.textContent=score;
-    addParticles(nh.x*CELL+CELL/2,nh.y*CELL+CELL/2,'#ff5e5e');
-    statusDiv.textContent='🍎 +1';
+    addParticles(nh.x*CELL+CELL/2,nh.y*CELL+CELL/2,'#ff5e5e',20);
+    statusDiv.textContent='🍎 Яблоко! Змейка удвоена! +1';
     const newLevel=Math.floor(score/5)+1;
     if(newLevel>level){level=newLevel;levelSpan.textContent=level;statusDiv.textContent='⚡ Уровень '+level+'!';restartLoop()}
     if(score%3===0&&!bonus)spawnBonus();
