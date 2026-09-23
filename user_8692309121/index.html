@@ -1,71 +1,295 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Змейка</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);font-family:'Segoe UI',sans-serif;overflow:hidden}
-.game{text-align:center;padding:20px}
-h1{color:#e94560;font-size:2.5rem;margin-bottom:15px;text-shadow:0 0 20px rgba(233,69,96,.5);letter-spacing:3px}
-canvas{border:3px solid #e94560;border-radius:12px;box-shadow:0 0 30px rgba(233,69,96,.4),inset 0 0 30px rgba(0,0,0,.5);background:#0a0a1a;display:block;margin:0 auto}
-.info{display:flex;justify-content:space-between;margin:15px auto 0;max-width:400px;color:#fff;font-size:1.1rem}
-.score,.best{background:rgba(233,69,96,.15);padding:8px 20px;border-radius:20px;border:1px solid rgba(233,69,96,.3)}
-.score span,.best span{color:#e94560;font-weight:bold}
-.overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,26,.95);padding:30px 50px;border-radius:15px;border:2px solid #e94560;text-align:center;display:none}
-.overlay.show{display:block}
-.overlay h2{color:#e94560;margin-bottom:15px;font-size:1.8rem}
-.overlay p{color:#aaa;margin-bottom:20px}
-.btn{background:#e94560;color:#fff;border:none;padding:12px 35px;border-radius:25px;font-size:1.1rem;cursor:pointer;transition:.3s;font-weight:bold;letter-spacing:1px}
-.btn:hover{background:#ff6b81;transform:scale(1.05);box-shadow:0 0 20px rgba(233,69,96,.6)}
-.controls{color:#666;margin-top:15px;font-size:.9rem}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кулдаун · защита бота</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0e14 0%, #141a24 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 1.5rem;
+      color: #eef2f8;
+    }
+
+    .card {
+      max-width: 680px;
+      width: 100%;
+      background: rgba(22, 28, 38, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(90, 140, 255, 0.2);
+      border-radius: 2.5rem;
+      padding: 2.5rem 2.2rem;
+      box-shadow: 0 30px 50px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(70, 130, 255, 0.15) inset;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.005);
+      border-color: rgba(100, 160, 255, 0.4);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 180, 40, 0.12);
+      border: 1px solid rgba(255, 200, 70, 0.3);
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      color: #ffd966;
+      margin-bottom: 1.8rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .badge span {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 0%, #b8d0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subhead {
+      font-size: 1.1rem;
+      color: #9aa9c0;
+      margin-bottom: 2.2rem;
+      font-weight: 400;
+      border-left: 3px solid #3b6eff;
+      padding-left: 1.2rem;
+      background: linear-gradient(90deg, rgba(59, 110, 255, 0.08), transparent);
+      border-radius: 0 8px 8px 0;
+      padding: 0.8rem 1.2rem;
+    }
+
+    .code-block {
+      background: #0d111a;
+      border-radius: 1.5rem;
+      padding: 1.8rem 1.8rem 1.8rem 2rem;
+      border: 1px solid #2a3448;
+      box-shadow: 0 10px 25px -8px #00000080, inset 0 1px 0 #ffffff0d;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .code-block::before {
+      content: "python";
+      position: absolute;
+      top: 0.6rem;
+      right: 1.2rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #4f6a8f;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: #1a2230;
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid #2e3d55;
+    }
+
+    .line {
+      display: block;
+      color: #cbd5e6;
+    }
+
+    .comment {
+      color: #6b7f9e;
+      font-style: italic;
+    }
+
+    .keyword {
+      color: #ff9f6e;
+      font-weight: 500;
+    }
+
+    .string {
+      color: #a3e3a0;
+    }
+
+    .number {
+      color: #f7c96b;
+    }
+
+    .func {
+      color: #7aa9ff;
+    }
+
+    .var {
+      color: #d9e2f0;
+    }
+
+    .highlight {
+      background: rgba(255, 200, 70, 0.12);
+      border-radius: 6px;
+      padding: 0.1rem 0.3rem;
+      color: #ffd966;
+      font-weight: 500;
+    }
+
+    .return-highlight {
+      background: rgba(255, 100, 100, 0.15);
+      border-left: 4px solid #ff6b6b;
+      padding: 0.6rem 1rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0 0.5rem 0;
+      font-weight: 500;
+      color: #ffb3b3;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .return-highlight span {
+      font-size: 1.4rem;
+    }
+
+    .cooldown-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-top: 1.8rem;
+      justify-content: space-between;
+    }
+
+    .info-item {
+      background: #10161f;
+      border-radius: 1.2rem;
+      padding: 1rem 1.4rem;
+      flex: 1 1 160px;
+      border: 1px solid #263040;
+      transition: border-color 0.2s;
+    }
+
+    .info-item:hover {
+      border-color: #3b6eff;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7f9e;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #eef2f8;
+      line-height: 1.2;
+    }
+
+    .info-value small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #8a9bb8;
+      margin-left: 0.2rem;
+    }
+
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #6b7f9e;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-top: 1px solid #1f2a3a;
+      padding-top: 1.5rem;
+    }
+
+    .footer-note .icon {
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        padding: 1.8rem 1.4rem;
+        border-radius: 2rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .code-block {
+        font-size: 0.8rem;
+        padding: 1.4rem;
+      }
+      .info-value {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="game">
-<h1>ЗМЕЙКА</h1>
-<canvas id="c" width="400" height="400"></canvas>
-<div class="info">
-<div class="score">Счёт: <span id="s">0</span></div>
-<div class="best">Рекорд: <span id="b">0</span></div>
-</div>
-<div class="controls">Управление: стрелки или WASD</div>
-</div>
-<div class="overlay" id="o">
-<h2 id="ot">Игра окончена</h2>
-<p id="op">Ваш счёт: 0</p>
-<button class="btn" id="rb">Заново</button>
-</div>
-<script>
-const c=document.getElementById('c'),x=c.getContext('2d'),S=20,N=20;
-let sn,dir,nd,food,sc,bs=+localStorage.getItem('snakeBest')||0,run,sp,lt;
-document.getElementById('b').textContent=bs;
-function init(){sn=[{x:10,y:10}];dir={x:1,y:0};nd={x:1,y:0};sc=0;sp=150;run=true;food=rf();document.getElementById('s').textContent=0;document.getElementById('o').classList.remove('show');lt=0;requestAnimationFrame(loop)}
-function rf(){let f;do{f={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(sn.some(s=>s.x===f.x&&s.y===f.y));return f}
-function loop(t){if(!run)return;if(t-lt>sp){lt=t;upd()}drw();requestAnimationFrame(loop)}
-function upd(){dir=nd;let h={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
-if(h.x<0||h.x>=N||h.y<0||h.y>=N||sn.some(s=>s.x===h.x&&s.y===h.y)){go();return}
-sn.unshift(h);
-if(h.x===food.x&&h.y===food.y){sc+=10;document.getElementById('s').textContent=sc;if(sc>bs){bs=sc;localStorage.setItem('snakeBest',bs);document.getElementById('b').textContent=bs}food=rf();if(sp>60)sp-=3}else sn.pop()}
-function drw(){x.fillStyle='#0a0a1a';x.fillRect(0,0,c.width,c.height);
-x.strokeStyle='rgba(233,69,96,.08)';x.lineWidth=1;
-for(let i=0;i<=N;i++){x.beginPath();x.moveTo(i*S,0);x.lineTo(i*S,c.height);x.stroke();x.beginPath();x.moveTo(0,i*S);x.lineTo(c.width,i*S);x.stroke()}
-x.fillStyle='#e94560';x.shadowColor='#e94560';x.shadowBlur=15;
-x.beginPath();x.arc(food.x*S+S/2,food.y*S+S/2,S/2-2,0,Math.PI*2);x.fill();
-x.shadowBlur=0;
-sn.forEach((s,i)=>{let r=1-i/(sn.length+5);x.fillStyle=i===0?'#ff6b81':`rgba(233,69,96,${r})`;x.shadowColor='#e94560';x.shadowBlur=i===0?15:5;
-x.beginPath();x.roundRect(s.x*S+1,s.y*S+1,S-2,S-2,5);x.fill()});
-x.shadowBlur=0}
-function go(){run=false;document.getElementById('ot').textContent='Игра окончена';document.getElementById('op').textContent='Ваш счёт: '+sc;document.getElementById('o').classList.add('show')}
-document.addEventListener('keydown',e=>{let k=e.key.toLowerCase();
-if((k==='arrowup'||k==='w')&&dir.y!==1)nd={x:0,y:-1};
-else if((k==='arrowdown'||k==='s')&&dir.y!==-1)nd={x:0,y:1};
-else if((k==='arrowleft'||k==='a')&&dir.x!==1)nd={x:-1,y:0};
-else if((k==='arrowright'||k==='d')&&dir.x!==-1)nd={x:1,y:0};
-if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()});
-document.getElementById('rb').onclick=init;
-init();
-</script>
+  <div class="card">
+    <div class="badge">
+      <span>⏳</span> защита от спама
+    </div>
+    <h1>Кулдаун‑контроль</h1>
+    <div class="subhead">
+      <span class="highlight">return</span> — мгновенно останавливает функцию, если время ещё не пришло.
+    </div>
+
+    <div class="code-block">
+      <span class="line"><span class="var">cooldown</span> = <span class="number">300</span> <span class="keyword">if</span> status == <span class="string">'free'</span> <span class="keyword">else</span> <span class="number">30</span></span>
+      <span class="line"><span class="keyword">if</span> time.time() - last_time &lt; cooldown:</span>
+      <span class="line">    minutes_left = <span class="func">int</span>((cooldown - (time.time() - last_time)) // <span class="number">60</span>) + <span class="number">1</span></span>
+      <span class="line">    <span class="keyword">await</span> message.answer(<span class="string">f"⏳ Пожалуйста, подождите. Создавать сайты можно раз в {cooldown//60} мин. Осталось примерно ~{minutes_left} мин."</span>)</span>
+      <span class="line">    <span class="keyword">return</span>  <span class="comment"># 🌟 ВОТ ЭТО СЛОВО СПАСЕТ БОТА! Оно мгновенно остановит функцию.</span></span>
+    </div>
+
+    <div class="return-highlight">
+      <span>🛑</span> return — выход из функции, бот не продолжит выполнение
+    </div>
+
+    <div class="cooldown-info">
+      <div class="info-item">
+        <div class="info-label">Бесплатный статус</div>
+        <div class="info-value">5 <small>мин</small></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Платный статус</div>
+        <div class="info-value">30 <small>сек</small></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Осталось</div>
+        <div class="info-value">~1 <small>мин</small></div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <span class="icon">⚡</span> return останавливает выполнение — защита работает корректно.
+    </div>
+  </div>
 </body>
 </html>
