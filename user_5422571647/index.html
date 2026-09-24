@@ -306,4 +306,4 @@ function move(dir){
       if(dir==='right')row.reverse();
       const newRow=slideRow(row);
       if(dir==='right')newRow.reverse();
-      for(let c=0;c<4;c++)if(newRow[c]!==grid[r][c]&&newRow[c]!==0)popCells.push
+      for(let c=0;c<4;c++)if(newRow[c]!==grid[r][c]&&newRow[c]!==0)popCells.push([r,c
