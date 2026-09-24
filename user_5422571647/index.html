@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Змейка · Аркада</title>
+<title>Тетрис · Аркада</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;font-family:'Segoe UI',Roboto,system-ui,sans-serif;padding:16px;color:#ddf0ff}
@@ -18,8 +18,8 @@ body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14
 .restart-btn{background:#1e3347;border:none;border-radius:40px;padding:10px 22px;font-size:1rem;font-weight:600;color:#ddf0ff;cursor:pointer;box-shadow:0 6px 0 #0a121c,0 8px 12px rgba(0,0,0,.4);transition:all .08s ease;border:1px solid #3f637e;letter-spacing:.5px}
 .restart-btn:active{transform:translateY(5px);box-shadow:0 1px 0 #0a121c,0 5px 10px rgba(0,0,0,.5)}
 .restart-btn:hover{background:#264a64;color:#fff}
-.canvas-wrap{position:relative;border-radius:28px;overflow:hidden;box-shadow:0 0 0 2px #1e3a4e,0 20px 30px -5px #000}
-canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;background:#0b141c;margin:0 auto;touch-action:none}
+.snake-wrap{position:relative;background:#0b1822;border:1px solid #24405a;border-radius:24px;padding:12px;box-shadow:inset 0 3px 8px rgba(0,0,0,.5)}
+#snakeCanvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;background:#0b141c;border-radius:16px;margin:0 auto;touch-action:none}
 .controls{display:flex;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap}
 .arrow{background:#1b2d3b;border:none;width:66px;height:66px;border-radius:26px;font-size:2rem;font-weight:700;color:#b1d9f0;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 0 #0b131b,0 10px 16px rgba(0,0,0,.5);cursor:pointer;transition:all .06s ease;border:1px solid #3b5e78;user-select:none}
 .arrow:active{transform:translateY(6px);box-shadow:0 2px 0 #0b131b,0 6px 12px rgba(0,0,0,.5)}
@@ -73,8 +73,6 @@ canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;bac
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.success{border-color:#7ee0ff;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 20px #7ee0ff60}
 .toast.error{border-color:#ff5e5e;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 20px #ff5e5e60}
-.snake-wrap{position:relative;background:#0b1822;border:1px solid #24405a;border-radius:24px;padding:12px;box-shadow:inset 0 3px 8px rgba(0,0,0,.5)}
-#snakeCanvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;background:#0b141c;border-radius:16px;margin:0 auto;touch-action:none}
 @media(max-width:480px){.game-wrapper{padding:16px;border-radius:32px}.arrow{width:56px;height:56px;font-size:1.6rem;border-radius:22px}.stat{font-size:.9rem;padding:6px 12px}.restart-btn{padding:8px 16px;font-size:.9rem}.best-setter input{width:70px;padding:6px 10px;font-size:.85rem}.best-setter button{padding:6px 14px;font-size:.85rem}.best-panel-value{font-size:2rem}.best-panel{padding:12px 16px}.shop-grid{grid-template-columns:1fr}.shop-item .desc{min-height:auto}.panel-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -82,10 +80,10 @@ canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;bac
 <div class="game-wrapper">
 <div class="header">
 <div class="stats">
-<div class="stat">🐍 <span id="sScore">0</span></div>
+<div class="stat">🎯 <span id="sScore">0</span></div>
 <div class="stat best">🏆 <span id="sBest">0</span></div>
 <div class="stat lvl">⚡ <span id="sLevel">1</span></div>
-<div class="stat stars">🍎 <span id="sApples">0</span></div>
+<div class="stat stars">🧱 <span id="sApples">0</span></div>
 </div>
 <button class="restart-btn" id="sRestart">⟳ Заново</button>
 </div>
@@ -93,18 +91,18 @@ canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;bac
 <canvas id="snakeCanvas" width="500" height="500"></canvas>
 </div>
 <div class="controls">
-<button class="arrow" data-s="up">▲</button>
 <button class="arrow" data-s="left">◀</button>
+<button class="arrow" data-s="rotate">⟳</button>
 <button class="arrow" data-s="down">▼</button>
 <button class="arrow" data-s="right">▶</button>
 </div>
-<div class="status" id="sStatus">Собирай яблоки — не врезайся в себя и стены!</div>
+<div class="status" id="sStatus">Складывай линии — не дай блокам достичь верха!</div>
 <div class="best-panel">
 <div class="best-panel-title">Лучший результат</div>
 <div class="best-panel-value" id="bestPanelValue">0</div>
 <div class="best-panel-sub">Текущий рекорд: <span id="bestPanelSub">0</span> очков</div>
 <div class="panel-stats">
-<div class="panel-stat"><span class="ps-icon">🐍</span><span class="ps-val" id="panelScore">0</span><span class="ps-lbl">Счёт</span></div>
+<div class="panel-stat"><span class="ps-icon">🎯</span><span class="ps-val" id="panelScore">0</span><span class="ps-lbl">Счёт</span></div>
 <div class="panel-stat ps-best"><span class="ps-icon">🏆</span><span class="ps-val" id="panelBest">0</span><span class="ps-lbl">Рекорд</span></div>
 <div class="panel-stat ps-lvl"><span class="ps-icon">⚡</span><span class="ps-val" id="panelLevel">1</span><span class="ps-lbl">Уровень</span></div>
 <div class="panel-stat ps-stars"><span class="ps-icon">⭐</span><span class="ps-val" id="panelStars">0</span><span class="ps-lbl">Звёзды</span></div>
@@ -126,7 +124,7 @@ canvas{display:block;width:100%;height:auto;max-width:500px;aspect-ratio:1/1;bac
 </div>
 <div class="shop-note">Оплата через <b>Telegram Stars</b> · Баланс: <b id="shopBalance">0</b> ⭐</div>
 </div>
-<div class="hint">WASD / стрелки · пробел — рестарт · свайп на телефоне</div>
+<div class="hint">← → двигать · ↑ поворот · ↓ ускорить · пробел — рестарт · свайп на телефоне</div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -162,130 +160,95 @@ bestInput.value=best;bestPanelValue.textContent=best;bestPanelSub.textContent=be
 let activeBoosts={speed:0,shield:0};
 let scoreMultiplier=1;
 
-function updatePanelStats(){panelScore.textContent=snake.score;panelBest.textContent=best;panelLevel.textContent=snake.level;panelStars.textContent=stars;renderPanelBoosts()}
+function updatePanelStats(){panelScore.textContent=T.score;panelBest.textContent=best;panelLevel.textContent=T.level;panelStars.textContent=stars;renderPanelBoosts()}
 function renderPanelBoosts(){const chips=[];if(activeBoosts.shield>0)chips.push('<span class="boost-chip shield">🛡️ Щит ×'+activeBoosts.shield+'</span>');if(activeBoosts.speed>0)chips.push('<span class="boost-chip speed">🚀 Ускорение '+activeBoosts.speed+'с</span>');if(chips.length===0)chips.push('<span class="boost-chip empty">Нет активных бустов</span>');panelBoosts.innerHTML=chips.join('')}
 
 const canvas=document.getElementById('snakeCanvas');
 const ctx=canvas.getContext('2d');
-const CELL=25;
-const COLS=canvas.width/CELL;
-const ROWS=canvas.height/CELL;
+const COLS=10,ROWS=20,CELL=canvas.width/COLS;
 
-const snake={body:[],dir:{x:1,y:0},nextDir:{x:1,y:0},food:{x:0,y:0},score:0,level:1,apples:0,alive:true,started:false,tick:0,speed:8};
+const SHAPES={
+  I:[[1,1,1,1]],
+  O:[[1,1],[1,1]],
+  T:[[0,1,0],[1,1,1]],
+  S:[[0,1,1],[1,1,0]],
+  Z:[[1,1,0],[0,1,1]],
+  J:[[1,0,0],[1,1,1]],
+  L:[[0,0,1],[1,1,1]]
+};
+const COLORS={I:'#7ee0ff',O:'#f5e56b',T:'#c084fc',S:'#7ee07e',Z:'#ff5e5e',J:'#5e9eff',L:'#ffb86b'};
 
-function randFood(){
-  let x,y,ok;
-  do{x=Math.floor(Math.random()*COLS);y=Math.floor(Math.random()*ROWS);ok=true;
-    for(const s of snake.body)if(s.x===x&&s.y===y){ok=false;break}
-  }while(!ok);
-  snake.food={x,y};
-}
-function resetSnake(){
-  snake.body=[{x:5,y:10},{x:4,y:10},{x:3,y:10}];
-  snake.dir={x:1,y:0};snake.nextDir={x:1,y:0};
-  snake.score=0;snake.level=1;snake.apples=0;snake.alive=true;snake.tick=0;snake.speed=8;
-  randFood();
-  sScore.textContent=0;sLevel.textContent=1;sApples.textContent=0;
-  sStatus.textContent='Собирай яблоки — не врезайся в себя и стены!';
+const T={grid:[],piece:null,next:null,score:0,level:1,lines:0,alive:true,started:false,tick:0,speed:800,dropFast:false};
+
+function newGrid(){const g=[];for(let y=0;y<ROWS;y++){g.push(new Array(COLS).fill(null))}return g}
+function randPiece(){const keys=Object.keys(SHAPES);const k=keys[Math.floor(Math.random()*keys.length)];return{shape:SHAPES[k].map(r=>r.slice()),color:COLORS[k],x:Math.floor((COLS-SHAPES[k][0].length)/2),y:0,type:k}}
+function rotate(shape){const h=shape.length,w=shape[0].length;const r=[];for(let x=0;x<w;x++){const row=[];for(let y=h-1;y>=0;y--)row.push(shape[y][x]);r.push(row)}return r}
+function collides(shape,px,py){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++){if(!shape[y][x])continue;const nx=px+x,ny=py+y;if(nx<0||nx>=COLS||ny>=ROWS)return true;if(ny>=0&&T.grid[ny][nx])return true}return false}
+function merge(){const p=T.piece;for(let y=0;y<p.shape.length;y++)for(let x=0;x<p.shape[y].length;x++){if(p.shape[y][x]){const ny=p.y+y;if(ny<0){gameOver();return}T.grid[ny][p.x+x]=p.color}}}
+function clearLines(){let cleared=0;for(let y=ROWS-1;y>=0;y--){if(T.grid[y].every(c=>c)){T.grid.splice(y,1);T.grid.unshift(new Array(COLS).fill(null));cleared++;y++}}
+if(cleared>0){const pts=[0,100,300,500,800][cleared]||1000;T.score+=pts*scoreMultiplier*T.level;T.lines+=cleared;
+  const newLevel=Math.floor(T.lines/10)+1;
+  if(newLevel>T.level){T.level=newLevel;T.speed=Math.max(100,800-(T.level-1)*70);stars+=2;updateStarsUI();showToast('⚡ Уровень '+T.level+'! +2⭐','success')}
+  sScore.textContent=T.score;sLevel.textContent=T.level;sApples.textContent=T.lines;
+  if(T.score>best){best=T.score;localStorage.setItem('snakeBest',best);sBest.textContent=best;bestPanelValue.textContent=best;bestPanelSub.textContent=best;bestInput.value=best}
   updatePanelStats();
-}
-function drawSnake(){
+}}
+function spawn(){T.piece=T.next||randPiece();T.next=randPiece();if(collides(T.piece.shape,T.piece.x,T.piece.y)){gameOver()}}
+function gameOver(){T.alive=false;sStatus.textContent='💀 Игра окончена! Счёт: '+T.score+' · Нажми ⟳';showToast('Игра окончена! Счёт: '+T.score,'error')}
+function step(){if(!T.alive||!T.started)return;const p=T.piece;if(!collides(p.shape,p.x,p.y+1)){p.y++}else{merge();if(!T.alive)return;clearLines();spawn();updatePanelStats()}}
+function move(dx){if(!T.alive)return;const p=T.piece;if(!collides(p.shape,p.x+dx,p.y))p.x+=dx}
+function rotatePiece(){if(!T.alive)return;const p=T.piece;const r=rotate(p.shape);for(let k=0;k<3;k++){const testX=p.x+[0,-1,1,-2,2][k];if(!collides(r,testX,p.y)){p.shape=r;p.x=testX;return}}}
+function hardDrop(){if(!T.alive)return;while(!collides(T.piece.shape,T.piece.x,T.piece.y+1))T.piece.y++;step()}
+
+function drawBlock(x,y,color,alpha){ctx.globalAlpha=alpha||1;ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=8;const px=x*CELL+1,py=y*CELL+1,w=CELL-2,h=CELL-2,r=4;ctx.beginPath();ctx.moveTo(px+r,py);ctx.lineTo(px+w-r,py);ctx.quadraticCurveTo(px+w,py,px+w,py+r);ctx.lineTo(px+w,py+h-r);ctx.quadraticCurveTo(px+w,py+h,px+w-r,py+h);ctx.lineTo(px+r,py+h);ctx.quadraticCurveTo(px,py+h,px,py+h-r);ctx.lineTo(px,py+r);ctx.quadraticCurveTo(px,py,px+r,py);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.globalAlpha=1}
+function draw(){
   ctx.fillStyle='#0b141c';ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.strokeStyle='#132a3d';ctx.lineWidth=1;
   for(let i=0;i<=COLS;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,canvas.height);ctx.stroke()}
   for(let i=0;i<=ROWS;i++){ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(canvas.width,i*CELL);ctx.stroke()}
-  const fx=snake.food.x*CELL,fy=snake.food.y*CELL;
-  ctx.fillStyle='#ff5e5e';ctx.shadowColor='#ff5e5e';ctx.shadowBlur=15;
-  ctx.beginPath();ctx.arc(fx+CELL/2,fy+CELL/2,CELL/2-3,0,Math.PI*2);ctx.fill();
-  ctx.shadowBlur=0;
-  for(let i=0;i<snake.body.length;i++){
-    const s=snake.body[i];
-    const t=i/snake.body.length;
-    const g=Math.floor(200-t*80);
-    ctx.fillStyle=i===0?'#7ee0ff':'rgb(60,'+g+',180)';
-    if(i===0){ctx.shadowColor='#7ee0ff';ctx.shadowBlur=12}
-    ctx.beginPath();
-    const r=6;
-    const x=s.x*CELL+2,y=s.y*CELL+2,w=CELL-4,h=CELL-4;
-    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-    ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-    ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-    ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
-    ctx.shadowBlur=0;
-  }
-}
-function stepSnake(){
-  if(!snake.alive)return;
-  snake.dir=snake.nextDir;
-  const head={x:snake.body[0].x+snake.dir.x,y:snake.body[0].y+snake.dir.y};
-  if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS){
-    if(activeBoosts.shield>0){activeBoosts.shield--;showToast('🛡️ Щит спас!','success');snake.dir={x:-snake.dir.x,y:-snake.dir.y};snake.nextDir=snake.dir;updatePanelStats();return}
-    gameOverSnake();return;
-  }
-  for(let i=0;i<snake.body.length-1;i++){
-    if(snake.body[i].x===head.x&&snake.body[i].y===head.y){
-      if(activeBoosts.shield>0){activeBoosts.shield--;showToast('🛡️ Щит спас!','success');updatePanelStats();return}
-      gameOverSnake();return;
-    }
-  }
-  snake.body.unshift(head);
-  if(head.x===snake.food.x&&head.y===snake.food.y){
-    snake.score+=10*scoreMultiplier;snake.apples++;
-    if(snake.apples%5===0){snake.level++;snake.speed=Math.min(20,8+snake.level-1);stars+=2;updateStarsUI();showToast('⚡ Уровень '+snake.level+'! +2⭐','success')}
-    sScore.textContent=snake.score;sApples.textContent=snake.apples;sLevel.textContent=snake.level;
-    if(snake.score>best){best=snake.score;localStorage.setItem('snakeBest',best);sBest.textContent=best;bestPanelValue.textContent=best;bestPanelSub.textContent=best;bestInput.value=best}
-    randFood();
-  } else snake.body.pop();
-  updatePanelStats();
-}
-function gameOverSnake(){
-  snake.alive=false;
-  sStatus.textContent='💀 Игра окончена! Счёт: '+snake.score+' · Нажми ⟳';
-  showToast('Игра окончена! Счёт: '+snake.score,'error');
+  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){if(T.grid[y][x])drawBlock(x,y,T.grid[y][x])}
+  if(T.piece){const p=T.piece;for(let y=0;y<p.shape.length;y++)for(let x=0;x<p.shape[y].length;x++){if(p.shape[y][x])drawBlock(p.x+x,p.y+y,p.color)}}
+  if(T.next){ctx.save();ctx.globalAlpha=.85;const nx=COLS*CELL+10;ctx.fillStyle='#0f1c26';ctx.fillRect(nx,10,CELL*4,CELL*4);ctx.strokeStyle='#2e4b62';ctx.strokeRect(nx,10,CELL*4,CELL*4);ctx.fillStyle='#7ee0ff';ctx.font='bold 12px sans-serif';ctx.fillText('NEXT',nx+8,26);const s=T.next.shape;const ox=nx+(CELL*4-s[0].length*CELL)/2;const oy=40+(CELL*4-s.length*CELL)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++){if(s[y][x]){ctx.fillStyle=T.next.color;ctx.fillRect(ox+x*CELL+1,oy+y*CELL+1,CELL-2,CELL-2)}}ctx.restore()}
 }
 let lastTime=0;
-function loop(ts){
-  if(!lastTime)lastTime=ts;
-  const dt=ts-lastTime;lastTime=ts;
-  if(snake.started&&snake.alive){
-    snake.tick+=dt;
-    const interval=1000/(snake.speed*(activeBoosts.speed>0?1.5:1));
-    if(snake.tick>=interval){snake.tick=0;stepSnake()}
-  }
-  drawSnake();
-  requestAnimationFrame(loop);
-}
+function loop(ts){if(!lastTime)lastTime=ts;const dt=ts-lastTime;lastTime=ts;
+  if(T.started&&T.alive){T.tick+=dt;const interval=T.dropFast?50:T.speed*(activeBoosts.speed>0?0.66:1);if(T.tick>=interval){T.tick=0;step()}}
+  draw();requestAnimationFrame(loop)}
+
+function resetGame(){T.grid=newGrid();T.score=0;T.level=1;T.lines=0;T.alive=true;T.started=false;T.tick=0;T.speed=800;T.dropFast=false;T.next=randPiece();spawn();
+  sScore.textContent=0;sLevel.textContent=1;sApples.textContent=0;sStatus.textContent='Складывай линии — не дай блокам достичь верха!';updatePanelStats()}
+
 function setDir(d){
-  const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
-  const nd=map[d];if(!nd)return;
-  if(nd.x===-snake.dir.x&&nd.y===-snake.dir.y)return;
-  snake.nextDir=nd;
-  if(!snake.started){snake.started=true}
+  if(!T.started){T.started=true}
+  if(d==='left')move(-1);
+  else if(d==='right')move(1);
+  else if(d==='down'){if(!collides(T.piece.shape,T.piece.x,T.piece.y+1))T.piece.y++}
+  else if(d==='rotate')rotatePiece();
 }
-document.querySelectorAll('[data-s]').forEach(b=>{
-  b.addEventListener('click',()=>setDir(b.dataset.s));
-});
+document.querySelectorAll('[data-s]').forEach(b=>{b.addEventListener('click',()=>setDir(b.dataset.s))});
 document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
-  if(k==='arrowup'||k==='w'){e.preventDefault();setDir('up')}
-  else if(k==='arrowdown'||k==='s'){e.preventDefault();setDir('down')}
-  else if(k==='arrowleft'||k==='a'){e.preventDefault();setDir('left')}
+  if(k==='arrowleft'||k==='a'){e.preventDefault();setDir('left')}
   else if(k==='arrowright'||k==='d'){e.preventDefault();setDir('right')}
-  else if(k===' '){e.preventDefault();resetSnake();snake.started=true}
+  else if(k==='arrowdown'||k==='s'){e.preventDefault();T.dropFast=true}
+  else if(k==='arrowup'||k==='w'){e.preventDefault();setDir('rotate')}
+  else if(k===' '){e.preventDefault();if(T.alive&&T.started)hardDrop();else{resetGame();T.started=true}}
 });
+document.addEventListener('keyup',e=>{if(e.key.toLowerCase()==='arrowdown'||e.key.toLowerCase()==='s')T.dropFast=false});
 let touchStart=null;
-canvas.addEventListener('touchstart',e=>{touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+canvas.addEventListener('touchstart',e=>{touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY,t:Date.now()}},{passive:true});
 canvas.addEventListener('touchend',e=>{
   if(!touchStart)return;
   const dx=e.changedTouches[0].clientX-touchStart.x;
   const dy=e.changedTouches[0].clientY-touchStart.y;
-  if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+  const dt=Date.now()-touchStart.t;
+  if(Math.abs(dx)<20&&Math.abs(dy)<20&&dt<300){setDir('rotate');touchStart=null;return}
   if(Math.abs(dx)>Math.abs(dy))setDir(dx>0?'right':'left');
-  else setDir(dy>0?'down':'up');
+  else if(dy>30)hardDrop();
   touchStart=null;
 },{passive:true});
 
-sRestart.addEventListener('click',()=>{resetSnake();snake.started=true});
+sRestart.addEventListener('click',()=>{resetGame();T.started=true});
 
 setBestButton.addEventListener('click',()=>{
   const v=Math.max(0,parseInt(bestInput.value)||0);
@@ -304,20 +267,9 @@ document.querySelectorAll('.buy-btn').forEach(btn=>{
     if(boost==='speed'){activeBoosts.speed=30;showToast('🚀 Ускорение активировано!','success')}
     else if(boost==='grow'){scoreMultiplier=2;setTimeout(()=>{scoreMultiplier=1;showToast('Двойной счёт закончился')},30000);showToast('🍎 Двойной счёт на 30 сек!','success')}
     else if(boost==='shield'){activeBoosts.shield++;showToast('🛡️ Щит активирован!','success')}
-    else if(boost==='score'){snake.score+=10;sScore.textContent=snake.score;showToast('💎 +10 очков!','success')}
+    else if(boost==='score'){T.score+=10;sScore.textContent=T.score;showToast('💎 +10 очков!','success')}
     updatePanelStats();
   });
 });
 
-setInterval(()=>{
-  let changed=false;
-  if(activeBoosts.speed>0){activeBoosts.speed--;changed=true}
-  if(changed)updatePanelStats();
-},1000);
-
-resetSnake();
-requestAnimationFrame(loop);
-})();
-</script>
-</body>
-</html>
+set
