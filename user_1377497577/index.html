@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Космический защитник</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(135deg,#0a0a2e,#1a1a4e,#0a0a2e);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;overflow:hidden;color:#fff}
+canvas{border:2px solid rgba(100,200,255,.3);border-radius:12px;box-shadow:0 0 40px rgba(100,200,255,.2),inset 0 0 60px rgba(0,0,0,.5);background:#050520}
+#hud{display:flex;gap:30px;margin-bottom:15px;font-size:18px;letter-spacing:1px}
+#hud span{color:#7df;text-shadow:0 0 10px rgba(100,220,255,.6)}
+#hud b{color:#fff;font-weight:600}
+#overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;background:rgba(5,5,30,.92);padding:40px 60px;border-radius:20px;border:1px solid rgba(100,200,255,.3);box-shadow:0 0 60px rgba(100,200,255,.15);backdrop-filter:blur(10px)}
+#overlay h1{font-size:36px;margin-bottom:15px;background:linear-gradient(90deg,#7df,#f7d,#7df);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#overlay p{color:#9ab;margin-bottom:25px;font-size:15px;line-height:1.6}
+#overlay button{background:linear-gradient(135deg,#2a6,#1a4);border:none;color:#fff;padding:14px 40px;font-size:18px;border-radius:30px;cursor:pointer;letter-spacing:1px;transition:.3s;box-shadow:0 0 20px rgba(50,200,100,.3)}
+#overlay button:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(50,200,100,.5)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="hud"><span>Очки: <b id="score">0</b></span><span>Жизни: <b id="lives">3</b></span><span>Уровень: <b id="level">1</b></span></div>
+<canvas id="game" width="800" height="500"></canvas>
+<div id="overlay">
+<h1>Космический защитник</h1>
+<p>Управление: ← → или A/D<br>Пробел — выстрел<br>Уничтожай врагов, защищай Землю!</p>
+<button id="startBtn">Начать игру</button>
+</div>
+<script>
+const c=document.getElementById('game'),x=c.getContext('2d'),W=c.width,H=c.height;
+const scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),levelEl=document.getElementById('level');
+const overlay=document.getElementById('overlay'),startBtn=document.getElementById('startBtn');
+let player,keys={},bullets,enemies,particles,stars,score,lives,level,gameOver,animId,shootCd,enemyDir,enemySpeed,spawnTimer;
+function initStars(){stars=[];for(let i=0;i<120;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2+.5,v:Math.random()*1.5+.3})}
+function reset(){
+player={x:W/2,y:H-50,w:40,h:30,speed:6};
+bullets=[];enemies=[];particles=[];score=0;lives=3;level=1;gameOver=false;shootCd=0;enemyDir=1;enemySpeed=1;spawnTimer=0;
+scoreEl.textContent=0;livesEl.textContent=3;levelEl.textContent=1;
+initStars();
+}
+function spawnEnemies(){
+const rows=Math.min(3+Math.floor(level/2),5),cols=8;
+for(let r=0;r<rows;r++)for(let col=0;col<cols;col++){
+enemies.push({x:80+col*80,y:60+r*55,w:36,h:28,alive:true,type:r%3});
+}
+}
+function shoot(){
+if(shootCd>0)return;
+bullets.push({x:player.x,y:player.y-20,vy:-9});
+shootCd=8;
+}
+function addParticles(x,y,color,n=12){
+for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=Math.random()*4+1;
+particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color});}
+}
+function update(){
+if(gameOver)return;
+if(shootCd>0)shootCd--;
+if(keys['ArrowLeft']||keys['a']||keys['A'])player.x-=player.speed;
+if(keys['ArrowRight']||keys['d']||keys['D'])player.x+=player.speed;
+player.x=Math.max(player.w/2,Math.min(W-player.w/2,player.x));
+if(keys[' '])shoot();
+bullets.forEach(b=>b.y+=b.vy);
+bullets=bullets.filter(b=>b.y>-20);
+let hitEdge=false;
+enemies.forEach(e=>{if(!e.alive)return;e.x+=enemySpeed*enemyDir;if(e.x+e.w/2>W-10||e.x-e.w/2<10)hitEdge=true;});
+if(hitEdge){enemyDir*=-1;enemies.forEach(e=>{if(e.alive)e.y+=15;});}
+bullets.forEach(b=>{
+enemies.forEach(e=>{
+if(!e.alive)return;
+if(Math.abs(b.x-e.x)<e.w/2+5&&Math.abs(b.y-e.y)<e.h/2+5){
+e.alive=false;b.y=-100;score+=10*(e.type+1);scoreEl.textContent=score;
+addParticles(e.x,e.y,['#f66','#fa0','#6f6'][e.type],15);
+}
+});
+});
+bullets=bullets.filter(b=>b.y>-20);
+enemies.forEach(e=>{
+if(!e.alive)return;
+if(e.y+e.h/2>player.y-player.h/2&&Math.abs(e.x-player.x)<e.w/2+player.w/2){
+e.alive=false;lives--;livesEl.textContent=lives;
+addParticles(player.x,player.y,'#f44',25);
+if(lives<=0)endGame();
+}
+});
+enemies=enemies.filter(e=>e.alive);
+if(enemies.length===0){
+level++;levelEl.textContent=level;
+enemySpeed=1+level*0.3;
+spawnEnemies();
+}
+particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.1;p.life-=.02;});
+particles=particles.filter(p=>p.life>0);
+stars.forEach(s=>{s.y+=s.v;if(s.y>H){s.y=0;s.x=Math.random()*W;}});
+}
+function draw(){
+x.fillStyle='#050520';x.fillRect(0,0,W,H);
+stars.forEach(s=>{x.fillStyle=`rgba(200,220,255,${s.s/2.5})`;x.fillRect(s.x,s.y,s.s,s.s);});
+x.save();
+x.shadowBlur=15;x.shadowColor='#4af';
+x.fillStyle='#4af';
+x.beginPath();
+x.moveTo(player.x,player.y-player.h/2);
+x.lineTo(player.x-player.w/2,player.y+player.h/2);
+x.lineTo(player.x+player.w/2,player.y+player.h/2);
+x.closePath();x.fill();
+x.fillStyle='#8df';
+x.beginPath();
+x.moveTo(player.x,player.y-player.h/2-8);
+x.lineTo(player.x-8,player.y-player.h/2+5);
+x.lineTo(player.x+8,player.y-player.h/2+5);
+x.closePath();x.fill();
+x.restore();
+bullets.forEach(b=>{
+x.save();x.shadowBlur=12;x.shadowColor='#0ff';
+x.fillStyle='#0ff';x.fillRect(b.x-2,b.y-8,4,12);
+x.restore();
+});
+const colors=['#f66','#fa0','#6f6'];
+enemies.forEach(e=>{
+x.save();x.shadowBlur=10;x.shadowColor=colors[e.type];
+x.fillStyle=colors[e.type];
+x.beginPath();
+x.moveTo(e.x,e.y+e.h/2);
+x.lineTo(e.x-e.w/2,e.y-e.h/2);
+x.lineTo(e.x+e.w/2,e.y-e.h/2);
+x.closePath();x.fill();
+x.fillStyle='rgba(255,255,255,.6)';
+x.beginPath();x.arc(e.x,e.y-2,4,0,Math.PI*2);x.fill();
+x.restore();
+});
+particles.forEach(p=>{
+x.globalAlpha=p.life;
+x.fillStyle=p.color;
+x.beginPath();x.arc(p.x,p.y,3*p.life,0,Math.PI*2);x.fill();
+});
+x.globalAlpha=1;
+}
+function loop(){
+update();draw();
+animId=requestAnimationFrame(loop);
+}
+function endGame(){
+gameOver=true;
+cancelAnimationFrame(animId);
+overlay.classList.remove('hidden');
+overlay.querySelector('h1').textContent='Игра окончена';
+overlay.querySelector('p').innerHTML=`Ваш результат: <b style="color:#7df">${score}</b> очков<br>Уровень: ${level}`;
+startBtn.textContent='Играть снова';
+}
+function start(){
+reset();spawnEnemies();
+overlay.classList.add('hidden');
+if(animId)cancelAnimationFrame(animId);
+loop();
+}
+document.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' ')e.preventDefault();});
+document.addEventListener('keyup',e=>{keys[e.key]=false;});
+startBtn.addEventListener('click',start);
+reset();draw();
+</script>
+</body>
+</html>
