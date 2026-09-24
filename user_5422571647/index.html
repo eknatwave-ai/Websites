@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Космический защитник · Аркада</title>
+<title>Неоновый Breakout · Аркада</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;font-family:'Segoe UI',Roboto,system-ui,sans-serif;padding:16px;color:#ddf0ff}
@@ -94,10 +94,10 @@ body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14
 </div>
 <div class="controls">
 <button class="arrow" data-s="left">◀</button>
-<button class="arrow fire" data-s="fire">🔥</button>
+<button class="arrow fire" data-s="fire">🚀</button>
 <button class="arrow" data-s="right">▶</button>
 </div>
-<div class="status" id="sStatus">Уничтожь врагов — защити свой сектор!</div>
+<div class="status" id="sStatus">Разбей все блоки — не урони мяч!</div>
 <div class="best-panel">
 <div class="best-panel-title">Лучший результат</div>
 <div class="best-panel-value" id="bestPanelValue">0</div>
@@ -105,8 +105,8 @@ body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14
 <div class="panel-stats">
 <div class="panel-stat"><span class="ps-icon">🎯</span><span class="ps-val" id="panelScore">0</span><span class="ps-lbl">Счёт</span></div>
 <div class="panel-stat ps-best"><span class="ps-icon">🏆</span><span class="ps-val" id="panelBest">0</span><span class="ps-lbl">Рекорд</span></div>
-<div class="panel-stat ps-lvl"><span class="ps-icon">⚡</span><span class="ps-val" id="panelLevel">1</span><span class="ps-lbl">Волна</span></div>
-<div class="panel-stat ps-stars"><span class="ps-icon">⭐</span><span class="ps-val" id="panelStars">0</span><span class="ps-lbl">Звёзды</span></div>
+<div class="panel-stat ps-lvl"><span class="ps-icon">⚡</span><span class="ps-val" id="panelLevel">1</span><span class="ps-lbl">Уровень</span></div>
+<div class="panel-stat ps-stars"><span class="ps-icon">🔥</span><span class="ps-val" id="panelStars">0</span><span class="ps-lbl">Комбо</span></div>
 </div>
 <div class="panel-boosts" id="panelBoosts"><span class="boost-chip empty">Нет активных бустов</span></div>
 </div>
@@ -118,14 +118,14 @@ body{background:radial-gradient(circle at 20% 10%,#1b2f44 0%,#0b1a2e 60%,#050b14
 <div class="shop">
 <div class="shop-title">⭐ Магазин бустов · Telegram Stars</div>
 <div class="shop-grid">
-<div class="shop-item"><div class="icon">🚀</div><div class="name">Ускорение</div><div class="desc">+50% к скорости корабля на 30 сек</div><div class="price">15</div><button class="buy-btn" data-boost="speed" data-price="15">Купить</button></div>
+<div class="shop-item"><div class="icon">🚀</div><div class="name">Ускорение</div><div class="desc">+50% к скорости платформы на 30 сек</div><div class="price">15</div><button class="buy-btn" data-boost="speed" data-price="15">Купить</button></div>
 <div class="shop-item"><div class="icon">🍎</div><div class="name">Двойной счёт</div><div class="desc">Удвоение очков на 30 сек</div><div class="price">25</div><button class="buy-btn" data-boost="grow" data-price="25">Купить</button></div>
-<div class="shop-item"><div class="icon">🛡️</div><div class="name">Щит</div><div class="desc">Одно попадание без потерь</div><div class="price">40</div><button class="buy-btn" data-boost="shield" data-price="40">Купить</button></div>
+<div class="shop-item"><div class="icon">🛡️</div><div class="name">Щит</div><div class="desc">Одно падение мяча без потерь</div><div class="price">40</div><button class="buy-btn" data-boost="shield" data-price="40">Купить</button></div>
 <div class="shop-item"><div class="icon">💎</div><div class="name">Супер-старт</div><div class="desc">+10 очков сразу</div><div class="price">30</div><button class="buy-btn" data-boost="score" data-price="30">Купить</button></div>
 </div>
 <div class="shop-note">Оплата через <b>Telegram Stars</b> · Баланс: <b id="shopBalance">0</b> ⭐</div>
 </div>
-<div class="hint">← → двигать корабль · пробел — огонь · свайп на телефоне</div>
+<div class="hint">← → двигать платформу · пробел — запуск мяча · свайп на телефоне</div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -161,34 +161,35 @@ bestInput.value=best;bestPanelValue.textContent=best;bestPanelSub.textContent=be
 let activeBoosts={speed:0,shield:0};
 let scoreMultiplier=1;
 
-function updatePanelStats(){panelScore.textContent=G.score;panelBest.textContent=best;panelLevel.textContent=G.wave;panelStars.textContent=stars;renderPanelBoosts()}
+function updatePanelStats(){panelScore.textContent=G.score;panelBest.textContent=best;panelLevel.textContent=G.level;panelStars.textContent=G.combo;renderPanelBoosts()}
 function renderPanelBoosts(){const chips=[];if(activeBoosts.shield>0)chips.push('<span class="boost-chip shield">🛡️ Щит ×'+activeBoosts.shield+'</span>');if(activeBoosts.speed>0)chips.push('<span class="boost-chip speed">🚀 Ускорение '+activeBoosts.speed+'с</span>');if(chips.length===0)chips.push('<span class="boost-chip empty">Нет активных бустов</span>');panelBoosts.innerHTML=chips.join('')}
 
 const canvas=document.getElementById('snakeCanvas');
 const ctx=canvas.getContext('2d');
 const W=canvas.width,H=canvas.height;
 
-// ===== ИГРА: КОСМИЧЕСКИЙ ЗАЩИТНИК =====
+// ===== ИГРА: НЕОНОВЫЙ BREAKOUT =====
 const G={
-  ship:{x:W/2,y:H-40,w:44,h:32,speed:6},
-  bullets:[],
-  enemies:[],
-  enemyBullets:[],
+  paddle:{x:W/2,y:H-30,w:90,h:14,speed:7},
+  ball:{x:W/2,y:H-60,r:8,vx:0,vy:0,speed:5,launched:false},
+  bricks:[],
   particles:[],
   stars:[],
   score:0,
-  wave:1,
+  level:1,
   lives:3,
+  combo:0,
   alive:true,
   started:false,
   keys:{left:false,right:false},
-  fireCooldown:0,
-  spawnTimer:0,
-  spawnInterval:70,
-  waveTimer:0,
-  waveEnemiesLeft:0,
-  waveEnemiesTotal:0,
-  waveTransition:0
+  gridX:8,
+  gridY:5,
+  brickW:0,
+  brickH:0,
+  brickPad:6,
+  brickTop:50,
+  brickLeft:20,
+  levelTransition:0
 };
 
 // Фоновые звёзды
@@ -196,44 +197,56 @@ for(let i=0;i<70;i++){
   G.stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*1.6+0.4,v:Math.random()*0.6+0.2});
 }
 
-function startWave(n){
-  G.wave=n;
-  G.waveEnemiesTotal=4+n*2;
-  G.waveEnemiesLeft=G.waveEnemiesTotal;
-  G.spawnInterval=Math.max(28,70-n*4);
-  G.spawnTimer=0;
-  G.waveTransition=0;
+const BRICK_COLORS=['#7ee0ff','#c084fc','#ffb86b','#f5e56b','#7effa8','#ff7ec8'];
+
+function buildLevel(n){
+  G.bricks=[];
+  const cols=G.gridX;
+  const rows=Math.min(G.gridY+Math.floor((n-1)/2),7);
+  const totalW=W-G.brickLeft*2;
+  G.brickW=(totalW-(cols-1)*G.brickPad)/cols;
+  G.brickH=22;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const x=G.brickLeft+c*(G.brickW+G.brickPad);
+      const y=G.brickTop+r*(G.brickH+G.brickPad);
+      const hp=1+Math.floor(Math.random()*Math.min(2,Math.floor(n/2)+1));
+      G.bricks.push({
+        x,y,w:G.brickW,h:G.brickH,
+        hp,
+        maxHp:hp,
+        color:BRICK_COLORS[(r+c)%BRICK_COLORS.length],
+        alive:true
+      });
+    }
+  }
+}
+
+function resetBall(){
+  G.ball.x=G.paddle.x;
+  G.ball.y=G.paddle.y-G.ball.r-2;
+  G.ball.vx=0;
+  G.ball.vy=0;
+  G.ball.launched=false;
+  G.ball.speed=5+G.level*0.3;
+}
+
+function startLevel(n){
+  G.level=n;
+  buildLevel(n);
+  resetBall();
+  G.paddle.x=W/2;
+  G.levelTransition=0;
   sLevel.textContent=n;
   updatePanelStats();
 }
 
-function spawnEnemy(){
-  const cols=5;
-  const col=Math.floor(Math.random()*cols);
-  const cellW=(W-40)/cols;
-  const x=20+col*cellW+cellW/2;
-  const type=Math.random()<0.25&&G.wave>=2?'shooter':'basic';
-  G.enemies.push({
-    x,y:30,
-    w:34,h:28,
-    vx:(Math.random()-0.5)*1.2,
-    vy:0.5+G.wave*0.08,
-    hp:type==='shooter'?2:1,
-    type,
-    color:type==='shooter'?'#c084fc':'#ff5e5e',
-    shootTimer:60+Math.random()*60,
-    wobble:Math.random()*Math.PI*2
-  });
-}
-
 function resetGame(){
-  G.ship.x=W/2;
-  G.bullets=[];G.enemies=[];G.enemyBullets=[];G.particles=[];
-  G.score=0;G.lives=3;G.alive=true;G.started=false;
-  G.fireCooldown=0;
-  startWave(1);
+  G.score=0;G.lives=3;G.combo=0;G.alive=true;G.started=false;
+  G.particles=[];
+  startLevel(1);
   sScore.textContent=0;sApples.textContent=3;
-  sStatus.textContent='Уничтожь врагов — защити свой сектор!';
+  sStatus.textContent='Разбей все блоки — не урони мяч!';
   updatePanelStats();
 }
 
@@ -244,10 +257,15 @@ function spawnParticles(x,y,color,count){
   }
 }
 
-function fire(){
-  if(!G.alive||G.fireCooldown>0)return;
-  G.bullets.push({x:G.ship.x,y:G.ship.y-16,vy:-9,r:3});
-  G.fireCooldown=10;
+function launchBall(){
+  if(!G.alive)return;
+  if(!G.ball.launched){
+    G.ball.launched=true;
+    const angle=(Math.random()*0.6-0.3)-Math.PI/2;
+    G.ball.vx=Math.cos(angle)*G.ball.speed;
+    G.ball.vy=Math.sin(angle)*G.ball.speed;
+    if(G.ball.vy>-2)G.ball.vy=-2;
+  }
 }
 
 function update(dt){
@@ -256,91 +274,83 @@ function update(dt){
 
   if(!G.alive)return;
 
-  // Движение корабля
-  const sp=G.ship.speed*(activeBoosts.speed>0?1.5:1);
-  if(G.keys.left)G.ship.x-=sp;
-  if(G.keys.right)G.ship.x+=sp;
-  if(G.ship.x<G.ship.w/2)G.ship.x=G.ship.w/2;
-  if(G.ship.x>W-G.ship.w/2)G.ship.x=W-G.ship.w/2;
+  // Движение платформы
+  const sp=G.paddle.speed*(activeBoosts.speed>0?1.5:1);
+  if(G.keys.left)G.paddle.x-=sp;
+  if(G.keys.right)G.paddle.x+=sp;
+  if(G.paddle.x<G.paddle.w/2)G.paddle.x=G.paddle.w/2;
+  if(G.paddle.x>W-G.paddle.w/2)G.paddle.x=W-G.paddle.w/2;
 
-  if(G.fireCooldown>0)G.fireCooldown--;
+  // Мяч не запущен — следует за платформой
+  if(!G.ball.launched){
+    G.ball.x=G.paddle.x;
+    G.ball.y=G.paddle.y-G.ball.r-2;
+  } else {
+    G.ball.x+=G.ball.vx;
+    G.ball.y+=G.ball.vy;
 
-  // Пули игрока
-  for(let i=G.bullets.length-1;i>=0;i--){
-    const b=G.bullets[i];
-    b.y+=b.vy;
-    if(b.y<-10){G.bullets.splice(i,1);continue}
-    for(let j=G.enemies.length-1;j>=0;j--){
-      const e=G.enemies[j];
-      if(b.x>e.x-e.w/2&&b.x<e.x+e.w/2&&b.y>e.y-e.h/2&&b.y<e.y+e.h/2){
-        e.hp--;
-        spawnParticles(b.x,b.y,e.color,5);
-        G.bullets.splice(i,1);
-        if(e.hp<=0){
-          spawnParticles(e.x,e.y,e.color,14);
-          G.enemies.splice(j,1);
-          G.waveEnemiesLeft--;
-          G.score+=15*scoreMultiplier*G.wave;
+    // Стены
+    if(G.ball.x-G.ball.r<0){G.ball.x=G.ball.r;G.ball.vx=-G.ball.vx;spawnParticles(0,G.ball.y,'#7ee0ff',4)}
+    if(G.ball.x+G.ball.r>W){G.ball.x=W-G.ball.r;G.ball.vx=-G.ball.vx;spawnParticles(W,G.ball.y,'#7ee0ff',4)}
+    if(G.ball.y-G.ball.r<0){G.ball.y=G.ball.r;G.ball.vy=-G.ball.vy;spawnParticles(G.ball.x,0,'#7ee0ff',4)}
+
+    // Платформа
+    if(G.ball.vy>0&&
+       G.ball.y+G.ball.r>=G.paddle.y-G.paddle.h/2&&
+       G.ball.y-G.ball.r<=G.paddle.y+G.paddle.h/2&&
+       G.ball.x>=G.paddle.x-G.paddle.w/2-G.ball.r&&
+       G.ball.x<=G.paddle.x+G.paddle.w/2+G.ball.r){
+      const rel=(G.ball.x-G.paddle.x)/(G.paddle.w/2);
+      const angle=rel*Math.PI/3;
+      const spd=Math.hypot(G.ball.vx,G.ball.vy);
+      G.ball.vx=Math.sin(angle)*spd;
+      G.ball.vy=-Math.abs(Math.cos(angle)*spd);
+      G.ball.y=G.paddle.y-G.paddle.h/2-G.ball.r-1;
+      G.combo=0;
+      updatePanelStats();
+      spawnParticles(G.ball.x,G.paddle.y,'#7ee0ff',6);
+    }
+
+    // Кирпичи
+    for(const b of G.bricks){
+      if(!b.alive)continue;
+      if(G.ball.x+G.ball.r>b.x&&G.ball.x-G.ball.r<b.x+b.w&&
+         G.ball.y+G.ball.r>b.y&&G.ball.y-G.ball.r<b.y+b.h){
+        // Определяем сторону удара
+        const overlapL=(G.ball.x+G.ball.r)-b.x;
+        const overlapR=(b.x+b.w)-(G.ball.x-G.ball.r);
+        const overlapT=(G.ball.y+G.ball.r)-b.y;
+        const overlapB=(b.y+b.h)-(G.ball.y-G.ball.r);
+        const minX=Math.min(overlapL,overlapR);
+        const minY=Math.min(overlapT,overlapB);
+        if(minX<minY){
+          G.ball.vx=-G.ball.vx;
+          if(overlapL<overlapR)G.ball.x=b.x-G.ball.r-1;
+          else G.ball.x=b.x+b.w+G.ball.r+1;
+        } else {
+          G.ball.vy=-G.ball.vy;
+          if(overlapT<overlapB)G.ball.y=b.y-G.ball.r-1;
+          else G.ball.y=b.y+b.h+G.ball.r+1;
+        }
+        b.hp--;
+        spawnParticles(G.ball.x,G.ball.y,b.color,6);
+        if(b.hp<=0){
+          b.alive=false;
+          G.combo++;
+          const gain=(10+G.combo*2)*scoreMultiplier*G.level;
+          G.score+=gain;
           sScore.textContent=G.score;
+          spawnParticles(b.x+b.w/2,b.y+b.h/2,b.color,14);
           if(G.score>best){best=G.score;localStorage.setItem('snakeBest',best);sBest.textContent=best;bestPanelValue.textContent=best;bestPanelSub.textContent=best;bestInput.value=best}
           updatePanelStats();
         }
         break;
       }
     }
-  }
 
-  // Спавн врагов
-  if(G.waveEnemiesLeft>0){
-    G.spawnTimer--;
-    if(G.spawnTimer<=0){
-      spawnEnemy();
-      G.spawnTimer=G.spawnInterval;
-    }
-  }
-
-  // Враги
-  for(let i=G.enemies.length-1;i>=0;i--){
-    const e=G.enemies[i];
-    e.wobble+=0.05;
-    e.x+=e.vx+Math.sin(e.wobble)*0.6;
-    e.y+=e.vy;
-    if(e.x<e.w/2){e.x=e.w/2;e.vx=Math.abs(e.vx)}
-    if(e.x>W-e.w/2){e.x=W-e.w/2;e.vx=-Math.abs(e.vx)}
-
-    if(e.type==='shooter'){
-      e.shootTimer--;
-      if(e.shootTimer<=0){
-        e.shootTimer=90+Math.random()*60;
-        G.enemyBullets.push({x:e.x,y:e.y+e.h/2,vy:4,r:4});
-      }
-    }
-
-    if(e.y-e.h/2>H){
-      G.enemies.splice(i,1);
-      G.waveEnemiesLeft--;
-      damagePlayer();
-      continue;
-    }
-
-    if(Math.abs(e.x-G.ship.x)<(e.w+G.ship.w)/2-6&&
-       Math.abs(e.y-G.ship.y)<(e.h+G.ship.h)/2-4){
-      spawnParticles(e.x,e.y,e.color,16);
-      G.enemies.splice(i,1);
-      G.waveEnemiesLeft--;
-      damagePlayer();
-    }
-  }
-
-  // Пули врагов
-  for(let i=G.enemyBullets.length-1;i>=0;i--){
-    const b=G.enemyBullets[i];
-    b.y+=b.vy;
-    if(b.y>H+10){G.enemyBullets.splice(i,1);continue}
-    if(Math.abs(b.x-G.ship.x)<G.ship.w/2&&
-       Math.abs(b.y-G.ship.y)<G.ship.h/2){
-      G.enemyBullets.splice(i,1);
-      damagePlayer();
+    // Падение мяча
+    if(G.ball.y-G.ball.r>H){
+      loseLife();
     }
   }
 
@@ -351,32 +361,38 @@ function update(dt){
     if(p.life<=0)G.particles.splice(i,1);
   }
 
-  // Конец волны
-  if(G.waveEnemiesLeft<=0&&G.enemies.length===0&&G.waveTransition===0){
-    G.waveTransition=90;
+  // Конец уровня
+  if(G.bricks.every(b=>!b.alive)&&G.levelTransition===0){
+    G.levelTransition=90;
   }
-  if(G.waveTransition>0){
-    G.waveTransition--;
-    if(G.waveTransition===0){
+  if(G.levelTransition>0){
+    G.levelTransition--;
+    if(G.levelTransition===0){
       stars+=3;updateStarsUI();
-      showToast('⚡ Волна '+(G.wave+1)+'! +3⭐','success');
-      startWave(G.wave+1);
+      showToast('⚡ Уровень '+(G.level+1)+'! +3⭐','success');
+      startLevel(G.level+1);
     }
   }
 }
 
-function damagePlayer(){
+function loseLife(){
   if(activeBoosts.shield>0){
     activeBoosts.shield--;
-    showToast('🛡️ Щит поглотил удар!','success');
+    showToast('🛡️ Щит спас мяч!','success');
     updatePanelStats();
+    resetBall();
     return;
   }
   G.lives--;
+  G.combo=0;
   sApples.textContent=G.lives;
-  spawnParticles(G.ship.x,G.ship.y,'#7ee0ff',18);
+  spawnParticles(G.ball.x,H-10,'#ff5e5e',18);
   if(G.lives<=0){gameOver()}
-  else{showToast('Попадание! Осталось: '+G.lives,'error')}
+  else{
+    showToast('Мяч потерян! Осталось: '+G.lives,'error');
+    resetBall();
+  }
+  updatePanelStats();
 }
 
 function gameOver(){
@@ -385,89 +401,39 @@ function gameOver(){
   showToast('Игра окончена! Счёт: '+G.score,'error');
 }
 
-function drawShip(x,y){
+function drawPaddle(){
   ctx.save();
-  ctx.translate(x,y);
   ctx.fillStyle='#7ee0ff';
-  ctx.shadowColor='#7ee0ff';ctx.shadowBlur=15;
+  ctx.shadowColor='#7ee0ff';ctx.shadowBlur=18;
+  const x=G.paddle.x-G.paddle.w/2;
+  const y=G.paddle.y-G.paddle.h/2;
+  const r=G.paddle.h/2;
   ctx.beginPath();
-  ctx.moveTo(0,-18);
-  ctx.lineTo(14,10);
-  ctx.lineTo(6,10);
-  ctx.lineTo(6,16);
-  ctx.lineTo(-6,16);
-  ctx.lineTo(-6,10);
-  ctx.lineTo(-14,10);
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+G.paddle.w-r,y);
+  ctx.arcTo(x+G.paddle.w,y,x+G.paddle.w,y+r,r);
+  ctx.lineTo(x+G.paddle.w,y+G.paddle.h-r);
+  ctx.arcTo(x+G.paddle.w,y+G.paddle.h,x+G.paddle.w-r,y+G.paddle.h,r);
+  ctx.lineTo(x+r,y+G.paddle.h);
+  ctx.arcTo(x,y+G.paddle.h,x,y+G.paddle.h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
   ctx.closePath();
   ctx.fill();
   ctx.shadowBlur=0;
   ctx.fillStyle='#f5e56b';
-  ctx.beginPath();
-  ctx.arc(0,-2,4,0,Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle='#ffb86b';
-  ctx.shadowColor='#ffb86b';ctx.shadowBlur=12;
-  ctx.beginPath();
-  ctx.moveTo(-5,16);
-  ctx.lineTo(0,16+8+Math.random()*6);
-  ctx.lineTo(5,16);
-  ctx.closePath();
-  ctx.fill();
+  ctx.fillRect(G.paddle.x-8,G.paddle.y-2,16,4);
   ctx.restore();
-  ctx.shadowBlur=0;
 }
 
-function drawEnemy(e){
+function drawBall(){
   ctx.save();
-  ctx.translate(e.x,e.y);
-  ctx.fillStyle=e.color;
-  ctx.shadowColor=e.color;ctx.shadowBlur=12;
+  ctx.fillStyle='#f5e56b';
+  ctx.shadowColor='#f5e56b';ctx.shadowBlur=20;
   ctx.beginPath();
-  ctx.moveTo(0,e.h/2);
-  ctx.lineTo(e.w/2,-e.h/2);
-  ctx.lineTo(e.w/4,-e.h/2);
-  ctx.lineTo(0,-e.h/4);
-  ctx.lineTo(-e.w/4,-e.h/2);
-  ctx.lineTo(-e.w/2,-e.h/2);
-  ctx.closePath();
+  ctx.arc(G.ball.x,G.ball.y,G.ball.r,0,Math.PI*2);
   ctx.fill();
   ctx.shadowBlur=0;
-  ctx.fillStyle='#0b141c';
+  ctx.fillStyle='#fff';
   ctx.beginPath();
-  ctx.arc(0,0,3,0,Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-}
-
-function draw(){
-  ctx.fillStyle='#0b141c';ctx.fillRect(0,0,W,H);
-
-  for(const s of G.stars){
-    ctx.globalAlpha=0.3+s.s/3;
-    ctx.fillStyle='#7ee0ff';
-    ctx.fillRect(s.x,s.y,s.s,s.s);
-  }
-  ctx.globalAlpha=1;
-
-  for(const p of G.particles){
-    ctx.globalAlpha=p.life;
-    ctx.fillStyle=p.color;
-    ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
-  }
-  ctx.globalAlpha=1;
-
-  for(const b of G.bullets){
-    ctx.fillStyle='#f5e56b';
-    ctx.shadowColor='#f5e56b';ctx.shadowBlur=10;
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-  }
-  ctx.shadowBlur=0;
-
-  for(const b of G.enemyBullets){
-    ctx.fillStyle='#ff5e5e';
-    ctx.shadowColor='#ff5e5e';ctx.shadowBlur=10;
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-  }
-  ctx.shadowBlur=0;
-
-  for(const e of G.enemies)drawEnemy(e);
+  ctx.arc(G.ball.x-2,G.ball.y-2,G.ball.r*0.35,0
