@@ -10,12 +10,280 @@ body{background:radial-gradient(circle at 20% 10%,#2a1b44 0%,#140b2e 60%,#05040f
 .arcade-wrapper{background:rgba(24,18,41,.85);backdrop-filter:blur(8px);border-radius:48px;padding:40px 26px;box-shadow:0 25px 50px rgba(0,0,0,.7),inset 0 1px 4px rgba(255,255,255,.08);border:1px solid #5e3e7a;max-width:560px;width:100%;text-align:center}
 .arcade-title{font-size:1.6rem;font-weight:800;color:#c78eff;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 20px #c78eff80;margin-bottom:12px}
 .arcade-sub{font-size:.9rem;color:#8b6fa3;letter-spacing:.5px}
+.stats{display:flex;justify-content:space-between;margin:18px 0 10px;font-size:.95rem;color:#c9a7ff;letter-spacing:1px;font-weight:600}
+.stats span{color:#ff7ad9;text-shadow:0 0 10px #ff7ad980}
+#gameCanvas{width:100%;max-width:480px;height:auto;background:linear-gradient(180deg,#0d0820 0%,#1a0f33 100%);border-radius:20px;border:1px solid #6b4a8a;box-shadow:inset 0 0 40px #00000080,0 0 30px #c78eff30;display:block;margin:0 auto;touch-action:none}
+.controls{margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+button{background:linear-gradient(180deg,#7b3fd1,#4a1f8a);color:#f2e7ff;border:1px solid #b57aff;border-radius:14px;padding:12px 26px;font-size:.95rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;box-shadow:0 6px 18px #7b3fd150,inset 0 1px 2px #ffffff30;transition:transform .12s,box-shadow .12s}
+button:hover{transform:translateY(-2px);box-shadow:0 10px 24px #c78eff70,inset 0 1px 2px #ffffff40}
+button:active{transform:translateY(0)}
+.hint{margin-top:14px;font-size:.78rem;color:#7e6399;letter-spacing:.5px}
 </style>
 </head>
 <body>
 <div class="arcade-wrapper">
 <div class="arcade-title">Неоновая Аркада</div>
-<div class="arcade-sub">Игра удалена</div>
+<div class="arcade-sub">Ловите неоновые сферы, уклоняйтесь от красных</div>
+<div class="stats">
+<div>Счёт: <span id="score">0</span></div>
+<div>Рекорд: <span id="best">0</span></div>
+<div>Жизни: <span id="lives">3</span></div>
 </div>
+<canvas id="gameCanvas" width="480" height="480"></canvas>
+<div class="controls">
+<button id="startBtn">Старт</button>
+<button id="pauseBtn">Пауза</button>
+</div>
+<div class="hint">Управление: мышь / палец / стрелки ← →</div>
+</div>
+<script>
+(function(){
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+const scoreEl=document.getElementById('score');
+const bestEl=document.getElementById('best');
+const livesEl=document.getElementById('lives');
+const startBtn=document.getElementById('startBtn');
+const pauseBtn=document.getElementById('pauseBtn');
+
+const W=canvas.width, H=canvas.height;
+const player={x:W/2,y:H-40,w:70,h:14,speed:7};
+let keys={left:false,right:false};
+let pointerX=null;
+let running=false, paused=false, gameOver=false;
+let score=0, lives=3, best=Number(localStorage.getItem('neonBest')||0);
+bestEl.textContent=best;
+
+let items=[];
+let particles=[];
+let spawnTimer=0, spawnInterval=45;
+let frame=0;
+
+function reset(){
+  score=0;lives=3;items=[];particles=[];spawnTimer=0;spawnInterval=45;frame=0;
+  player.x=W/2;
+  scoreEl.textContent=0;livesEl.textContent=3;
+  gameOver=false;
+}
+
+function spawn(){
+  const isEnemy=Math.random()<0.35;
+  items.push({
+    x:20+Math.random()*(W-40),
+    y:-20,
+    r:isEnemy?14:10,
+    vy:isEnemy?2.4+Math.random()*1.2:1.8+Math.random()*1.0,
+    enemy:isEnemy,
+    phase:Math.random()*Math.PI*2
+  });
+}
+
+function addParticles(x,y,color,count){
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=1+Math.random()*3;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:30,color});
+  }
+}
+
+function update(){
+  frame++;
+  if(keys.left) player.x-=player.speed;
+  if(keys.right) player.x+=player.speed;
+  if(pointerX!==null){
+    const target=pointerX;
+    const diff=target-player.x;
+    player.x+=Math.max(-player.speed,Math.min(player.speed,diff*0.35));
+  }
+  player.x=Math.max(player.w/2,Math.min(W-player.w/2,player.x));
+
+  spawnTimer++;
+  const interval=Math.max(18,spawnInterval-frame*0.05);
+  if(spawnTimer>interval){spawnTimer=0;spawn();}
+
+  for(let i=items.length-1;i>=0;i--){
+    const it=items[i];
+    it.y+=it.vy;
+    it.phase+=0.1;
+    // collision with player
+    const px=player.x, py=player.y;
+    const dx=Math.abs(it.x-px), dy=Math.abs(it.y-py);
+    if(dx<player.w/2+it.r && dy<player.h/2+it.r){
+      if(it.enemy){
+        lives--;
+        livesEl.textContent=lives;
+        addParticles(it.x,it.y,'#ff4d6d',18);
+        items.splice(i,1);
+        if(lives<=0){endGame();return;}
+      }else{
+        score++;
+        scoreEl.textContent=score;
+        addParticles(it.x,it.y,'#7af0ff',12);
+        items.splice(i,1);
+      }
+      continue;
+    }
+    if(it.y-it.r>H){
+      if(!it.enemy){/* missed bonus - no penalty */}
+      items.splice(i,1);
+    }
+  }
+
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.life--;
+    if(p.life<=0)particles.splice(i,1);
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // stars
+  ctx.fillStyle='rgba(200,160,255,0.35)';
+  for(let i=0;i<40;i++){
+    const sx=(i*97+frame*0.3)%W;
+    const sy=(i*53)%H;
+    ctx.fillRect(sx,sy,1.5,1.5);
+  }
+
+  // items
+  for(const it of items){
+    ctx.save();
+    ctx.shadowBlur=20;
+    if(it.enemy){
+      ctx.shadowColor='#ff4d6d';
+      ctx.fillStyle='#ff4d6d';
+      ctx.beginPath();
+      ctx.arc(it.x,it.y,it.r,0,Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle='#ffb3c1';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(it.x,it.y,it.r+4+Math.sin(it.phase)*2,0,Math.PI*2);
+      ctx.stroke();
+    }else{
+      ctx.shadowColor='#7af0ff';
+      const grad=ctx.createRadialGradient(it.x,it.y,1,it.x,it.y,it.r);
+      grad.addColorStop(0,'#e6ffff');
+      grad.addColorStop(1,'#22c7e0');
+      ctx.fillStyle=grad;
+      ctx.beginPath();
+      ctx.arc(it.x,it.y,it.r,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // particles
+  for(const p of particles){
+    ctx.globalAlpha=Math.max(0,p.life/30);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(p.x,p.y,3,3);
+  }
+  ctx.globalAlpha=1;
+
+  // player paddle
+  ctx.save();
+  ctx.shadowBlur=25;
+  ctx.shadowColor='#c78eff';
+  const pg=ctx.createLinearGradient(player.x-player.w/2,0,player.x+player.w/2,0);
+  pg.addColorStop(0,'#7b3fd1');
+  pg.addColorStop(0.5,'#e8c8ff');
+  pg.addColorStop(1,'#7b3fd1');
+  ctx.fillStyle=pg;
+  ctx.beginPath();
+  const rx=player.x-player.w/2, ry=player.y-player.h/2, r=player.h/2;
+  ctx.moveTo(rx+r,ry);
+  ctx.lineTo(rx+player.w-r,ry);
+  ctx.quadraticCurveTo(rx+player.w,ry,rx+player.w,ry+r);
+  ctx.quadraticCurveTo(rx+player.w,ry+player.h,rx+player.w-r,ry+player.h);
+  ctx.lineTo(rx+r,ry+player.h);
+  ctx.quadraticCurveTo(rx,ry+player.h,rx,ry+r);
+  ctx.quadraticCurveTo(rx,ry,rx+r,ry);
+  ctx.fill();
+  ctx.restore();
+
+  if(gameOver){
+    ctx.fillStyle='rgba(10,5,25,0.75)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#ff7ad9';
+    ctx.font='bold 38px Segoe UI, sans-serif';
+    ctx.textAlign='center';
+    ctx.shadowBlur=25;
+    ctx.shadowColor='#ff7ad9';
+    ctx.fillText('ИГРА ОКОНЧЕНА',W/2,H/2-10);
+    ctx.shadowBlur=0;
+    ctx.fillStyle='#c9a7ff';
+    ctx.font='18px Segoe UI, sans-serif';
+    ctx.fillText('Счёт: '+score,W/2,H/2+30);
+    ctx.fillText('Нажмите Старт',W/2,H/2+60);
+  }else if(paused){
+    ctx.fillStyle='rgba(10,5,25,0.6)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#c78eff';
+    ctx.font='bold 32px Segoe UI, sans-serif';
+    ctx.textAlign='center';
+    ctx.shadowBlur=20;
+    ctx.shadowColor='#c78eff';
+    ctx.fillText('ПАУЗА',W/2,H/2);
+    ctx.shadowBlur=0;
+  }
+}
+
+function loop(){
+  if(running && !paused && !gameOver){
+    update();
+  }
+  draw();
+  if(running && !gameOver) requestAnimationFrame(loop);
+  else if(gameOver) requestAnimationFrame(loop);
+}
+
+function endGame(){
+  gameOver=true;
+  running=false;
+  if(score>best){best=score;localStorage.setItem('neonBest',best);bestEl.textContent=best;}
+}
+
+function startGame(){
+  reset();
+  running=true;
+  paused=false;
+  pauseBtn.textContent='Пауза';
+  loop();
+}
+
+startBtn.addEventListener('click',startGame);
+pauseBtn.addEventListener('click',()=>{
+  if(!running||gameOver)return;
+  paused=!paused;
+  pauseBtn.textContent=paused?'Продолжить':'Пауза';
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=true;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=true;
+  if(e.key===' '){e.preventDefault();pauseBtn.click();}
+});
+document.addEventListener('keyup',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')keys.left=false;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')keys.right=false;
+});
+
+function canvasPos(e){
+  const rect=canvas.getBoundingClientRect();
+  const cx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+  return cx*(W/rect.width);
+}
+canvas.addEventListener('mousemove',e=>{pointerX=canvasPos(e);});
+canvas.addEventListener('mouseleave',()=>{pointerX=null;});
+canvas.addEventListener('touchstart',e=>{e.preventDefault();pointerX=canvasPos(e);},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();pointerX=canvasPos(e);},{passive:false});
+canvas.addEventListener('touchend',()=>{pointerX=null;});
+
+draw();
+})();
+</script>
 </body>
 </html>
