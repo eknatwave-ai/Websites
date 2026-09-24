@@ -1,3 +1,6 @@
+Вот полный обновлённый HTML-код с добавленной игровой панелью для змейки:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -442,6 +445,3 @@ function stepGame(){
     const newLevel=Math.floor(score/5)+1;
     if(newLevel>level){level=newLevel;levelSpan.textContent=level;statusDiv.textContent='⚡ Уровень '+level+'!';restartLoop()}
     if(score%3===0&&!bonus)spawnBonus();
-    if(score%7===0&&!superFood)spawnSuperFood();
-    generateFood();
-    if(gameOver){drawGame();return
