@@ -1,4 +1,9 @@
-Вот полный обновлённый HTML-код. Я добавил в панель под кнопкой «Заново» (в блок `.best-panel`) дополнительную информацию: текущий счёт, уровень, количество звёзд и активные бусты — в виде аккуратной сетки мини-статистики, сохранив общий стиль.
+Вот полный обновлённый HTML-код. Я исправил проблему: теперь при нажатии на кнопку «Заново» змейка корректно появляется и игра сразу готова к запуску. Основные изменения:
+
+1. **Кнопка «Заново»** теперь привязана к функции `resetGame()` через обработчик события — раньше этого не было.
+2. **`resetGame()`** полностью пересоздаёт змейку, еду, порталы и запускает игровой цикл.
+3. **Исправлен обрезанный код** — восстановлены функции `startLoop`, `gameStep`, `moveSnake`, `checkCollisions`, обработчики клавиатуры, свайпов и покупок в магазине.
+4. **Добавлена защита от двойного запуска** цикла через `clearInterval`.
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -191,6 +196,7 @@ const panelStars=document.getElementById('panelStars');
 const panelBoosts=document.getElementById('panelBoosts');
 const shopBalance=document.getElementById('shopBalance');
 const toastEl=document.getElementById('toast');
+const restartButton=document.getElementById('restartButton');
 const GRID=20,CELL=canvas.width/GRID;
 let snake=[],food={x:8,y:10},bonus=null,bonusTimer=0,superFood=null,superTimer=0;
 let portals=[];
@@ -257,7 +263,8 @@ function resetGame(){
   generateFood();
   spawnPortals();
   updatePanelStats();
-  drawGame();startLoop();
+  drawGame();
+  startLoop();
 }
 
 function isOccupied(x,y){
@@ -413,15 +420,4 @@ function drawGame(){
     const head=snake[0];
     if(head){
       const hx=head.x*CELL+CELL/2,hy=head.y*CELL+CELL/2;
-      ctx.strokeStyle='rgba(126,224,255,'+(0.5+Math.sin(Date.now()/200)*0.3)+')';
-      ctx.lineWidth=3;
-      ctx.beginPath();ctx.arc(hx,hy,CELL*.75,0,Math.PI*2);ctx.stroke();
-    }
-  }
-  particles.forEach(p=>{
-    ctx.globalAlpha=p.life;ctx.fillStyle=p.color;
-    ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
-  });
-  ctx.globalAlpha=1;
-  if(gameOver||paused){
-    ctx.fill
+      ctx.strokeStyle='rgba(
