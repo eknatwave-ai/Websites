@@ -170,7 +170,6 @@ const recordBoosts=document.getElementById('recordBoosts');
 const pauseOverlay=document.getElementById('pauseOverlay');
 const startOverlay=document.getElementById('startOverlay');
 
-// ===== РЕКОРДЫ (localStorage) =====
 const RECORD_KEY='arcadeSnakeRecord';
 function loadRecord(){
   try{
@@ -202,7 +201,6 @@ function renderRecordPanel(){
   recordAccuracy.textContent=record.accuracy.toFixed(0)+'%';
 }
 
-// Проверка и обновление рекорда. Возвращает true, если побит рекорд.
 function tryUpdateRecord(){
   const speedX=BASE_TICK/G.tickInterval;
   const candidate={
@@ -214,7 +212,6 @@ function tryUpdateRecord(){
   };
   let updated=false;
 
-  // Основной критерий — очки. При равенстве — длина, затем скорость.
   if(candidate.score>record.score){
     record=candidate;updated=true;
   } else if(candidate.score===record.score && candidate.score>0){
@@ -239,20 +236,19 @@ const canvas=document.getElementById('arenaCanvas');
 const ctx=canvas.getContext('2d');
 const W=canvas.width,H=canvas.height;
 
-// ===== ИГРА: КОСМИЧЕСКИЙ ПРОРЫВ =====
-const CELL=20;              // размер клетки
-const COLS=Math.floor(W/CELL); // 25
-const ROWS=Math.floor(H/CELL); // 25
+const CELL=20;
+const COLS=Math.floor(W/CELL);
+const ROWS=Math.floor(H/CELL);
 const GRID_W=COLS*CELL;
 const GRID_H=ROWS*CELL;
 const OFFSET_X=(W-GRID_W)/2;
 const OFFSET_Y=(H-GRID_H)/2;
 
-const BASE_TICK=0.16;       // базовый интервал шага (сек)
+const BASE_TICK=0.16;
 const MIN_TICK=0.06;
 
 const G={
-  snake:[],              // массив {x,y} в клетках, [0] - голова
+  snake:[],
   dir:{x:1,y:0},
   nextDir:{x:1,y:0},
   food:{x:0,y:0},
@@ -277,7 +273,6 @@ const G={
   headTrail:[]
 };
 
-// фоновые звёзды
 for(let i=0;i<70;i++){
   G.stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*1.6+0.4,v:Math.random()*0.6+0.2});
 }
@@ -371,26 +366,16 @@ function spawnParticles(x,y,color,count){
   }
 }
 
-// ===== УПРАВЛЕНИЕ: 4 НАПРАВЛЕНИЯ =====
-// Кнопки задают АБСОЛЮТНОЕ направление (вверх/вниз/влево/вправо).
-// Запрещён только разворот на 180° относительно текущего направления движения.
 function setDirection(dirX,dirY){
   if(!G.alive||G.gameOver)return;
-
-  // Нельзя разворачиваться на 180° относительно ТЕКУЩЕГО направления движения
   if(dirX===-G.dir.x && dirY===-G.dir.y)return;
-
-  // Если направление совпадает с уже запланированным — ничего не делаем
   if(dirX===G.nextDir.x && dirY===G.nextDir.y)return;
-
   G.nextDir={x:dirX,y:dirY};
-
   if(!G.started){
     startGame();
   }
 }
 
-// Применение направления по имени кнопки
 function applyDirection(act){
   switch(act){
     case 'up':    setDirection(0,-1); break;
@@ -400,12 +385,10 @@ function applyDirection(act){
   }
 }
 
-// ===== СТАРТ / ПАУЗА =====
 function startGame(){
   if(!G.alive||G.gameOver)return;
   if(G.started&&!G.paused)return;
   if(G.paused){
-    // снимаем паузу
     G.paused=false;
     hudStatus.classList.remove('status-paused');
     hudStatus.textContent='Корабль снова в бою ▶';
@@ -422,7 +405,6 @@ function startGame(){
 function togglePause(){
   if(!G.alive||G.gameOver)return;
   if(!G.started){
-    // если игра ещё не начата — стартуем
     startGame();
     return;
   }
@@ -430,3 +412,36 @@ function togglePause(){
   if(G.paused){
     hudStatus.textContent='⏸ Пауза · пробел или тап — продолжить';
     hudStatus.classList.add('status-paused');
+    pauseOverlay.classList.add('show');
+    showToast('⏸ Пауза','toast-pause');
+  } else {
+    hudStatus.textContent='Корабль снова в бою ▶';
+    hudStatus.classList.remove('status-paused');
+    pauseOverlay.classList.remove('show');
+    showToast('▶ Продолжение','toast-success');
+  }
+}
+
+function gameOver(reason){
+  G.alive=false;
+  G.gameOver=true;
+  G.deathFlash=1;
+  const head=G.snake[0];
+  if(head){
+    const p=cellToPx(head.x,head.y);
+    spawnParticles(p.x,p.y,'#ff5e5e',26);
+    spawnParticles(p.x,p.y,'#ffb86b',18);
+  }
+  hudStatus.textContent='💥 '+reason+' · Счёт: '+G.score;
+  showToast('💥 '+reason,'toast-error');
+  if(tryUpdateRecord())showToast('🏆 Новый рекорд! '+record.score,'toast-success');
+}
+
+function step(){
+  G.dir={x:G.nextDir.x,y:G.nextDir.y};
+  const head=G.snake[0];
+  const nx=head.x+G.dir.x;
+  const ny=head.y+G.dir.y;
+
+  if(nx<0||nx>=COLS||ny<0||ny>=ROWS){
+    gameOver('Столкновение со стеной
