@@ -23,6 +23,17 @@ button.danger{background:linear-gradient(180deg,#d12a5f,#8a1a3a);border-color:#f
 button.danger:hover{box-shadow:0 10px 24px #ff7ad970,inset 0 1px 2px #ffffff40}
 .hint{margin-top:14px;font-size:.78rem;color:#5a4a7a;letter-spacing:.5px;line-height:1.6}
 .hint b{color:#a8c8ff}
+.shop{margin-top:22px;padding:18px;background:rgba(30,15,55,.6);border:1px solid #4a2e6a;border-radius:20px;text-align:left}
+.shop h3{font-size:1rem;color:#ffd97a;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;text-align:center;text-shadow:0 0 12px #ffd97a80}
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;margin-bottom:8px;background:rgba(10,5,25,.7);border:1px solid #3a2a5a;border-radius:12px;gap:10px}
+.shop-item .info{flex:1;min-width:0}
+.shop-item .name{font-size:.9rem;color:#a8c8ff;font-weight:700;letter-spacing:.5px}
+.shop-item .desc{font-size:.72rem;color:#6b5a8a;margin-top:3px;line-height:1.3}
+.shop-item .price{font-size:.85rem;color:#7aff9a;font-weight:700;white-space:nowrap;text-shadow:0 0 8px #7aff9a80}
+.shop-item button{padding:8px 14px;font-size:.75rem;border-radius:10px;letter-spacing:1px}
+.shop-item button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.balance{text-align:center;font-size:.85rem;color:#ffd97a;margin-bottom:12px;letter-spacing:1px}
+.balance b{color:#fff;text-shadow:0 0 10px #ffd97a}
 </style>
 </head>
 <body>
@@ -50,6 +61,11 @@ button.danger:hover{box-shadow:0 10px 24px #ff7ad970,inset 0 1px 2px #ffffff40}
 <b>Пробел</b> — пауза · <b>P</b> — пауза · <b>M</b> — звук · <b>R</b> — рестарт<br>
 Собирай <b>энергию</b>, лови <b>бонусы</b> (щит, тройной выстрел, жизнь), избегай врагов!
 </div>
+<div class="shop">
+<h3>Магазин улучшений</h3>
+<div class="balance">Кристаллы: <b id="crystals">0</b></div>
+<div id="shopList"></div>
+</div>
 </div>
 <script>
 (function(){
@@ -61,6 +77,8 @@ const livesEl=document.getElementById('lives');
 const levelEl=document.getElementById('level');
 const comboEl=document.getElementById('combo');
 const shieldEl=document.getElementById('shield');
+const crystalsEl=document.getElementById('crystals');
+const shopList=document.getElementById('shopList');
 const startBtn=document.getElementById('startBtn');
 const pauseBtn=document.getElementById('pauseBtn');
 const soundBtn=document.getElementById('soundBtn');
@@ -73,6 +91,48 @@ let running=false, paused=false, gameOver=false;
 let score=0, lives=3, best=Number(localStorage.getItem('neonBest')||0);
 let level=1, combo=1, comboTimer=0, shield=0;
 bestEl.textContent=best;
+
+// Магазин
+const SHOP_KEY='neonShop';
+const CRYSTAL_KEY='neonCrystals';
+const shopItems=[
+  {id:'startShield',name:'Стартовый щит',desc:'Начинать игру с +1 щитом',cost:50,max:3},
+  {id:'extraLife',name:'Доп. жизнь',desc:'Начинать игру с +1 жизнью',cost:80,max:2},
+  {id:'fireRate',name:'Скорострельность',desc:'Стрельба на 20% быстрее',cost:100,max:3},
+  {id:'magnet',name:'Магнит',desc:'Притягивать энергию в радиусе',cost:120,max:1},
+  {id:'crystalBonus',name:'Кристальный бонус',desc:'+50% кристаллов за игру',cost:150,max:2}
+];
+let shopState=JSON.parse(localStorage.getItem(SHOP_KEY)||'{}');
+let crystals=Number(localStorage.getItem(CRYSTAL_KEY)||0);
+crystalsEl.textContent=crystals;
+
+function renderShop(){
+  shopList.innerHTML='';
+  shopItems.forEach(it=>{
+    const lvl=shopState[it.id]||0;
+    const maxed=lvl>=it.max;
+    const canBuy=!maxed && crystals>=it.cost;
+    const div=document.createElement('div');
+    div.className='shop-item';
+    div.innerHTML='<div class="info"><div class="name">'+it.name+' <span style="color:#7aff9a">['+lvl+'/'+it.max+']</span></div><div class="desc">'+it.desc+'</div></div><div class="price">'+it.cost+' кр.</div>';
+    const btn=document.createElement('button');
+    btn.textContent=maxed?'MAX':'Купить';
+    btn.disabled=!canBuy;
+    btn.onclick=()=>{
+      if(maxed||crystals<it.cost)return;
+      crystals-=it.cost;
+      shopState[it.id]=lvl+1;
+      localStorage.setItem(CRYSTAL_KEY,crystals);
+      localStorage.setItem(SHOP_KEY,JSON.stringify(shopState));
+      crystalsEl.textContent=crystals;
+      renderShop();
+      beep(1200,0.1,'sine',0.06);
+    };
+    div.appendChild(btn);
+    shopList.appendChild(div);
+  });
+}
+renderShop();
 
 // Audio
 let soundOn = localStorage.getItem('neonSound')!=='off';
@@ -111,18 +171,23 @@ let frame=0;
 let tripleShotTimer=0;
 let invulnTimer=0;
 let screenShake=0;
+let crystalsEarned=0;
 
 for(let i=0;i<80;i++){
   stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*1.5+0.5,speed:Math.random()*1.5+0.3});
 }
 
 function reset(){
-  score=0;lives=3;items=[];bullets=[];particles=[];powerups=[];
+  score=0;items=[];bullets=[];particles=[];powerups=[];
   spawnTimer=0;spawnInterval=50;shootTimer=0;frame=0;
-  level=1;combo=1;comboTimer=0;shield=0;tripleShotTimer=0;invulnTimer=0;screenShake=0;
+  level=1;combo=1;comboTimer=0;screenShake=0;
+  lives=3+(shopState.extraLife||0);
+  shield=shopState.startShield||0;
+  tripleShotTimer=0;invulnTimer=0;
+  crystalsEarned=0;
   player.x=W/2;
-  scoreEl.textContent=0;livesEl.textContent=3;levelEl.textContent=1;
-  comboEl.textContent='x1';shieldEl.textContent=0;
+  scoreEl.textContent=0;livesEl.textContent=lives;levelEl.textContent=1;
+  comboEl.textContent='x1';shieldEl.textContent=shield;
   gameOver=false;
 }
 
@@ -154,6 +219,7 @@ function addParticles(x,y,color,count){
 }
 
 function shoot(){
+  const rateMul=1-0.2*(shopState.fireRate||0);
   if(tripleShotTimer>0){
     bullets.push({x:player.x,y:player.y-20,vy:-9});
     bullets.push({x:player.x-14,y:player.y-16,vy:-9,vx:-1.5});
@@ -163,6 +229,7 @@ function shoot(){
     bullets.push({x:player.x+12,y:player.y-20,vy:-9});
   }
   beep(880,0.04,'square',0.02);
+  return rateMul;
 }
 
 function update(){
@@ -182,13 +249,14 @@ function update(){
   if(comboTimer>0){comboTimer--;if(comboTimer===0){combo=1;comboEl.textContent='x1';}}
 
   shootTimer++;
-  if(shootTimer>12){shootTimer=0;shoot();}
+  const rateMul=1-0.2*(shopState.fireRate||0);
+  const shootDelay=Math.max(5,Math.round(12*rateMul));
+  if(shootTimer>shootDelay){shootTimer=0;shoot();}
 
   spawnTimer++;
   const interval=Math.max(20,spawnInterval-frame*0.05);
   if(spawnTimer>interval){spawnTimer=0;spawn();}
 
-  // level up every 30 score
   const newLevel = 1 + Math.floor(score/30);
   if(newLevel!==level){
     level=newLevel;
@@ -197,7 +265,6 @@ function update(){
     addParticles(W/2,H/2,'#7aff9a',30);
   }
 
-  // bullets
   for(let i=bullets.length-1;i>=0;i--){
     const b=bullets[i];
     b.y+=b.vy;
@@ -219,7 +286,6 @@ function update(){
           addParticles(it.x,it.y,'#ff4d6d',20);
           items.splice(j,1);
           beep(220,0.08,'sawtooth',0.04);
-          // combo
           combo=Math.min(combo+1,10);
           comboTimer=120;
           comboEl.textContent='x'+combo;
@@ -236,11 +302,22 @@ function update(){
     it.phase+=0.1;
     if(it.x<20||it.x>W-20) it.vx*=-1;
 
+    // магнит
+    if(shopState.magnet && it.type==='energy'){
+      const dx=player.x-it.x, dy=player.y-it.y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<120){
+        it.x+=dx/d*1.5;
+        it.y+=dy/d*1.5;
+      }
+    }
+
     const dx=Math.abs(it.x-player.x), dy=Math.abs(it.y-player.y);
     if(dx<player.w/2+it.r-10 && dy<player.h/2+it.r-10){
       if(it.type==='energy'){
         score+=combo;
         scoreEl.textContent=score;
+        crystalsEarned+=1;
         addParticles(it.x,it.y,'#7af0ff',12);
         items.splice(i,1);
         beep(660,0.05,'sine',0.03);
@@ -308,7 +385,6 @@ function drawShip(x,y,size){
     ctx.fill();
   }
   ctx.restore();
-  // shield ring
   if(shield>0){
     ctx.save();
     ctx.strokeStyle='#7aff9a';
@@ -451,15 +527,17 @@ function draw(){
     ctx.textAlign='center';
     ctx.shadowBlur=25;
     ctx.shadowColor='#ff7ad9';
-    ctx.fillText('ИГРА ОКОНЧЕНА',W/2,H/2-40);
+    ctx.fillText('ИГРА ОКОНЧЕНА',W/2,H/2-60);
     ctx.shadowBlur=0;
     ctx.fillStyle='#a8c8ff';
     ctx.font='18px Segoe UI, sans-serif';
-    ctx.fillText('Счёт: '+score,W/2,H/2);
-    ctx.fillText('Уровень: '+level,W/2,H/2+28);
-    ctx.fillText('Рекорд: '+best,W/2,H/2+56);
+    ctx.fillText('Счёт: '+score,W/2,H/2-20);
+    ctx.fillText('Уровень: '+level,W/2,H/2+8);
+    ctx.fillText('Рекорд: '+best,W/2,H/2+36);
+    ctx.fillStyle='#ffd97a';
+    ctx.fillText('Кристаллов: +'+crystalsEarned,W/2,H/2+64);
     ctx.fillStyle='#7af0ff';
-    ctx.fillText('Нажмите Старт или R',W/2,H/2+90);
+    ctx.fillText('Нажмите Старт или R',W/2,H/2+100);
   }else if(paused){
     ctx.fillStyle='rgba(5,2,15,0.7)';
     ctx.fillRect(0,0,W,H);
@@ -485,6 +563,13 @@ function endGame(){
   gameOver=true;
   running=false;
   if(score>best){best=score;localStorage.setItem('neonBest',best);bestEl.textContent=best;}
+  const bonusMul=1+0.5*(shopState.crystalBonus||0);
+  const total=Math.floor(crystalsEarned*bonusMul);
+  crystals+=total;
+  localStorage.setItem(CRYSTAL_KEY,crystals);
+  crystalsEl.textContent=crystals;
+  crystalsEarned=total;
+  renderShop();
   beep(80,0.6,'sawtooth',0.1);
 }
 
