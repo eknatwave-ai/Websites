@@ -55,7 +55,6 @@ W=window.innerWidth;H=window.innerHeight;
 canvas.width=W*DPR;canvas.height=H*DPR;
 canvas.style.width=W+'px';canvas.style.height=H+'px';
 ctx.setTransform(DPR,0,0,DPR,0,0);
-// Масштаб адаптации: базовое разрешение 1280x720
 const baseW=1280, baseH=720;
 SCALE=Math.min(W/baseW, H/baseH);
 SCALE=Math.max(0.45, Math.min(SCALE, 1.6));
@@ -69,10 +68,12 @@ let score=0,level=1;
 let birdsAvailable=3;
 let state='menu';
 let cameraX=0,cameraTargetX=0;
+let levelCompleteTimer=null;
+let levelFailedTimer=null;
+let spawnTimer=null;
 
 const groundY=()=>H-Math.max(50,H*0.08);
 
-// Смещение стартовой позиции птицы относительно ширины экрана
 function slingXPos(){ return Math.min(W*0.18, 260); }
 function slingYPos(){ return groundY()-Math.max(90,Math.min(H*0.22,160)); }
 
@@ -148,7 +149,6 @@ this.hurt=0;this.vy=0;this.vx=0;this.settled=false;
 }
 update(dt){
 if(this.dead)return;
-// Если свинья "осела" и стоит на земле — не двигается (не дрожит)
 if(this.settled){
 this.vx=0;this.vy=0;
 return;
@@ -208,7 +208,6 @@ this.settled=false;
 }
 update(dt){
 if(this.dead)return;
-// Если блок "осел" на земле — он не двигается (не дрожит)
 if(this.settled){
 this.vx=0;this.vy=0;this.rotSpeed=0;
 return;
@@ -224,7 +223,6 @@ this.vx*=0.5;
 this.rotSpeed*=0.3;
 if(Math.abs(this.vx)<15&&Math.abs(this.rotSpeed)<0.3){
 this.vx=0;this.rotSpeed=0;
-// Выравниваем угол к ближайшему кратному PI/2
 this.rot=Math.round(this.rot/(Math.PI/2))*(Math.PI/2);
 this.settled=true;
 }
@@ -275,15 +273,23 @@ const d=document.createElement('div');d.className='bird-icon';bl.appendChild(d);
 }
 }
 
+function clearTimers(){
+if(levelCompleteTimer){clearTimeout(levelCompleteTimer);levelCompleteTimer=null;}
+if(levelFailedTimer){clearTimeout(levelFailedTimer);levelFailedTimer=null;}
+if(spawnTimer){clearTimeout(spawnTimer);spawnTimer=null;}
+}
+
 function setupLevel(){
+clearTimers();
 birds=[];pigs=[];blocks=[];particles=[];
 birdsAvailable=3;
 slingX=slingXPos();
 slingY=slingYPos();
 cameraX=0;cameraTargetX=0;
+currentBird=null;
+dragging=false;dragStart=null;dragCurrent=null;
 
 const baseY=groundY();
-// Масштабируем позиции строений относительно ширины экрана
 const rightAnchor=Math.min(W*0.72, W-160*SCALE);
 
 if(level===1){
@@ -340,8 +346,11 @@ currentBird=null;
 }
 
 function checkLevelComplete(){
+if(pigs.length===0)return false;
 if(pigs.every(p=>p.dead)){
-setTimeout(()=>{
+if(levelCompleteTimer)return true;
+levelCompleteTimer=setTimeout(()=>{
+levelCompleteTimer=null;
 level++;
 if(level>3){level=1;score+=2000;}
 setupLevel();
@@ -355,7 +364,9 @@ function checkLevelFailed(){
 if(birdsAvailable<=0&&!currentBird){
 const anyActive=birds.some(b=>b.launched&&!b.dead);
 if(!anyActive&&!pigs.every(p=>p.dead)){
-setTimeout(()=>{
+if(levelFailedTimer)return;
+levelFailedTimer=setTimeout(()=>{
+levelFailedTimer=null;
 if(pigs.every(p=>p.dead))return;
 alert('Уровень провален! Попробуем снова.');
 setupLevel();
@@ -611,6 +622,8 @@ ctx.setLineDash([]);
 }
 
 let lastTime=performance.now();
+let autoSpawnTimer=0;
+
 function loop(now){
 const dt=Math.min((now-lastTime)/1000,0.033);
 lastTime=now;
@@ -634,26 +647,10 @@ cameraTargetX=0;
 }
 cameraX+=(cameraTargetX-cameraX)*0.08;
 
-if(!currentBird&&birdsAvailable>0){
+if(!currentBird&&birdsAvailable>0&&!levelCompleteTimer){
 const allDone=birds.every(b=>b.dead||(b.launched&&b.sleeping));
 if(allDone&&birds.length>0){
-setTimeout(()=>{
-if(!currentBird&&birdsAvailable>0&&state==='playing')spawnBird();
-},400);
-}
-}
-
-checkLevelComplete();
-checkLevelFailed();
-}
-
-drawBackground();
-drawSling();
-blocks.forEach(b=>b.draw());
-pigs.forEach(p=>p.draw());
-birds.forEach(b=>b.draw());
-drawTrajectory();
-drawParticles();
-
-requestAnimationFrame(loop);
-}
+autoSpawnTimer+=dt;
+if(autoSpawnTimer>0.4){
+autoSpawnTimer=0;
+if(!currentBird&&birdsAvailable>0&&state==
