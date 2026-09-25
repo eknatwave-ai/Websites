@@ -1,6 +1,3 @@
-Вот исправленный полный код. Проблема была в том, что код был обрезан (не было закрытия `forEach`, функций отрисовки и главного вызова `loop()`, а также не было обработчиков кнопки "ИГРАТЬ"). Вот полностью рабочий файл:
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -396,16 +393,34 @@ function onMove(e){
   e.preventDefault();
   const p=getPos(e);
   dragCurrent={x:p.x+cameraX,y:p.y};
+  if(currentBird&&!currentBird.launched){
+    const dx=dragCurrent.x-currentBird.x;
+    const dy=dragCurrent.y-currentBird.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const maxPull=180*SCALE;
+    if(dist>maxPull){
+      const k=maxPull/dist;
+      dragCurrent.x=currentBird.x+dx*k;
+      dragCurrent.y=currentBird.y+dy*k;
+    }
+    currentBird.x=dragCurrent.x;
+    currentBird.y=dragCurrent.y;
+  }
 }
 
 function onUp(e){
   if(!dragging)return;
   dragging=false;
   if(!currentBird)return;
-  const dx=currentBird.x-dragCurrent.x;
-  const dy=currentBird.y-dragCurrent.y;
+  const dx=slingX-currentBird.x;
+  const dy=slingY-currentBird.y;
   const dist=Math.sqrt(dx*dx+dy*dy);
-  if(dist<15){dragStart=null;dragCurrent=null;return;}
+  if(dist<15){
+    currentBird.x=slingX;
+    currentBird.y=slingY;
+    dragStart=null;dragCurrent=null;
+    return;
+  }
   const maxPull=180*SCALE;
   const power=Math.min(dist,maxPull);
   const angle=Math.atan2(dy,dx);
@@ -584,9 +599,4 @@ function drawSling(){
 }
 
 function drawTrajectory(){
-  if(!dragging||!currentBird)return;
-  const dx=currentBird.x-dragCurrent.x;
-  const dy=currentBird.y-dragCurrent.y;
-  const dist=Math.sqrt(dx*dx+dy*dy);
-  if(dist<15)return;
-  const maxPull=180*SCALE;
+  if(!dragging||!
