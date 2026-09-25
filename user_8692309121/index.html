@@ -2,27 +2,32 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Angry Birds</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#000;touch-action:none}
-#game{position:fixed;inset:0;display:block;cursor:crosshair}
-#hud{position:fixed;top:0;left:0;right:0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:10;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
-.hud-item{background:rgba(0,0,0,.35);backdrop-filter:blur(8px);padding:8px 16px;border-radius:14px;font-weight:700;font-size:16px;border:1px solid rgba(255,255,255,.15)}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#000;touch-action:none;position:fixed;overscroll-behavior:none}
+#game{position:fixed;inset:0;display:block;cursor:crosshair;touch-action:none}
+#hud{position:fixed;top:0;left:0;right:0;padding:calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left));display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:10;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6);gap:8px;flex-wrap:wrap}
+.hud-item{background:rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:6px 12px;border-radius:14px;font-weight:700;font-size:clamp(12px,2.5vw,16px);border:1px solid rgba(255,255,255,.15);white-space:nowrap}
 .hud-item span{color:#ffd54a}
-#birdsLeft{display:flex;gap:6px;align-items:center}
-.bird-icon{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff6b6b,#c92a2a);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
-#overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:20;transition:opacity .4s;padding:20px;text-align:center}
+#birdsLeft{display:flex;gap:5px;align-items:center}
+.bird-icon{width:clamp(16px,3vw,22px);height:clamp(16px,3vw,22px);border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff6b6b,#c92a2a);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+#overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:20;transition:opacity .4s;padding:20px;text-align:center}
 #overlay.hidden{opacity:0;pointer-events:none}
-#overlay h1{font-size:clamp(32px,8vw,64px);font-weight:900;background:linear-gradient(135deg,#ffd54a,#ff6b6b,#c92a2a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:2px;filter:drop-shadow(0 4px 20px rgba(255,107,107,.4))}
-#overlay p{color:#cbd5e1;font-size:clamp(14px,3vw,18px);margin-bottom:28px;max-width:500px;line-height:1.6}
-#overlay button{padding:16px 48px;font-size:18px;font-weight:800;border:none;border-radius:50px;background:linear-gradient(135deg,#ff6b6b,#c92a2a);color:#fff;cursor:pointer;box-shadow:0 10px 30px rgba(201,42,42,.5);transition:transform .2s,box-shadow .2s;letter-spacing:1px}
+#overlay h1{font-size:clamp(28px,7vw,64px);font-weight:900;background:linear-gradient(135deg,#ffd54a,#ff6b6b,#c92a2a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;letter-spacing:2px;filter:drop-shadow(0 4px 20px rgba(255,107,107,.4))}
+#overlay p{color:#cbd5e1;font-size:clamp(13px,2.8vw,18px);margin-bottom:28px;max-width:500px;line-height:1.6;padding:0 10px}
+#overlay button{padding:clamp(12px,2.5vw,16px) clamp(32px,7vw,48px);font-size:clamp(15px,3vw,18px);font-weight:800;border:none;border-radius:50px;background:linear-gradient(135deg,#ff6b6b,#c92a2a);color:#fff;cursor:pointer;box-shadow:0 10px 30px rgba(201,42,42,.5);transition:transform .2s,box-shadow .2s;letter-spacing:1px}
 #overlay button:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 15px 40px rgba(201,42,42,.7)}
 #overlay button:active{transform:translateY(0) scale(.98)}
-#subtitle{color:#94a3b8;font-size:14px;margin-top:20px}
-#restartBtn{position:fixed;top:12px;right:12px;z-index:15;padding:10px 20px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px;transition:background .2s}
+#subtitle{color:#94a3b8;font-size:clamp(11px,2.2vw,14px);margin-top:20px}
+#restartBtn{position:fixed;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:15;padding:8px 14px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:12px;font-weight:700;cursor:pointer;font-size:clamp(11px,2.2vw,14px);transition:background .2s}
 #restartBtn:hover{background:rgba(255,107,107,.6)}
+@media (max-width:480px){
+#hud{padding:calc(6px + env(safe-area-inset-top)) 8px 6px 8px}
+.hud-item{padding:5px 9px;border-radius:10px}
+#restartBtn{padding:6px 10px}
+}
 </style>
 </head>
 <body>
@@ -43,14 +48,21 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-u
 const canvas=document.getElementById('game');
 const ctx=canvas.getContext('2d');
 let W=0,H=0,DPR=1;
+let SCALE=1;
 function resize(){
 DPR=Math.min(window.devicePixelRatio||1,2);
 W=window.innerWidth;H=window.innerHeight;
 canvas.width=W*DPR;canvas.height=H*DPR;
 canvas.style.width=W+'px';canvas.style.height=H+'px';
 ctx.setTransform(DPR,0,0,DPR,0,0);
+// Масштаб адаптации: базовое разрешение 1280x720
+const baseW=1280, baseH=720;
+SCALE=Math.min(W/baseW, H/baseH);
+SCALE=Math.max(0.45, Math.min(SCALE, 1.6));
 }
-window.addEventListener('resize',resize);resize();
+window.addEventListener('resize',resize);
+window.addEventListener('orientationchange',()=>setTimeout(resize,200));
+resize();
 
 const G=1600;
 let score=0,level=1;
@@ -58,12 +70,16 @@ let birdsAvailable=3;
 let state='menu';
 let cameraX=0,cameraTargetX=0;
 
-const groundY=()=>H-60;
+const groundY=()=>H-Math.max(50,H*0.08);
+
+// Смещение стартовой позиции птицы относительно ширины экрана
+function slingXPos(){ return Math.min(W*0.18, 260); }
+function slingYPos(){ return groundY()-Math.max(90,Math.min(H*0.22,160)); }
 
 class Bird{
 constructor(x,y){
 this.x=x;this.y=y;this.vx=0;this.vy=0;
-this.r=18;this.launched=false;this.dead=false;
+this.r=18*SCALE;this.launched=false;this.dead=false;
 this.trail=[];this.rot=0;this.rotSpeed=0;this.sleeping=false;
 }
 update(dt){
@@ -127,22 +143,32 @@ ctx.restore();
 
 class Pig{
 constructor(x,y,size){
-this.x=x;this.y=y;this.r=size;this.dead=false;this.hp=size>22?2:1;
+this.x=x;this.y=y;this.r=size*SCALE;this.dead=false;this.hp=size>22?2:1;
 this.hurt=0;this.vy=0;this.vx=0;this.settled=false;
 }
 update(dt){
 if(this.dead)return;
+// Если свинья "осела" и стоит на земле — не двигается (не дрожит)
+if(this.settled){
+this.vx=0;this.vy=0;
+return;
+}
 this.vy+=G*dt;
 this.x+=this.vx*dt;this.y+=this.vy*dt;
 const gy=groundY()-this.r;
-if(this.y>gy){this.y=gy;this.vy*=-0.3;this.vx*=0.8;
-if(Math.abs(this.vy)<50){this.vy=0;this.vx*=0.9;if(Math.abs(this.vx)<10)this.vx=0}
+if(this.y>gy){
+this.y=gy;this.vy=0;this.vx*=0.7;
+if(Math.abs(this.vx)<15){
+this.vx=0;
+this.settled=true;
+}
 }
 if(this.hurt>0)this.hurt-=dt;
 }
 hit(dmg){
 this.hp-=dmg;this.hurt=0.3;
-if(this.hp<=0){this.dead=true;score+=this.r>22?500:300;updateHUD()}
+this.settled=false;
+if(this.hp<=0){this.dead=true;score+=this.r>22*SCALE?500:300;updateHUD()}
 }
 draw(){
 if(this.dead)return;
@@ -175,14 +201,14 @@ ctx.restore();
 
 class Block{
 constructor(x,y,w,h,type){
-this.x=x;this.y=y;this.w=w;this.h=h;this.type=type||'wood';
+this.x=x;this.y=y;this.w=w*SCALE;this.h=h*SCALE;this.type=type||'wood';
 this.vx=0;this.vy=0;this.rot=0;this.rotSpeed=0;
 this.dead=false;this.hp=type==='stone'?100:type==='ice'?25:50;
 this.settled=false;
 }
 update(dt){
 if(this.dead)return;
-// Если блок "осел" на земле — он не двигается (не танцует)
+// Если блок "осел" на земле — он не двигается (не дрожит)
 if(this.settled){
 this.vx=0;this.vy=0;this.rotSpeed=0;
 return;
@@ -193,11 +219,11 @@ this.rot+=this.rotSpeed*dt;
 const gy=groundY()-this.h/2;
 if(this.y>gy){
 this.y=gy;
-this.vy*=-0.15;
-this.vx*=0.6;
-this.rotSpeed*=0.4;
-if(Math.abs(this.vy)<30&&Math.abs(this.vx)<15&&Math.abs(this.rotSpeed)<0.3){
-this.vy=0;this.vx=0;this.rotSpeed=0;
+this.vy=0;
+this.vx*=0.5;
+this.rotSpeed*=0.3;
+if(Math.abs(this.vx)<15&&Math.abs(this.rotSpeed)<0.3){
+this.vx=0;this.rotSpeed=0;
 // Выравниваем угол к ближайшему кратному PI/2
 this.rot=Math.round(this.rot/(Math.PI/2))*(Math.PI/2);
 this.settled=true;
@@ -238,7 +264,6 @@ ctx.restore();
 let birds=[],pigs=[],blocks=[],particles=[];
 let currentBird=null,dragging=false,dragStart=null,dragCurrent=null;
 let slingX=0,slingY=0;
-let pigVisible={x:0,y:0,angle:0}; // Направление, куда смотрит принц (последняя птица)
 
 function updateHUD(){
 document.getElementById('score').textContent=score;
@@ -253,14 +278,16 @@ const d=document.createElement('div');d.className='bird-icon';bl.appendChild(d);
 function setupLevel(){
 birds=[];pigs=[];blocks=[];particles=[];
 birdsAvailable=3;
-slingX=W*0.18;
-slingY=groundY()-140;
+slingX=slingXPos();
+slingY=slingYPos();
 cameraX=0;cameraTargetX=0;
 
 const baseY=groundY();
+// Масштабируем позиции строений относительно ширины экрана
+const rightAnchor=Math.min(W*0.72, W-160*SCALE);
 
 if(level===1){
-const bx=W*0.72;
+const bx=rightAnchor;
 blocks.push(new Block(bx,baseY-40,20,80,'wood'));
 blocks.push(new Block(bx+70,baseY-40,20,80,'wood'));
 blocks.push(new Block(bx+35,baseY-100,110,20,'wood'));
@@ -269,7 +296,7 @@ blocks.push(new Block(bx+35,baseY-140,20,60,'ice'));
 pigs.push(new Pig(bx+35,baseY-180,22));
 }
 else if(level===2){
-const bx=W*0.7;
+const bx=rightAnchor-30;
 blocks.push(new Block(bx,baseY-40,20,80,'stone'));
 blocks.push(new Block(bx+80,baseY-40,20,80,'stone'));
 blocks.push(new Block(bx+40,baseY-100,120,20,'wood'));
@@ -280,7 +307,7 @@ blocks.push(new Block(bx+90,baseY-40,20,80,'wood'));
 pigs.push(new Pig(bx+120,baseY-30,22));
 }
 else{
-const bx=W*0.68;
+const bx=rightAnchor-50;
 for(let i=0;i<4;i++){
 blocks.push(new Block(bx+i*55,baseY-40,18,80,i%2?'wood':'stone'));
 }
@@ -350,7 +377,8 @@ const p=getPos(e);
 if(currentBird&&!currentBird.launched){
 const dx=p.x-(currentBird.x-cameraX);
 const dy=p.y-currentBird.y;
-if(dx*dx+dy*dy<60*60){
+const hitR=Math.max(60,60*SCALE);
+if(dx*dx+dy*dy<hitR*hitR){
 dragging=true;
 dragStart={x:currentBird.x,y:currentBird.y};
 dragCurrent={x:p.x+cameraX,y:p.y};
@@ -373,7 +401,8 @@ const dx=currentBird.x-dragCurrent.x;
 const dy=currentBird.y-dragCurrent.y;
 const dist=Math.sqrt(dx*dx+dy*dy);
 if(dist<15){dragStart=null;dragCurrent=null;return}
-const power=Math.min(dist,180);
+const maxPull=180*SCALE;
+const power=Math.min(dist,maxPull);
 const angle=Math.atan2(dy,dx);
 const speed=power*10;
 launchBird(Math.cos(angle)*speed,Math.sin(angle)*speed);
@@ -386,6 +415,7 @@ canvas.addEventListener('mouseup',onUp);
 canvas.addEventListener('touchstart',onDown,{passive:false});
 canvas.addEventListener('touchmove',onMove,{passive:false});
 canvas.addEventListener('touchend',onUp,{passive:false});
+canvas.addEventListener('touchcancel',onUp,{passive:false});
 
 function circleRect(cx,cy,cr,rx,ry,rw,rh,rot){
 const cos=Math.cos(-rot),sin=Math.sin(-rot);
@@ -426,7 +456,7 @@ bl.hit(speed>500?3:1);
 bl.vx=(b.vx)*0.3;
 bl.vy=(b.vy)*0.3;
 bl.rotSpeed=(Math.random()-0.5)*3;
-bl.settled=false; // разрушаем "сон" при ударе
+bl.settled=false;
 for(let i=0;i<6;i++)spawnParticle(bl.x,bl.y,bl.type==='ice'?'#b4dcff':'#c98a4b');
 }
 b.vx*=0.5;b.vy*=0.5;
@@ -479,9 +509,9 @@ sky.addColorStop(1,'#d4f0d4');
 ctx.fillStyle=sky;
 ctx.fillRect(0,0,W,H);
 ctx.fillStyle='rgba(255,230,120,.9)';
-ctx.beginPath();ctx.arc(W*0.85,80,50,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(W*0.85,80*SCALE+20,50*SCALE,0,Math.PI*2);ctx.fill();
 ctx.fillStyle='rgba(255,255,180,.4)';
-ctx.beginPath();ctx.arc(W*0.85,80,75,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(W*0.85,80*SCALE+20,75*SCALE,0,Math.PI*2);ctx.fill();
 ctx.fillStyle='rgba(255,255,255,.85)';
 const cloudOffset=(cameraX*0.2)%(W+400);
 drawCloud(W*0.15-cloudOffset+W+400,90,60);
@@ -553,7 +583,8 @@ const dx=currentBird.x-dragCurrent.x;
 const dy=currentBird.y-dragCurrent.y;
 const dist=Math.sqrt(dx*dx+dy*dy);
 if(dist<15)return;
-const power=Math.min(dist,180);
+const maxPull=180*SCALE;
+const power=Math.min(dist,maxPull);
 const angle=Math.atan2(dy,dx);
 const speed=power*10;
 const vx=Math.cos(angle)*speed;
@@ -626,23 +657,3 @@ drawParticles();
 
 requestAnimationFrame(loop);
 }
-requestAnimationFrame(loop);
-
-document.getElementById('playBtn').addEventListener('click',()=>{
-document.getElementById('overlay').classList.add('hidden');
-state='playing';
-score=0;level=1;
-setupLevel();
-});
-
-document.getElementById('restartBtn').addEventListener('click',()=>{
-score=0;level=1;
-setupLevel();
-state='playing';
-document.getElementById('overlay').classList.add('hidden');
-});
-
-updateHUD();
-</script>
-</body>
-</html>
