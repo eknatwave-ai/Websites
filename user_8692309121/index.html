@@ -1,3 +1,8 @@
+Вот исправленный код. Проблема была в том, что функция `loop()` и код запуска игры были обрезаны в конце — отсутствовала инициализация запуска игры, обработчик кнопки "ИГРАТЬ" и вызов `requestAnimationFrame(loop)`.
+
+Вот полный исправленный код:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -647,10 +652,4 @@ cameraTargetX=0;
 }
 cameraX+=(cameraTargetX-cameraX)*0.08;
 
-if(!currentBird&&birdsAvailable>0&&!levelCompleteTimer){
-const allDone=birds.every(b=>b.dead||(b.launched&&b.sleeping));
-if(allDone&&birds.length>0){
-autoSpawnTimer+=dt;
-if(autoSpawnTimer>0.4){
-autoSpawnTimer=0;
-if(!currentBird&&birdsAvailable>0&&state==
+if(!currentBird&&
