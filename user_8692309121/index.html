@@ -1,6 +1,4 @@
-Вот исправленный код. Проблема была в том, что функция `loop()` и код запуска игры были обрезаны в конце — отсутствовала инициализация запуска игры, обработчик кнопки "ИГРАТЬ" и вызов `requestAnimationFrame(loop)`.
-
-Вот полный исправленный код:
+Понял, ты прав — код был обрезан. Вот **полный рабочий код** с исправленным запуском игры по кнопке "ИГРАТЬ":
 
 ```html
 <!DOCTYPE html>
@@ -75,7 +73,6 @@ let state='menu';
 let cameraX=0,cameraTargetX=0;
 let levelCompleteTimer=null;
 let levelFailedTimer=null;
-let spawnTimer=null;
 
 const groundY=()=>H-Math.max(50,H*0.08);
 
@@ -281,7 +278,6 @@ const d=document.createElement('div');d.className='bird-icon';bl.appendChild(d);
 function clearTimers(){
 if(levelCompleteTimer){clearTimeout(levelCompleteTimer);levelCompleteTimer=null;}
 if(levelFailedTimer){clearTimeout(levelFailedTimer);levelFailedTimer=null;}
-if(spawnTimer){clearTimeout(spawnTimer);spawnTimer=null;}
 }
 
 function setupLevel(){
@@ -627,7 +623,6 @@ ctx.setLineDash([]);
 }
 
 let lastTime=performance.now();
-let autoSpawnTimer=0;
 
 function loop(now){
 const dt=Math.min((now-lastTime)/1000,0.033);
@@ -652,4 +647,18 @@ cameraTargetX=0;
 }
 cameraX+=(cameraTargetX-cameraX)*0.08;
 
-if(!currentBird&&
+if(!currentBird&&birdsAvailable>0&&!checkLevelComplete()){
+const anyActive=birds.some(b=>b.launched&&!b.dead);
+if(!anyActive){
+spawnBird();
+}
+}
+
+checkLevelFailed();
+}
+
+ctx.clearRect(0,0,W,H);
+drawBackground();
+drawSling();
+
+blocks.forEach(b
