@@ -1,5 +1,3 @@
-Вот полный обновлённый HTML-код с сохранением игрового движка и добавлением структуры простого сайта:
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -16,6 +14,9 @@ body{background:linear-gradient(135deg,#0a0a2e,#1a1a4e,#0a0a2e);min-height:100vh
 #site-header{text-align:center;margin-bottom:18px;max-width:760px}
 #site-header h1{font-size:30px;letter-spacing:1px;background:linear-gradient(90deg,#7df,#f7d,#7df);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
 #site-header p{color:#8fa8c8;font-size:14px;line-height:1.6}
+#site-nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+#site-nav a{color:#9df;text-decoration:none;font-size:13px;padding:7px 16px;border-radius:20px;border:1px solid rgba(100,200,255,.25);background:rgba(20,30,70,.5);transition:.25s}
+#site-nav a:hover{background:rgba(40,80,160,.7);color:#fff;box-shadow:0 0 14px rgba(100,200,255,.3)}
 
 /* --- Игровая зона --- */
 main{display:flex;flex-direction:column;align-items:center;width:100%}
@@ -38,6 +39,11 @@ canvas{display:block;width:100%;height:auto;border:2px solid rgba(100,200,255,.3
 #touch button:active,#touch button.pressed{background:rgba(60,120,220,.85);color:#fff;transform:scale(.96)}
 #touch #btnF{width:130px;background:rgba(40,20,70,.8);border-color:rgba(255,120,220,.4);color:#f9f}
 
+/* --- Информационные блоки --- */
+#about{max-width:760px;margin-top:34px;width:100%}
+#about h2{font-size:20px;color:#7df;margin-bottom:12px;text-align:center;letter-spacing:1px}
+#about p{color:#8fa8c8;font-size:14px;line-height:1.8;text-align:center}
+
 /* --- Подвал --- */
 footer{margin-top:34px;max-width:760px;text-align:center;color:#6d84a8;font-size:13px;line-height:1.8}
 footer .tips{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
@@ -53,6 +59,7 @@ footer .tip b{display:block;color:#7df;margin-bottom:4px;font-size:14px}
   #overlay button{padding:12px 28px;font-size:16px}
   #touch button{width:70px;height:54px;font-size:19px}
   #touch #btnF{width:104px}
+  #about h2{font-size:17px}
 }
 </style>
 </head>
@@ -61,6 +68,11 @@ footer .tip b{display:block;color:#7df;margin-bottom:4px;font-size:14px}
 <header id="site-header">
   <h1>Космический защитник</h1>
   <p>Простая браузерная аркада на HTML5 Canvas — уничтожай волны врагов и защищай Землю.</p>
+  <nav id="site-nav">
+    <a href="#stage">Играть</a>
+    <a href="#about">Об игре</a>
+    <a href="#rules">Управление</a>
+  </nav>
 </header>
 
 <main>
@@ -84,9 +96,16 @@ footer .tip b{display:block;color:#7df;margin-bottom:4px;font-size:14px}
     <button id="btnF" aria-label="Выстрел">ОГОНЬ</button>
     <button id="btnR" aria-label="Вправо">▶</button>
   </div>
+
+  <section id="about">
+    <h2>Об игре</h2>
+    <p>«Космический защитник» — мини‑игра, написанная на чистом HTML, CSS и JavaScript без сторонних библиотек.
+       Враги наступают волнами: чем выше уровень, тем быстрее они двигаются. За каждого сбитого врага начисляются очки —
+       красные дают 10, оранжевые 20, зелёные 30. Три промаха — и игра окончена.</p>
+  </section>
 </main>
 
-<footer>
+<footer id="rules">
   <div class="tips">
     <div class="tip"><b>Движение</b>← → или A / D</div>
     <div class="tip"><b>Выстрел</b>Пробел или кнопка «ОГОНЬ»</div>
@@ -265,19 +284,15 @@ bindHold(btnF,' ');
 
 startBtn.addEventListener('click',start);
 
+/* --- Плавная прокрутка по якорям навигации --- */
+document.querySelectorAll('#site-nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'center'});}
+  });
+});
+
 reset();draw();
 </script>
 </body>
 </html>
-```
-### Что изменилось и как играть
-
-Вот что появилось в обновлённой версии:
-
-- **Структура сайта:** добавлены шапка с названием и описанием, подвал с подсказками по управлению. Основная игра осталась в центре.
-- **Управление:** работают стрелки ← → или A/D, выстрел — пробел. Для мобильных добавлены экранные кнопки «◀», «ОГОНЬ», «▶».
-- **Игровой процесс:** тот же код, что и раньше — уничтожайте врагов, набирайте очки, переходите на новые уровни.
-- **Адаптивность:** интерфейс подстраивается под небольшие экраны, HUD и кнопки переносятся на новые строки.
----
-
-**Оптимизация:** Если захотите ускорить игру, измените переменную `player.speed` (сейчас 6) или уменьшите `shootCd` (сейчас 8) — выстрелы станут чаще.
