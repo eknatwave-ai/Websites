@@ -217,7 +217,6 @@ function addParticles(x,y,color,count){
 }
 
 function shoot(){
-  const rateMul=1-0.2*(shopState.fireRate||0);
   if(tripleShotTimer>0){
     bullets.push({x:player.x,y:player.y-20,vy:-9});
     bullets.push({x:player.x-14,y:player.y-16,vy:-9,vx:-1.5});
@@ -227,7 +226,6 @@ function shoot(){
     bullets.push({x:player.x+12,y:player.y-20,vy:-9});
   }
   beep(880,0.04,'square',0.02);
-  return rateMul;
 }
 
 function update(){
