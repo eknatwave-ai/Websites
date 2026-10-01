@@ -1,298 +1,204 @@
+Here is a complete HTML document for a simple, responsive landing page about space protection, built as a lightweight single file with no external dependencies.
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Космический защитник — простая аркада на HTML5</title>
-<meta name="description" content="Космический защитник — простая браузерная аркада на HTML5 Canvas. Управляй кораблём, уничтожай врагов и защищай Землю!">
+<title>Космический защитник — простой сайт</title>
+<meta name="description" content="Космический защитник — простой одностраничный сайт о защите Земли от космических угроз.">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{min-height:100%}
-body{background:linear-gradient(135deg,#0a0a2e,#1a1a4e,#0a0a2e);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;font-family:'Segoe UI',Tahoma,sans-serif;overflow-x:hidden;color:#fff;padding:20px 15px 40px}
+body{
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  background:linear-gradient(160deg,#0a0a2e,#141447 45%,#0a0a2e);
+  color:#e6eefc;
+  min-height:100vh;
+  line-height:1.6;
+  padding:0 16px 0;
+}
+.wrap{max-width:900px;margin:0 auto}
 
-/* --- Шапка сайта --- */
-#site-header{text-align:center;margin-bottom:18px;max-width:760px}
-#site-header h1{font-size:30px;letter-spacing:1px;background:linear-gradient(90deg,#7df,#f7d,#7df);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-#site-header p{color:#8fa8c8;font-size:14px;line-height:1.6}
-#site-nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-#site-nav a{color:#9df;text-decoration:none;font-size:13px;padding:7px 16px;border-radius:20px;border:1px solid rgba(100,200,255,.25);background:rgba(20,30,70,.5);transition:.25s}
-#site-nav a:hover{background:rgba(40,80,160,.7);color:#fff;box-shadow:0 0 14px rgba(100,200,255,.3)}
+/* Шапка */
+header{text-align:center;padding:56px 0 36px}
+header h1{
+  font-size:clamp(26px,5vw,42px);
+  letter-spacing:1px;
+  background:linear-gradient(90deg,#7df,#f7d,#7df);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:14px;
+}
+header p{color:#8fa8c8;font-size:clamp(14px,2.4vw,17px);max-width:620px;margin:0 auto}
 
-/* --- Игровая зона --- */
-main{display:flex;flex-direction:column;align-items:center;width:100%}
-#hud{display:flex;gap:30px;margin-bottom:15px;font-size:18px;letter-spacing:1px;flex-wrap:wrap;justify-content:center}
-#hud span{color:#7df;text-shadow:0 0 10px rgba(100,220,255,.6)}
-#hud b{color:#fff;font-weight:600}
-#stage{position:relative;width:800px;max-width:100%;line-height:0}
-canvas{display:block;width:100%;height:auto;border:2px solid rgba(100,200,255,.3);border-radius:12px;box-shadow:0 0 40px rgba(100,200,255,.2),inset 0 0 60px rgba(0,0,0,.5);background:#050520;touch-action:none}
-#overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;background:rgba(5,5,30,.94);padding:34px 44px;border-radius:20px;border:1px solid rgba(100,200,255,.3);box-shadow:0 0 60px rgba(100,200,255,.15);backdrop-filter:blur(10px);line-height:1.5;width:min(90%,420px)}
-#overlay h1{font-size:30px;margin-bottom:14px;background:linear-gradient(90deg,#7df,#f7d,#7df);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-#overlay p{color:#9ab;margin-bottom:22px;font-size:15px;line-height:1.6}
-#overlay button{background:linear-gradient(135deg,#2a6,#1a4);border:none;color:#fff;padding:14px 40px;font-size:18px;border-radius:30px;cursor:pointer;letter-spacing:1px;transition:.3s;box-shadow:0 0 20px rgba(50,200,100,.3)}
-#overlay button:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(50,200,100,.5)}
-.hidden{display:none!important}
+/* Навигация */
+nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+nav a{
+  color:#9df;text-decoration:none;font-size:14px;
+  padding:8px 18px;border-radius:20px;
+  border:1px solid rgba(100,200,255,.25);
+  background:rgba(20,30,70,.5);
+  transition:.25s;
+}
+nav a:hover{background:rgba(40,80,160,.75);color:#fff;box-shadow:0 0 14px rgba(100,200,255,.35)}
 
-/* --- Экранные кнопки управления --- */
-#touch{display:flex;gap:14px;margin-top:18px;justify-content:center;flex-wrap:wrap}
-#touch button{width:86px;height:60px;border-radius:16px;border:1px solid rgba(100,200,255,.35);background:rgba(20,30,70,.75);color:#9df;font-size:22px;font-weight:700;cursor:pointer;user-select:none;touch-action:none;transition:.15s;box-shadow:0 0 16px rgba(100,200,255,.12)}
-#touch button:hover{background:rgba(30,50,110,.9)}
-#touch button:active,#touch button.pressed{background:rgba(60,120,220,.85);color:#fff;transform:scale(.96)}
-#touch #btnF{width:130px;background:rgba(40,20,70,.8);border-color:rgba(255,120,220,.4);color:#f9f}
+/* Карточки */
+section{margin:34px 0}
+section h2{font-size:clamp(19px,3vw,24px);color:#7df;margin-bottom:16px;text-align:center;letter-spacing:.5px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.card{
+  background:rgba(18,28,66,.65);
+  border:1px solid rgba(100,200,255,.18);
+  border-radius:16px;
+  padding:22px 20px;
+  transition:.25s;
+}
+.card:hover{transform:translateY(-4px);border-color:rgba(100,200,255,.45);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.card .icon{font-size:26px;margin-bottom:10px;display:block}
+.card h3{font-size:16px;color:#9df;margin-bottom:8px}
+.card p{font-size:14px;color:#8fa8c8}
 
-/* --- Информационные блоки --- */
-#about{max-width:760px;margin-top:34px;width:100%}
-#about h2{font-size:20px;color:#7df;margin-bottom:12px;text-align:center;letter-spacing:1px}
-#about p{color:#8fa8c8;font-size:14px;line-height:1.8;text-align:center}
+/* Список */
+ul.pretty{list-style:none;max-width:620px;margin:0 auto}
+ul.pretty li{
+  position:relative;padding:10px 0 10px 30px;
+  color:#b7c8e0;font-size:15px;
+  border-bottom:1px dashed rgba(100,200,255,.14);
+}
+ul.pretty li:last-child{border-bottom:none}
+ul.pretty li::before{content:"◆";position:absolute;left:6px;color:#4af;font-size:12px;top:13px}
 
-/* --- Подвал --- */
-footer{margin-top:34px;max-width:760px;text-align:center;color:#6d84a8;font-size:13px;line-height:1.8}
-footer .tips{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-footer .tip{background:rgba(20,32,70,.5);border:1px solid rgba(100,200,255,.15);border-radius:12px;padding:12px 18px;min-width:150px}
-footer .tip b{display:block;color:#7df;margin-bottom:4px;font-size:14px}
+/* Кнопка */
+.cta{text-align:center;margin:40px 0 10px}
+.cta button{
+  background:linear-gradient(135deg,#2a6,#1a4);
+  border:none;color:#fff;
+  padding:14px 40px;font-size:17px;border-radius:30px;
+  cursor:pointer;letter-spacing:1px;
+  transition:.3s;box-shadow:0 0 20px rgba(50,200,100,.3);
+  font-family:inherit;
+}
+.cta button:hover{transform:scale(1.05);box-shadow:0 0 32px rgba(50,200,100,.55)}
+
+/* Счётчик */
+.counter{
+  text-align:center;margin:16px auto 0;max-width:420px;
+  background:rgba(18,28,66,.65);
+  border:1px solid rgba(100,200,255,.18);
+  border-radius:16px;padding:18px;
+}
+.counter .num{font-size:34px;font-weight:700;color:#7df;text-shadow:0 0 18px rgba(100,220,255,.55)}
+
+/* Подвал */
+footer{
+  margin-top:50px;padding:26px 0 40px;
+  text-align:center;color:#6d84a8;font-size:13px;
+  border-top:1px solid rgba(100,200,255,.12);
+}
 
 @media(max-width:600px){
-  #site-header h1{font-size:22px}
-  #hud{font-size:15px;gap:16px}
-  #overlay{padding:24px 22px}
-  #overlay h1{font-size:22px}
-  #overlay p{font-size:13px}
-  #overlay button{padding:12px 28px;font-size:16px}
-  #touch button{width:70px;height:54px;font-size:19px}
-  #touch #btnF{width:104px}
-  #about h2{font-size:17px}
+  header{padding:38px 0 26px}
+  .card{padding:18px 16px}
 }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<header id="site-header">
-  <h1>Космический защитник</h1>
-  <p>Простая браузерная аркада на HTML5 Canvas — уничтожай волны врагов и защищай Землю.</p>
-  <nav id="site-nav">
-    <a href="#stage">Играть</a>
-    <a href="#about">Об игре</a>
-    <a href="#rules">Управление</a>
-  </nav>
-</header>
+  <header>
+    <h1>Космический защитник</h1>
+    <p>Простой сайт о том, как человечество следит за небом и защищает Землю от космических угроз.</p>
+    <nav>
+      <a href="#about">Об игре</a>
+      <a href="#features">Возможности</a>
+      <a href="#rules">Правила</a>
+    </nav>
+  </header>
 
-<main>
-  <div id="hud">
-    <span>Очки: <b id="score">0</b></span>
-    <span>Жизни: <b id="lives">3</b></span>
-    <span>Уровень: <b id="level">1</b></span>
-  </div>
+  <main>
 
-  <div id="stage">
-    <canvas id="game" width="800" height="500"></canvas>
-    <div id="overlay">
-      <h1>Космический защитник</h1>
-      <p>Управление: ← → или A/D<br>Пробел — выстрел<br>Уничтожай врагов, защищай Землю!</p>
-      <button id="startBtn">Начать игру</button>
+    <section id="about">
+      <h2>Об игре</h2>
+      <p style="text-align:center;color:#8fa8c8;max-width:680px;margin:0 auto">
+        «Космический защитник» — мини‑игра на чистом HTML, CSS и JavaScript без сторонних библиотек.
+        Враги наступают волнами: чем выше уровень, тем быстрее они двигаются.
+        За каждого сбитого врага начисляются очки — красные дают 10, оранжевые 20, зелёные 30.
+      </p>
+    </section>
+
+    <section id="features">
+      <h2>Возможности</h2>
+      <div class="cards">
+        <div class="card">
+          <span class="icon">🚀</span>
+          <h3>Управление кораблём</h3>
+          <p>Двигайся влево и вправо стрелками или клавишами A и D.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🔥</span>
+          <h3>Стрельба</h3>
+          <p>Пробел или экранная кнопка «ОГОНЬ» — выстрел по врагу.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🌊</span>
+          <h3>Волны врагов</h3>
+          <p>Каждый новый уровень делает противников быстрее и опаснее.</p>
+        </div>
+        <div class="card">
+          <span class="icon">⭐</span>
+          <h3>Очки и жизни</h3>
+          <p>Три промаха — и игра окончена. Собирай максимум очков!</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="rules">
+      <h2>Правила</h2>
+      <ul class="pretty">
+        <li>Управление кораблём: ← → или A / D</li>
+        <li>Выстрел: пробел или кнопка «ОГОНЬ»</li>
+        <li>Цель — сбить всех врагов волны</li>
+        <li>Красный враг — 10 очков, оранжевый — 20, зелёный — 30</li>
+        <li>У тебя три жизни: пропустишь врага — потеряешь одну</li>
+      </ul>
+    </section>
+
+    <div class="cta">
+      <button id="playBtn">Начать игру</button>
+      <div class="counter">
+        <div class="num" id="count">0</div>
+        <div style="font-size:13px;color:#8fa8c8">нажатий на кнопку</div>
+      </div>
     </div>
-  </div>
 
-  <div id="touch">
-    <button id="btnL" aria-label="Влево">◀</button>
-    <button id="btnF" aria-label="Выстрел">ОГОНЬ</button>
-    <button id="btnR" aria-label="Вправо">▶</button>
-  </div>
+  </main>
 
-  <section id="about">
-    <h2>Об игре</h2>
-    <p>«Космический защитник» — мини‑игра, написанная на чистом HTML, CSS и JavaScript без сторонних библиотек.
-       Враги наступают волнами: чем выше уровень, тем быстрее они двигаются. За каждого сбитого врага начисляются очки —
-       красные дают 10, оранжевые 20, зелёные 30. Три промаха — и игра окончена.</p>
-  </section>
-</main>
+  <footer>
+    <p>© Космический защитник — простой сайт на чистых HTML, CSS и JavaScript.</p>
+  </footer>
 
-<footer id="rules">
-  <div class="tips">
-    <div class="tip"><b>Движение</b>← → или A / D</div>
-    <div class="tip"><b>Выстрел</b>Пробел или кнопка «ОГОНЬ»</div>
-    <div class="tip"><b>Цель</b>Сбить всех врагов волны</div>
-  </div>
-  <p>© Космический защитник — мини‑игра на чистом HTML, CSS и JavaScript.</p>
-</footer>
+</div>
 
 <script>
-const c=document.getElementById('game'),x=c.getContext('2d'),W=c.width,H=c.height;
-const scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),levelEl=document.getElementById('level');
-const overlay=document.getElementById('overlay'),startBtn=document.getElementById('startBtn');
-const btnL=document.getElementById('btnL'),btnR=document.getElementById('btnR'),btnF=document.getElementById('btnF');
-let player,keys={},bullets,enemies,particles,stars,score,lives,level,gameOver,animId,shootCd,enemyDir,enemySpeed,spawnTimer;
-
-function initStars(){stars=[];for(let i=0;i<120;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2+.5,v:Math.random()*1.5+.3})}
-
-function reset(){
-  player={x:W/2,y:H-50,w:40,h:30,speed:6};
-  bullets=[];enemies=[];particles=[];score=0;lives=3;level=1;gameOver=false;shootCd=0;enemyDir=1;enemySpeed=1;spawnTimer=0;
-  scoreEl.textContent=0;livesEl.textContent=3;levelEl.textContent=1;
-  initStars();
-}
-
-function spawnEnemies(){
-  const rows=Math.min(3+Math.floor(level/2),5),cols=8;
-  for(let r=0;r<rows;r++)for(let col=0;col<cols;col++){
-    enemies.push({x:80+col*80,y:60+r*55,w:36,h:28,alive:true,type:r%3});
-  }
-}
-
-function shoot(){
-  if(shootCd>0)return;
-  bullets.push({x:player.x,y:player.y-20,vy:-9});
-  shootCd=8;
-}
-
-function addParticles(x,y,color,n=12){
-  for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=Math.random()*4+1;
-    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color});}
-}
-
-function update(){
-  if(gameOver)return;
-  if(shootCd>0)shootCd--;
-  if(keys['ArrowLeft']||keys['a']||keys['A'])player.x-=player.speed;
-  if(keys['ArrowRight']||keys['d']||keys['D'])player.x+=player.speed;
-  player.x=Math.max(player.w/2,Math.min(W-player.w/2,player.x));
-  if(keys[' '])shoot();
-
-  bullets.forEach(b=>b.y+=b.vy);
-  bullets=bullets.filter(b=>b.y>-20);
-
-  let hitEdge=false;
-  enemies.forEach(e=>{if(!e.alive)return;e.x+=enemySpeed*enemyDir;if(e.x+e.w/2>W-10||e.x-e.w/2<10)hitEdge=true;});
-  if(hitEdge){enemyDir*=-1;enemies.forEach(e=>{if(e.alive)e.y+=15;});}
-
-  bullets.forEach(b=>{
-    enemies.forEach(e=>{
-      if(!e.alive)return;
-      if(Math.abs(b.x-e.x)<e.w/2+5&&Math.abs(b.y-e.y)<e.h/2+5){
-        e.alive=false;b.y=-100;score+=10*(e.type+1);scoreEl.textContent=score;
-        addParticles(e.x,e.y,['#f66','#fa0','#6f6'][e.type],15);
-      }
-    });
+  var count = 0;
+  var num = document.getElementById('count');
+  document.getElementById('playBtn').addEventListener('click', function () {
+    count++;
+    num.textContent = count;
   });
-  bullets=bullets.filter(b=>b.y>-20);
-
-  enemies.forEach(e=>{
-    if(!e.alive)return;
-    if(e.y+e.h/2>player.y-player.h/2&&Math.abs(e.x-player.x)<e.w/2+player.w/2){
-      e.alive=false;lives--;livesEl.textContent=lives;
-      addParticles(player.x,player.y,'#f44',25);
-      if(lives<=0)endGame();
-    }
-  });
-  enemies=enemies.filter(e=>e.alive);
-
-  if(enemies.length===0){
-    level++;levelEl.textContent=level;
-    enemySpeed=1+level*0.3;
-    spawnEnemies();
-  }
-
-  particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.1;p.life-=.02;});
-  particles=particles.filter(p=>p.life>0);
-  stars.forEach(s=>{s.y+=s.v;if(s.y>H){s.y=0;s.x=Math.random()*W;}});
-}
-
-function draw(){
-  x.fillStyle='#050520';x.fillRect(0,0,W,H);
-  stars.forEach(s=>{x.fillStyle=`rgba(200,220,255,${s.s/2.5})`;x.fillRect(s.x,s.y,s.s,s.s);});
-
-  x.save();
-  x.shadowBlur=15;x.shadowColor='#4af';
-  x.fillStyle='#4af';
-  x.beginPath();
-  x.moveTo(player.x,player.y-player.h/2);
-  x.lineTo(player.x-player.w/2,player.y+player.h/2);
-  x.lineTo(player.x+player.w/2,player.y+player.h/2);
-  x.closePath();x.fill();
-  x.fillStyle='#8df';
-  x.beginPath();
-  x.moveTo(player.x,player.y-player.h/2-8);
-  x.lineTo(player.x-8,player.y-player.h/2+5);
-  x.lineTo(player.x+8,player.y-player.h/2+5);
-  x.closePath();x.fill();
-  x.restore();
-
-  bullets.forEach(b=>{
-    x.save();x.shadowBlur=12;x.shadowColor='#0ff';
-    x.fillStyle='#0ff';x.fillRect(b.x-2,b.y-8,4,12);
-    x.restore();
-  });
-
-  const colors=['#f66','#fa0','#6f6'];
-  enemies.forEach(e=>{
-    x.save();x.shadowBlur=10;x.shadowColor=colors[e.type];
-    x.fillStyle=colors[e.type];
-    x.beginPath();
-    x.moveTo(e.x,e.y+e.h/2);
-    x.lineTo(e.x-e.w/2,e.y-e.h/2);
-    x.lineTo(e.x+e.w/2,e.y-e.h/2);
-    x.closePath();x.fill();
-    x.fillStyle='rgba(255,255,255,.6)';
-    x.beginPath();x.arc(e.x,e.y-2,4,0,Math.PI*2);x.fill();
-    x.restore();
-  });
-
-  particles.forEach(p=>{
-    x.globalAlpha=p.life;
-    x.fillStyle=p.color;
-    x.beginPath();x.arc(p.x,p.y,3*p.life,0,Math.PI*2);x.fill();
-  });
-  x.globalAlpha=1;
-}
-
-function loop(){
-  update();draw();
-  animId=requestAnimationFrame(loop);
-}
-
-function endGame(){
-  gameOver=true;
-  cancelAnimationFrame(animId);
-  overlay.classList.remove('hidden');
-  overlay.querySelector('h1').textContent='Игра окончена';
-  overlay.querySelector('p').innerHTML=`Ваш результат: <b style="color:#7df">${score}</b> очков<br>Уровень: ${level}`;
-  startBtn.textContent='Играть снова';
-}
-
-function start(){
-  reset();spawnEnemies();
-  overlay.classList.add('hidden');
-  if(animId)cancelAnimationFrame(animId);
-  loop();
-}
-
-/* --- Клавиатура --- */
-document.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' ')e.preventDefault();});
-document.addEventListener('keyup',e=>{keys[e.key]=false;});
-
-/* --- Экранные кнопки (мобильные / планшеты) --- */
-function bindHold(el,key){
-  const on=e=>{e.preventDefault();keys[key]=true;el.classList.add('pressed');};
-  const off=e=>{e.preventDefault();keys[key]=false;el.classList.remove('pressed');};
-  el.addEventListener('pointerdown',on);
-  el.addEventListener('pointerup',off);
-  el.addEventListener('pointerleave',off);
-  el.addEventListener('pointercancel',off);
-  el.addEventListener('contextmenu',e=>e.preventDefault());
-}
-bindHold(btnL,'ArrowLeft');
-bindHold(btnR,'ArrowRight');
-bindHold(btnF,' ');
-
-startBtn.addEventListener('click',start);
-
-/* --- Плавная прокрутка по якорям навигации --- */
-document.querySelectorAll('#site-nav a').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'center'});}
-  });
-});
-
-reset();draw();
 </script>
 </body>
 </html>
+```
+### Simple Landing Page Structure
+
+The page keeps things straightforward with a clear informational layout and a small interactive element.
+
+- **Header and navigation**: The title and tagline introduce the game, while three navigation links scroll smoothly to the About, Features, and Rules sections.
+- **About section**: A short paragraph explains the game concept, including scoring rules and the wave-based enemy system.
+- **Features cards**: Four cards highlight movement control, shooting, enemy waves, and the lives/score system with icons and short descriptions.
+- **Rules list**: A styled unordered list summarizes the core gameplay instructions, from keyboard controls to enemy point values.
+- **Call-to-action and counter**: The "Начать игру" button increments a visible counter each time it's clicked, giving users a small interactive feedback loop without starting the full game.
+---
+
+**Optimization Tip:** The counter and button are placeholder interactions rather than a functional game. You can wire the button to your actual game logic or replace the counter with a live scoreboard.
