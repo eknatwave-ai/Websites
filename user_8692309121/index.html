@@ -3,269 +3,452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Вершина — студия дизайна</title>
+<title>Nova — студия цифрового дизайна</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #0f1220;
-    --card: #191d33;
-    --accent: #6c5ce7;
-    --accent2: #00d2a8;
-    --text: #eef0f7;
-    --muted: #9aa0bd;
+  :root{
+    --bg:#07080d;
+    --bg-soft:#0d0f18;
+    --card:#12151f;
+    --line:#20242f;
+    --text:#eef1f7;
+    --muted:#9aa3b6;
+    --accent:#6c5ce7;
+    --accent2:#00d2ff;
+    --accent3:#ff4d94;
   }
-  body {
-    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    overflow-x:hidden;
   }
-  a { color: inherit; text-decoration: none; }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
 
-  header {
-    position: sticky; top: 0; z-index: 50;
-    backdrop-filter: blur(12px);
-    background: rgba(15,18,32,.82);
-    border-bottom: 1px solid rgba(255,255,255,.07);
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    backdrop-filter:blur(14px);
+    background:rgba(7,8,13,.72);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    transition:background .3s;
   }
-  nav {
-    max-width: 1080px; margin: 0 auto; padding: 16px 22px;
-    display: flex; align-items: center; justify-content: space-between;
+  .nav{
+    max-width:1180px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
   }
-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; letter-spacing: .5px; }
-  .logo span.mark {
-    width: 30px; height: 30px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: grid; place-items: center; font-size: .95rem; color: #0f1220; font-weight: 900;
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;letter-spacing:.5px}
+  .logo-mark{
+    width:32px;height:32px;border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 0 22px rgba(108,92,231,.6);
+    display:grid;place-items:center;font-size:.9rem;color:#fff;
   }
-  .links { display: flex; gap: 26px; font-size: .94rem; color: var(--muted); }
-  .links a { transition: color .2s; }
-  .links a:hover { color: var(--text); }
-  .burger { display: none; background: none; border: 0; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+  .nav-links{display:flex;gap:30px;font-size:.94rem;color:var(--muted)}
+  .nav-links a{position:relative;transition:color .25s}
+  .nav-links a::after{
+    content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:width .3s;border-radius:2px;
+  }
+  .nav-links a:hover{color:#fff}
+  .nav-links a:hover::after{width:100%}
+  .btn{
+    display:inline-block;padding:12px 26px;border-radius:60px;font-weight:600;
+    font-size:.94rem;cursor:pointer;border:none;transition:transform .25s,box-shadow .25s,background .25s;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background:linear-gradient(120deg,var(--accent),var(--accent2));
+    color:#05060a;box-shadow:0 8px 26px rgba(108,92,231,.4);
+  }
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,210,255,.45)}
+  .btn-ghost{
+    background:transparent;color:var(--text);border:1px solid var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--accent2);color:var(--accent2);transform:translateY(-3px)}
 
-  .hero {
-    max-width: 1080px; margin: 0 auto; padding: 90px 22px 70px;
-    display: grid; grid-template-columns: 1.15fr .85fr; gap: 50px; align-items: center;
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;padding:170px 24px 110px;text-align:center;overflow:hidden;
   }
-  .tag {
-    display: inline-block; padding: 6px 14px; border-radius: 999px;
-    background: rgba(108,92,231,.16); border: 1px solid rgba(108,92,231,.4);
-    color: #b3aaff; font-size: .82rem; letter-spacing: .6px; text-transform: uppercase;
+  .glow{
+    position:absolute;border-radius:50%;filter:blur(120px);opacity:.5;pointer-events:none;
   }
-  h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.12; margin: 20px 0 18px; }
-  h1 .grad {
-    background: linear-gradient(100deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+  .g1{width:520px;height:520px;background:var(--accent);top:-160px;left:-120px}
+  .g2{width:460px;height:460px;background:var(--accent2);top:60px;right:-160px;opacity:.35}
+  .g3{width:380px;height:380px;background:var(--accent3);bottom:-180px;left:45%;opacity:.22}
+  .hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto}
+  .badge{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:8px 18px;border-radius:60px;font-size:.82rem;
+    background:rgba(108,92,231,.13);border:1px solid rgba(108,92,231,.4);
+    color:#c3bcff;margin-bottom:26px;letter-spacing:.4px;
   }
-  .hero p { color: var(--muted); font-size: 1.06rem; max-width: 520px; }
-  .cta { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
-  .btn {
-    padding: 13px 26px; border-radius: 12px; font-weight: 600; font-size: .96rem;
-    cursor: pointer; border: 1px solid transparent; transition: transform .18s, box-shadow .18s;
+  .dot{width:7px;height:7px;border-radius:50%;background:#00e08a;box-shadow:0 0 10px #00e08a}
+  h1{
+    font-size:clamp(2.3rem,6vw,4.2rem);line-height:1.08;font-weight:800;letter-spacing:-1.5px;
+    margin-bottom:24px;
   }
-  .btn-main {
-    background: linear-gradient(120deg, var(--accent), #8f7bff);
-    color: #fff; box-shadow: 0 10px 30px -10px var(--accent);
+  h1 .grad{
+    background:linear-gradient(100deg,var(--accent2),var(--accent),var(--accent3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .btn-ghost { background: transparent; border-color: rgba(255,255,255,.2); color: var(--text); }
-  .btn:hover { transform: translateY(-2px); }
+  .hero p{
+    font-size:clamp(1rem,2vw,1.18rem);color:var(--muted);max-width:640px;margin:0 auto 38px;
+  }
+  .hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .stats{
+    display:flex;justify-content:center;gap:56px;flex-wrap:wrap;
+    margin-top:80px;position:relative;z-index:2;
+  }
+  .stat b{display:block;font-size:2rem;font-weight:800;
+    background:linear-gradient(120deg,#fff,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{font-size:.85rem;color:var(--muted);letter-spacing:.5px}
 
-  .visual {
-    position: relative; aspect-ratio: 1/1; border-radius: 26px;
-    background: radial-gradient(circle at 30% 25%, rgba(108,92,231,.55), transparent 60%),
-                radial-gradient(circle at 75% 75%, rgba(0,210,168,.45), transparent 60%),
-                var(--card);
-    border: 1px solid rgba(255,255,255,.08);
-    display: grid; place-items: center; overflow: hidden;
+  /* ---------- SECTIONS ---------- */
+  section{padding:100px 24px;position:relative}
+  .wrap{max-width:1180px;margin:0 auto}
+  .sec-head{text-align:center;max-width:660px;margin:0 auto 62px}
+  .eyebrow{
+    font-size:.78rem;letter-spacing:3px;text-transform:uppercase;
+    color:var(--accent2);font-weight:700;margin-bottom:14px;
   }
-  .orb {
-    width: 62%; aspect-ratio: 1; border-radius: 50%;
-    background: conic-gradient(from 210deg, var(--accent), var(--accent2), #ff6b9d, var(--accent));
-    filter: blur(2px); opacity: .85;
-    animation: spin 14s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  h2{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:800;letter-spacing:-.8px;margin-bottom:16px}
+  .sec-head p{color:var(--muted)}
 
-  section { max-width: 1080px; margin: 0 auto; padding: 70px 22px; }
-  .sec-title { font-size: 1.9rem; margin-bottom: 10px; }
-  .sec-sub { color: var(--muted); margin-bottom: 40px; }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-  .card {
-    background: var(--card); border: 1px solid rgba(255,255,255,.07);
-    border-radius: 18px; padding: 28px 24px;
-    transition: transform .22s, border-color .22s;
+  /* ---------- CARDS ---------- */
+  .grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .card{
+    background:linear-gradient(160deg,var(--card),#0b0d15);
+    border:1px solid var(--line);border-radius:20px;padding:34px 30px;
+    transition:transform .35s,border-color .35s,box-shadow .35s;position:relative;overflow:hidden;
   }
-  .card:hover { transform: translateY(-5px); border-color: rgba(108,92,231,.5); }
-  .icon {
-    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
-    font-size: 1.3rem; margin-bottom: 16px;
-    background: rgba(0,210,168,.14); border: 1px solid rgba(0,210,168,.3);
+  .card::before{
+    content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s;
+    background:radial-gradient(400px circle at 50% 0%,rgba(108,92,231,.22),transparent 70%);
+    pointer-events:none;
   }
-  .card h3 { font-size: 1.08rem; margin-bottom: 8px; }
-  .card p { color: var(--muted); font-size: .93rem; }
-
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 20px; text-align: center; }
-  .stat b { display: block; font-size: 2.2rem; background: linear-gradient(120deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .stat span { color: var(--muted); font-size: .9rem; }
-
-  .contact-box {
-    background: linear-gradient(140deg, rgba(108,92,231,.18), rgba(0,210,168,.12));
-    border: 1px solid rgba(255,255,255,.09);
-    border-radius: 24px; padding: 46px 30px; text-align: center;
+  .card:hover{transform:translateY(-8px);border-color:rgba(108,92,231,.55);box-shadow:0 22px 50px rgba(0,0,0,.5)}
+  .card:hover::before{opacity:1}
+  .ico{
+    width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+    font-size:1.4rem;margin-bottom:20px;
+    background:rgba(108,92,231,.14);border:1px solid rgba(108,92,231,.35);
   }
-  form { display: flex; gap: 12px; max-width: 520px; margin: 26px auto 0; flex-wrap: wrap; justify-content: center; }
-  input[type=email] {
-    flex: 1 1 260px; padding: 13px 18px; border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.25);
-    color: var(--text); font-size: .96rem; outline: none;
-  }
-  input[type=email]:focus { border-color: var(--accent); }
-  .note { margin-top: 14px; font-size: .86rem; color: var(--accent2); min-height: 20px; }
+  .card h3{font-size:1.16rem;margin-bottom:10px;font-weight:700}
+  .card p{color:var(--muted);font-size:.95rem}
 
-  footer {
-    border-top: 1px solid rgba(255,255,255,.07);
-    padding: 30px 22px; text-align: center; color: var(--muted); font-size: .88rem;
+  /* ---------- WORK ---------- */
+  .work-grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .work{
+    border-radius:20px;overflow:hidden;position:relative;height:290px;
+    border:1px solid var(--line);cursor:pointer;
   }
+  .work .fill{position:absolute;inset:0;transition:transform .5s}
+  .work:hover .fill{transform:scale(1.07)}
+  .f1{background:linear-gradient(135deg,#6c5ce7,#00d2ff)}
+  .f2{background:linear-gradient(135deg,#ff4d94,#ffa751)}
+  .f3{background:linear-gradient(135deg,#00e08a,#0f5fd6)}
+  .f4{background:linear-gradient(135deg,#8e2de2,#4a00e0)}
+  .f5{background:linear-gradient(135deg,#f9d423,#ff4e50)}
+  .f6{background:linear-gradient(135deg,#0ba360,#3cba92)}
+  .work .overlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:26px;background:linear-gradient(to top,rgba(5,6,10,.92),rgba(5,6,10,.15) 65%,transparent);
+  }
+  .work h4{font-size:1.15rem;font-weight:700}
+  .work span{font-size:.85rem;color:#b9c1d4}
 
-  @media (max-width: 860px) {
-    .hero { grid-template-columns: 1fr; padding-top: 60px; text-align: center; }
-    .hero p { margin: 0 auto; }
-    .cta { justify-content: center; }
-    .visual { max-width: 340px; margin: 0 auto; }
-    .links {
-      display: none; position: absolute; top: 100%; left: 0; right: 0;
-      flex-direction: column; gap: 0; background: #14172a; padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .links.open { display: flex; }
-    .links a { padding: 12px 22px; }
-    .burger { display: block; }
-    nav { position: relative; }
+  /* ---------- PRICING ---------- */
+  .price{
+    background:linear-gradient(165deg,var(--card),#0a0c14);
+    border:1px solid var(--line);border-radius:22px;padding:38px 32px;
+    display:flex;flex-direction:column;transition:transform .35s,border-color .35s;
+  }
+  .price:hover{transform:translateY(-8px);border-color:rgba(0,210,255,.45)}
+  .price.featured{
+    border-color:rgba(108,92,231,.7);
+    background:linear-gradient(165deg,#191d33,#0c0e18);
+    box-shadow:0 0 50px rgba(108,92,231,.22);
+  }
+  .tag{
+    align-self:flex-start;font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;
+    padding:5px 13px;border-radius:40px;margin-bottom:16px;font-weight:700;
+    background:linear-gradient(120deg,var(--accent),var(--accent2));color:#05060a;
+  }
+  .price h3{font-size:1.25rem;margin-bottom:8px}
+  .amount{font-size:2.6rem;font-weight:800;letter-spacing:-1.5px;margin:10px 0 4px}
+  .amount small{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
+  .price ul{list-style:none;margin:26px 0 30px;display:flex;flex-direction:column;gap:12px}
+  .price li{display:flex;gap:11px;font-size:.94rem;color:#cdd4e3}
+  .price li::before{content:"✓";color:var(--accent2);font-weight:800}
+  .price .btn{width:100%;text-align:center;margin-top:auto}
+
+  /* ---------- CONTACT ---------- */
+  .contact-box{
+    display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;
+    background:linear-gradient(150deg,#14172a,#0a0c14);
+    border:1px solid var(--line);border-radius:26px;padding:56px;
+    position:relative;overflow:hidden;
+  }
+  .contact-box::after{
+    content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+    background:var(--accent);filter:blur(130px);opacity:.28;right:-90px;bottom:-140px;
+  }
+  .contact-box h2{font-size:clamp(1.6rem,3vw,2.2rem)}
+  .contact-box p{color:var(--muted);margin:14px 0 26px}
+  form{display:flex;flex-direction:column;gap:14px;position:relative;z-index:2}
+  input,textarea{
+    background:#0a0c14;border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;color:var(--text);font-family:inherit;font-size:.95rem;
+    outline:none;transition:border-color .25s,box-shadow .25s;width:100%;
+  }
+  input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,92,231,.18)}
+  textarea{resize:vertical;min-height:104px}
+  .form-note{font-size:.8rem;color:var(--muted);text-align:center}
+  .ok-msg{color:#00e08a;font-size:.88rem;display:none;text-align:center}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--line);padding:44px 24px 34px;background:#05060a}
+  .foot{
+    max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;
+    align-items:center;gap:24px;flex-wrap:wrap;color:var(--muted);font-size:.88rem;
+  }
+  .socials{display:flex;gap:12px}
+  .socials a{
+    width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    border:1px solid var(--line);transition:.28s;font-size:.85rem;
+  }
+  .socials a:hover{border-color:var(--accent2);color:var(--accent2);transform:translateY(-3px)}
+
+  /* ---------- REVEAL ---------- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:860px){
+    .nav-links{display:none}
+    .contact-box{grid-template-columns:1fr;padding:36px 26px;gap:34px}
+    .stats{gap:34px}
+    section{padding:74px 20px}
+    .hero{padding:140px 20px 80px}
   }
 </style>
 </head>
 <body>
 
 <header>
-  <nav>
-    <div class="logo"><span class="mark">В</span> Вершина</div>
-    <button class="burger" id="burger" aria-label="Меню">☰</button>
-    <div class="links" id="links">
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-mark">◆</div>
+      NOVA
+    </div>
+    <div class="nav-links">
       <a href="#services">Услуги</a>
-      <a href="#about">О нас</a>
-      <a href="#stats">Цифры</a>
+      <a href="#works">Работы</a>
+      <a href="#pricing">Тарифы</a>
       <a href="#contact">Контакты</a>
     </div>
+    <a href="#contact" class="btn btn-primary">Обсудить проект</a>
   </nav>
 </header>
 
-<div class="hero">
-  <div>
-    <span class="tag">Студия дизайна и разработки</span>
-    <h1>Создаём сайты, которые <span class="grad">работают</span></h1>
-    <p>Мы превращаем идеи в быстрые, красивые и удобные интерфейсы. От первого наброска до готового продукта — под ключ и в срок.</p>
-    <div class="cta">
-      <button class="btn btn-main" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Обсудить проект</button>
-      <a class="btn btn-ghost" href="#services">Наши услуги</a>
+<main>
+  <section class="hero">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="hero-inner">
+      <div class="badge"><span class="dot"></span> Принимаем проекты на 2025 год</div>
+      <h1>Дизайн, который <span class="grad">продаёт</span> ваши идеи</h1>
+      <p>Мы создаём сайты, интерфейсы и бренды, которые запоминаются. Стратегия, дизайн и код — в одной команде, без посредников и лишних созвонов.</p>
+      <div class="hero-actions">
+        <a href="#works" class="btn btn-primary">Смотреть работы</a>
+        <a href="#services" class="btn btn-ghost">Что мы делаем</a>
+      </div>
     </div>
-  </div>
-  <div class="visual"><div class="orb"></div></div>
-</div>
+    <div class="stats">
+      <div class="stat"><b>240+</b><span>ПРОЕКТОВ</span></div>
+      <div class="stat"><b>11 лет</b><span>НА РЫНКЕ</span></div>
+      <div class="stat"><b>98%</b><span>ДОВОЛЬНЫХ КЛИЕНТОВ</span></div>
+      <div class="stat"><b>24 ч</b><span>ОТВЕТ НА ЗАЯВКУ</span></div>
+    </div>
+  </section>
 
-<section id="services">
-  <h2 class="sec-title">Что мы делаем</h2>
-  <p class="sec-sub">Полный цикл работы над цифровым продуктом.</p>
-  <div class="grid">
-    <div class="card">
-      <div class="icon">🎨</div>
-      <h3>Дизайн интерфейсов</h3>
-      <p>Понятные макеты, продуманная типографика и аккуратная сетка для любого экрана.</p>
+  <section id="services">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Услуги</div>
+        <h2>Полный цикл digital-продакшена</h2>
+        <p>От первой скетч-идеи до релиза и аналитики. Вы получаете один контакт и прозрачный процесс.</p>
+      </div>
+      <div class="grid">
+        <div class="card reveal">
+          <div class="ico">🎨</div>
+          <h3>UI/UX дизайн</h3>
+          <p>Исследование аудитории, прототипы, дизайн-система и интерактивные макеты, готовые к вёрстке.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">⚡</div>
+          <h3>Разработка сайтов</h3>
+          <p>Быстрые адаптивные сайты и веб-приложения. Чистый код, высокая скорость загрузки, SEO-база.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">💠</div>
+          <h3>Брендинг</h3>
+          <p>Логотип, айдентика, гайдлайны и визуальный язык, который отличает вас от конкурентов.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">📈</div>
+          <h3>Аналитика и рост</h3>
+          <p>A/B-тесты, воронки, метрики и итерации — превращаем трафик в реальные заявки.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">🧩</div>
+          <h3>Дизайн-системы</h3>
+          <p>Библиотеки компонентов и токены, чтобы команда собирала страницы быстро и консистентно.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico">🚀</div>
+          <h3>Запуск и поддержка</h3>
+          <p>Хостинг, домен, мониторинг и техподдержка. Следим, чтобы всё работало стабильно.</p>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="icon">⚡</div>
-      <h3>Разработка</h3>
-      <p>Чистый код, высокая скорость загрузки и корректная работа во всех браузерах.</p>
-    </div>
-    <div class="card">
-      <div class="icon">📈</div>
-      <h3>Продвижение</h3>
-      <p>Настраиваем аналитику, оптимизируем страницы под поисковые системы.</p>
-    </div>
-    <div class="card">
-      <div class="icon">🛠</div>
-      <h3>Поддержка</h3>
-      <p>Обновляем контент, дорабатываем функциональность и следим за стабильностью.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="about">
-  <h2 class="sec-title">О нас</h2>
-  <p class="sec-sub">Небольшая команда, которая любит своё дело.</p>
-  <div class="grid">
-    <div class="card">
-      <h3>6 лет опыта</h3>
-      <p>За это время мы прошли путь от фриланса до полноценной студии с постоянными клиентами.</p>
+  <section id="works">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Портфолио</div>
+        <h2>Проекты, которыми мы гордимся</h2>
+        <p>Каждый кейс — это измеримый результат: рост конверсии, узнаваемость и удобство для пользователя.</p>
+      </div>
+      <div class="work-grid">
+        <div class="work reveal"><div class="fill f1"></div><div class="overlay"><h4>Fintech Dashboard</h4><span>Продукт · UX/UI · 2024</span></div></div>
+        <div class="work reveal"><div class="fill f2"></div><div class="overlay"><h4>Bloom Coffee</h4><span>Брендинг · Упаковка</span></div></div>
+        <div class="work reveal"><div class="fill f3"></div><div class="overlay"><h4>EcoRide</h4><span>Мобильное приложение</span></div></div>
+        <div class="work reveal"><div class="fill f4"></div><div class="overlay"><h4>Nebula Studio</h4><span>Корпоративный сайт</span></div></div>
+        <div class="work reveal"><div class="fill f5"></div><div class="overlay"><h4>Sunrise Market</h4><span>E-commerce платформа</span></div></div>
+        <div class="work reveal"><div class="fill f6"></div><div class="overlay"><h4>Verde Health</h4><span>Сервис · Дизайн-система</span></div></div>
+      </div>
     </div>
-    <div class="card">
-      <h3>Прозрачный процесс</h3>
-      <p>Вы всегда знаете, на каком этапе проект: понятные сроки, этапы и отчётность.</p>
-    </div>
-    <div class="card">
-      <h3>Живая связь</h3>
-      <p>Отвечаем на вопросы в течение рабочего дня и не пропадаем после сдачи проекта.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="stats">
-  <div class="stats">
-    <div class="stat"><b>140+</b><span>проектов</span></div>
-    <div class="stat"><b>6</b><span>лет на рынке</span></div>
-    <div class="stat"><b>98%</b><span>довольных клиентов</span></div>
-    <div class="stat"><b>24/7</b><span>поддержка</span></div>
-  </div>
-</section>
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Тарифы</div>
+        <h2>Прозрачные цены без сюрпризов</h2>
+        <p>Выберите формат сотрудничества. Итоговую смету зафиксируем в договоре до старта работ.</p>
+      </div>
+      <div class="grid">
+        <div class="price reveal">
+          <h3>Лендинг</h3>
+          <div class="amount">от 90 000 ₽ <small>/ проект</small></div>
+          <ul>
+            <li>Одностраничный сайт</li>
+            <li>Индивидуальный дизайн</li>
+            <li>Адаптив под все устройства</li>
+            <li>Подключение формы заявок</li>
+            <li>Срок — 2–3 недели</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Выбрать</a>
+        </div>
+        <div class="price featured reveal">
+          <div class="tag">Популярный</div>
+          <h3>Бизнес-сайт</h3>
+          <div class="amount">от 240 000 ₽ <small>/ проект</small></div>
+          <ul>
+            <li>До 12 уникальных страниц</li>
+            <li>Дизайн-система и компоненты</li>
+            <li>CMS для самостоятельного редактирования</li>
+            <li>SEO-оптимизация и аналитика</li>
+            <li>Срок — 4–6 недель</li>
+          </ul>
+          <a href="#contact" class="btn btn-primary">Выбрать</a>
+        </div>
+        <div class="price reveal">
+          <h3>Продукт</h3>
+          <div class="amount">от 600 000 ₽ <small>/ продукт</small></div>
+          <ul>
+            <li>Исследование и стратегия</li>
+            <li>Веб-приложение или сервис</li>
+            <li>Дизайн-система под масштабирование</li>
+            <li>A/B-тесты и оптимизация</li>
+            <li>Поддержка 3 месяца</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost">Выбрать</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section id="contact">
-  <div class="contact-box">
-    <h2 class="sec-title">Начнём проект?</h2>
-    <p class="sec-sub">Оставьте почту — свяжемся и обсудим детали бесплатно.</p>
-    <form id="form">
-      <input type="email" id="email" placeholder="your@mail.com" required>
-      <button class="btn btn-main" type="submit">Отправить</button>
-    </form>
-    <div class="note" id="note"></div>
-  </div>
-</section>
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-box reveal">
+        <div>
+          <div class="eyebrow">Свяжитесь с нами</div>
+          <h2>Расскажите о своём проекте</h2>
+          <p>Оставьте заявку — ответим в течение 24 часов, зададим уточняющие вопросы и предложим решение с оценкой сроков и бюджета.</p>
+          <p style="margin:0"><strong>hello@nova.studio</strong><br>+7 (495) 000-00-00</p>
+        </div>
+        <form id="leadForm">
+          <input type="text" name="name" placeholder="Ваше имя" required>
+          <input type="email" name="email" placeholder="Email для ответа" required>
+          <textarea name="message" placeholder="Коротко о задаче и желаемых сроках"></textarea>
+          <button type="submit" class="btn btn-primary">Отправить заявку</button>
+          <div class="form-note">Нажимая кнопку, вы соглашаетесь на обработку данных.</div>
+          <div class="ok-msg" id="okMsg">Спасибо! Заявка отправлена — мы скоро свяжемся.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
-  © 2025 Студия «Вершина». Все права защищены.
+  <div class="foot">
+    <div>© 2025 Nova Studio. Цифровой дизайн и разработка.</div>
+    <div class="socials">
+      <a href="#" title="Telegram">TG</a>
+      <a href="#" title="Behance">Be</a>
+      <a href="#" title="Dribbble">Dr</a>
+      <a href="#" title="GitHub">Gh</a>
+    </div>
+  </div>
 </footer>
 
 <script>
-  var burger = document.getElementById('burger');
-  var links = document.getElementById('links');
-  burger.addEventListener('click', function () {
-    links.classList.toggle('open');
-  });
-  links.addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') links.classList.remove('open');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 70) + 'ms';
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  const form = document.getElementById('leadForm');
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    document.getElementById('okMsg').style.display = 'block';
+    form.querySelectorAll('input, textarea').forEach(f => f.value = '');
+    setTimeout(() => {
+      document.getElementById('okMsg').style.display = 'none';
+    }, 5000);
   });
 
-  document.getElementById('form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = document.getElementById('email').value.trim();
-    var note = document.getElementById('note');
-    if (email.indexOf('@') > 0 && email.indexOf('.') > 0) {
-      note.textContent = 'Спасибо! Мы напишем на ' + email;
-      document.getElementById('email').value = '';
-    } else {
-      note.style.color = '#ff6b9d';
-      note.textContent = 'Проверьте адрес электронной почты.';
-    }
+  const header = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    header.style.background = window.scrollY > 40
+      ? 'rgba(7,8,13,.94)'
+      : 'rgba(7,8,13,.72)';
   });
 </script>
 
