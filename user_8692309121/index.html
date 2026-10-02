@@ -26,7 +26,6 @@
   }
   .lbl{display:block;font-size:9px;opacity:.55;letter-spacing:2px;margin-bottom:1px;}
   .hud-box b{font-size:16px;color:#7fe9ff;text-shadow:0 0 10px rgba(77,227,255,.85);}
-  #ovContent b{color:#7fe9ff;}
   #overlay{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     background:radial-gradient(circle at 50% 38%,rgba(12,34,70,.78),rgba(3,4,10,.95));
@@ -47,6 +46,7 @@
     border-radius:12px;padding:12px 18px;margin-bottom:20px;opacity:.9;
   }
   .keys b{color:#7fe9ff;}
+  #ovContent b{color:#7fe9ff;}
   button{
     font-family:inherit;font-size:16px;font-weight:700;letter-spacing:3px;
     color:#04121c;background:linear-gradient(180deg,#9df3ff,#2fc6ee);
@@ -60,6 +60,7 @@
   .score-big{font-size:clamp(34px,10vw,60px);font-weight:900;color:#7fe9ff;
     text-shadow:0 0 12px rgba(77,227,255,.9),0 0 40px rgba(29,127,255,.6);margin:4px 0 2px;letter-spacing:2px;}
   .stat-line{font-size:14px;opacity:.75;margin:0 0 18px;letter-spacing:1px;}
+  .mini-note{font-size:12px;opacity:.5;margin-top:14px;letter-spacing:1px;}
 </style>
 </head>
 <body>
@@ -84,6 +85,7 @@
       <br>
       <button id="btn">НАЧАТЬ ИГРУ</button>
       <p class="best">Рекорд: <b id="uiBest">0</b></p>
+      <p class="mini-note">На телефоне — веди палец по экрану</p>
     </div>
   </div>
 </div>
@@ -100,6 +102,7 @@ var overlay = document.getElementById('overlay');
 var uiScore = document.getElementById('uiScore');
 var uiWave = document.getElementById('uiWave');
 var uiLives = document.getElementById('uiLives');
+var uiBest = document.getElementById('uiBest');
 
 var W = 0, H = 0, DPR = 1;
 var rand = function(a,b){ return a + Math.random()*(b-a); };
@@ -107,6 +110,7 @@ var clamp = function(v,a,b){ return v<a?a:(v>b?b:v); };
 
 var best = 0;
 try { best = parseInt(localStorage.getItem('neonvoid_best') || '0', 10) || 0; } catch(e){ best = 0; }
+uiBest.textContent = best;
 
 var state = 'menu';
 var stars = [], particles = [], enemies = [], bullets = [], ebullets = [], powerups = [], spawnQueue = [];
@@ -114,6 +118,7 @@ var player = null;
 var score = 0, lives = 3, wave = 0, waveTimer = 1.2, bannerT = 0, banner = '', shake = 0;
 var keys = {};
 var pointer = { x: 0, y: 0, active: false, touch: false };
+var flashT = 0;
 
 /* ================= ЗВУК ================= */
 var AC = null;
@@ -127,21 +132,23 @@ function audio(){
 function tone(freq, dur, type, vol, slideTo){
   var a = audio();
   if (!a) return;
-  var o = a.createOscillator(), g = a.createGain();
-  o.type = type || 'square';
-  var t0 = a.currentTime;
-  o.frequency.setValueAtTime(freq, t0);
-  if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(28, slideTo), t0 + dur);
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(vol || 0.05, t0 + 0.012);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g); g.connect(a.destination);
-  o.start(t0); o.stop(t0 + dur + 0.03);
+  try {
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'square';
+    var t0 = a.currentTime;
+    o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(28, slideTo), t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.05, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t0); o.stop(t0 + dur + 0.03);
+  } catch(e){}
 }
-function sfxShoot(){ tone(760, 0.05, 'square', 0.022, 380); }
-function sfxHit(){ tone(320, 0.05, 'square', 0.03, 160); }
-function sfxBoom(){ tone(150, 0.28, 'sawtooth', 0.06, 38); }
-function sfxHurt(){ tone(240, 0.4, 'sawtooth', 0.09, 50); }
+function sfxShoot(){ tone(760, 0.045, 'square', 0.02, 380); }
+function sfxHit(){ tone(320, 0.05, 'square', 0.028, 160); }
+function sfxBoom(){ tone(150, 0.28, 'sawtooth', 0.055, 38); }
+function sfxHurt(){ tone(240, 0.4, 'sawtooth', 0.085, 50); }
 function sfxPower(){ tone(620, 0.18, 'sine', 0.07, 1240); }
 function sfxShield(){ tone(880, 0.22, 'triangle', 0.07, 1500); }
 function sfxWave(){ tone(420, 0.2, 'triangle', 0.05, 840); }
@@ -157,6 +164,10 @@ function resize(){
   canvas.style.height = H + 'px';
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   initStars();
+  if (player){
+    player.x = clamp(player.x, 18, W - 18);
+    player.y = clamp(player.y, 34, H - 16);
+  }
 }
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', function(){ setTimeout(resize, 150); });
@@ -184,14 +195,14 @@ function updateStars(dt){
 function drawStars(){
   for (var i = 0; i < stars.length; i++){
     var s = stars[i];
-    ctx.fillStyle = 'rgba(175,228,255,' + (0.15 + s.z * 0.7) + ')';
+    ctx.fillStyle = 'rgba(175,228,255,' + (0.15 + s.z * 0.7).toFixed(3) + ')';
     ctx.fillRect(s.x, s.y, s.s, s.s * (1 + s.z));
   }
 }
 
 /* ================= ЧАСТИЦЫ ================= */
 function burst(x, y, color, count, spd){
-  if (particles.length > 460) return;
+  if (particles.length > 480) return;
   for (var i = 0; i < count; i++){
     var a = Math.random() * Math.PI * 2;
     var s = rand(35, 230) * (spd || 1);
@@ -233,7 +244,7 @@ function drawParticles(){
 function newPlayer(){
   return {
     x: W / 2, y: H - Math.max(90, H * 0.18),
-    r: 13, speed: 430,
+    r: 13, speed: 440,
     invuln: 2.4, shield: 0, triple: 0, fireCd: 0
   };
 }
@@ -257,7 +268,7 @@ function updatePlayer(dt){
     var dx = pointer.x - p.x, dy = pointer.y - p.y;
     var dist = Math.sqrt(dx * dx + dy * dy);
     if (dist > 1){
-      var step = Math.min(dist, p.speed * 1.75 * dt);
+      var step = Math.min(dist, p.speed * 1.8 * dt);
       p.x += (dx / dist) * step;
       p.y += (dy / dist) * step;
     }
@@ -274,7 +285,7 @@ function updatePlayer(dt){
 }
 function shoot(){
   var p = player;
-  var sp = 780;
+  var sp = 790;
   if (p.triple > 0){
     var angles = [-0.21, 0, 0.21];
     for (var i = 0; i < 3; i++){
@@ -294,7 +305,6 @@ function drawPlayer(){
   ctx.save();
   ctx.translate(p.x, p.y);
 
-  // пламя двигателя
   var fl = 8 + Math.random() * 10;
   ctx.beginPath();
   ctx.moveTo(-5, 11);
@@ -305,7 +315,6 @@ function drawPlayer(){
   ctx.shadowColor = '#4de3ff'; ctx.shadowBlur = 18;
   ctx.fill();
 
-  // корпус
   ctx.beginPath();
   ctx.moveTo(0, -18);
   ctx.lineTo(12, 12);
@@ -329,7 +338,7 @@ function drawPlayer(){
     ctx.save();
     ctx.beginPath();
     ctx.arc(p.x, p.y, 26, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(120,255,200,' + (0.45 + 0.3 * Math.sin(performance.now() / 130)) + ')';
+    ctx.strokeStyle = 'rgba(120,255,200,' + (0.45 + 0.3 * Math.sin(performance.now() / 130)).toFixed(3) + ')';
     ctx.lineWidth = 2;
     ctx.shadowColor = '#6dffc4'; ctx.shadowBlur = 18;
     ctx.stroke();
@@ -368,7 +377,6 @@ function makeEnemy(type){
     return base;
   }
 
-  // grunt
   base.x = x; base.bx = clamp(x, 76, Math.max(80, W - 76));
   base.y = -40; base.r = 15;
   base.hp = base.maxHp = 1 + Math.floor(wave / 3);
@@ -441,7 +449,7 @@ function updateEnemies(dt){
       e.x = e.bx + Math.sin(e.t * e.freq) * e.amp;
     } else if (e.type === 'diver'){
       e.y += e.vy * dt;
-      if (p) e.x += Math.sign(p.x - e.x) * 62 * dt;
+      if (p) e.x += (p.x > e.x ? 1 : -1) * 62 * dt;
     } else if (e.type === 'shooter'){
       if (e.y < e.stopY) e.y += e.vy * dt;
       else {
@@ -458,7 +466,6 @@ function updateEnemies(dt){
       }
     }
 
-    // стрельба
     if (e.y > 10 && e.y < H - 40 && p){
       e.fireCd -= dt;
       if (e.fireCd <= 0){
@@ -476,7 +483,6 @@ function updateEnemies(dt){
       }
     }
 
-    // столкновение с игроком
     if (p && p.invuln <= 0){
       var ddx = p.x - e.x, ddy = p.y - e.y;
       if (Math.sqrt(ddx * ddx + ddy * ddy) < e.r + p.r * 0.85){
@@ -503,7 +509,6 @@ function killEnemy(index){
   sfxBoom();
   enemies.splice(index, 1);
 
-  // выпадение бонуса
   var chance = e.boss ? 1 : 0.13;
   if (Math.random() < chance){
     var r = Math.random();
@@ -573,7 +578,6 @@ function drawEnemies(){
     }
     ctx.restore();
 
-    // полоска здоровья
     if (e.maxHp > 2 && !e.boss){
       var w = e.r * 2;
       ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -583,7 +587,6 @@ function drawEnemies(){
     }
   }
 
-  // здоровье босса
   for (var b = 0; b < enemies.length; b++){
     if (enemies[b].boss){
       var e2 = enemies[b];
@@ -610,7 +613,6 @@ function updateBullets(dt){
       bullets.splice(i, 1);
       continue;
     }
-    var hit = false;
     for (var j = enemies.length - 1; j >= 0; j--){
       var e = enemies[j];
       var dx = b.x - e.x, dy = b.y - e.y;
@@ -620,12 +622,10 @@ function updateBullets(dt){
         burst(b.x, b.y, e.color, 4, 0.7);
         sfxHit();
         bullets.splice(i, 1);
-        hit = true;
         if (e.hp <= 0) killEnemy(j);
         break;
       }
     }
-    if (hit) continue;
   }
 }
 function drawBullets(){
@@ -636,8 +636,8 @@ function drawBullets(){
     var b = bullets[i];
     ctx.fillStyle = '#eaffff';
     ctx.beginPath();
-    ctx.ellipse ? ctx.ellipse(b.x, b.y, b.r, b.r * 2.4, 0, 0, Math.PI * 2)
-                : ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    if (ctx.ellipse) ctx.ellipse(b.x, b.y, b.r, b.r * 2.4, 0, 0, Math.PI * 2);
+    else ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();
@@ -762,6 +762,7 @@ function hitPlayer(){
   p.invuln = 2.6;
   burst(p.x, p.y, '#ff5a7a', 36, 1.5);
   shake = Math.max(shake, 20);
+  flashT = 0.28;
   sfxHurt();
   updateHUD();
   if (lives <= 0) gameOver();
@@ -788,7 +789,8 @@ function showMenu(){
       '<div><b>P</b> — пауза</div>' +
     '</div><br>' +
     '<button id="btn">НАЧАТЬ ИГРУ</button>' +
-    '<p class="best">Рекорд: <b>' + best + '</b></p>';
+    '<p class="best">Рекорд: <b>' + best + '</b></p>' +
+    '<p class="mini-note">На телефоне — веди палец по экрану</p>';
 }
 
 function showPause(){
@@ -822,6 +824,7 @@ function togglePause(){
     state = 'playing';
     overlay.classList.remove('show');
     last = performance.now() / 1000;
+    keys = {};
   }
 }
 
@@ -843,11 +846,16 @@ function setPointer(e){
   pointer.active = true;
   pointer.touch = (e.pointerType === 'touch');
   pointer.x = e.clientX;
-  pointer.y = e.clientY - (pointer.touch ? 44 : 0);
+  pointer.y = e.clientY - (pointer.touch ? 46 : 0);
 }
 canvas.addEventListener('pointermove', setPointer);
 canvas.addEventListener('pointerdown', setPointer);
-window.addEventListener('pointerup', function(){ pointer.active = pointer.touch ? pointer.active : false; });
+window.addEventListener('pointerup', function(e){
+  if (!pointer.touch) pointer.active = false;
+});
+window.addEventListener('pointercancel', function(){
+  pointer.active = false;
+});
 
 ovContent.addEventListener('click', function(e){
   var t = e.target;
@@ -865,10 +873,12 @@ window.addEventListener('blur', function(){
 /* ================= СТАРТ / СБРОС ================= */
 function startGame(){
   audio();
-  score = 0; lives = 3; wave = 0; shake = 0; banner = ''; bannerT = 0;
+  score = 0; lives = 3; wave = 0; shake = 0; banner = ''; bannerT = 0; flashT = 0;
   bullets = []; ebullets = []; enemies = []; particles = []; powerups = []; spawnQueue = [];
+  keys = {};
   player = newPlayer();
   waveTimer = 1.0;
+  pointer.active = false;
   initStars();
   nextWave();
   updateHUD();
@@ -889,6 +899,7 @@ function update(dt){
   updateSpawns(dt);
 
   if (shake > 0) shake = Math.max(0, shake - dt * 46);
+  if (flashT > 0) flashT -= dt;
   if (bannerT > 0) bannerT -= dt;
 
   if (enemies.length === 0 && spawnQueue.length === 0){
@@ -914,7 +925,6 @@ function drawBanner(){
 }
 
 function draw(){
-  // фон
   ctx.fillStyle = '#04050c';
   ctx.fillRect(0, 0, W, H);
 
@@ -942,7 +952,11 @@ function draw(){
 
   drawBanner();
 
-  // виньетка
+  if (flashT > 0){
+    ctx.fillStyle = 'rgba(255,60,90,' + (flashT * 0.9).toFixed(3) + ')';
+    ctx.fillRect(0, 0, W, H);
+  }
+
   var v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.78);
   v.addColorStop(0, 'rgba(0,0,0,0)');
   v.addColorStop(1, 'rgba(0,0,0,0.55)');
@@ -967,6 +981,7 @@ function loop(ts){
     updateParticles(dt);
     if (shake > 0) shake = Math.max(0, shake - dt * 46);
     if (bannerT > 0) bannerT -= dt;
+    if (flashT > 0) flashT -= dt;
   }
   draw();
 }
@@ -974,6 +989,7 @@ function loop(ts){
 /* ================= ИНИЦИАЛИЗАЦИЯ ================= */
 resize();
 updateHUD();
+showMenu();
 requestAnimationFrame(loop);
 
 })();
@@ -981,15 +997,15 @@ requestAnimationFrame(loop);
 </body>
 </html>
 
-### Gameplay & Interaction Design
+### Gameplay Mechanics & Interaction
 
-The game delivers a fast-paced arcade experience with clear visual and audio feedback for every action.
+This neon arcade shooter focuses on fast, responsive action with clear visual feedback for every hit.
 
-- **Controls:** Move with WASD, arrow keys, or the mouse. Your ship fires automatically, so you can focus on dodging.
-- **Enemies & Bosses:** Waves introduce three enemy types — grunts that sway side-to-side, divers that home in on you, and shooters that fire aimed bullets. Every fifth wave spawns a boss with a wide spread attack.
-- **Power-Ups:** Destroyed enemies may drop pickups: a shield that absorbs one hit, a triple-shot upgrade, or a heart that restores a life.
-- **Visual & Audio Feedback:** Neon glow, particle bursts, screen shake, and synthesized sound effects react to hits, explosions, and pickups.
-- **Progression:** Your high score is saved locally, and the HUD shows score, wave, and remaining lives.
+- **Movement & Shooting:** Control your ship with WASD, arrow keys, or by dragging with the mouse or finger. Your ship fires automatically, so you can concentrate on dodging enemy fire and collecting power-ups.
+- **Enemy Types & Waves:** Each wave introduces a mix of grunts (swaying side-to-side), divers (homing in on you), and shooters (firing aimed projectiles). Every fifth wave spawns a boss with a wide spread attack and a health bar at the top.
+- **Power-Ups:** Destroyed enemies may drop pickups that grant a shield (absorbs one hit), a triple-shot upgrade, or a heart to restore a life. You can collect them by flying over them.
+- **Real-Time Feedback:** Hits produce particle bursts, screen shake, and synthesized sound effects. A red flash appears when you take damage, and your ship briefly blinks during invulnerability. The HUD shows your score, current wave, and remaining lives.
+- **Pause & High Score:** Press P or Escape to pause. Your best score is saved locally and shown on the menu and game-over screens.
 ---
 
-**Optimization Tip:** You can adjust the game's difficulty by changing the `lives` variable (default `3`) or the `waveTimer` value (default `3.0`) near the script's start.
+**Optimization Tip:** You can adjust the default starting lives by changing the `lives` variable from `3` to another value near the top of the script. The wave delay is controlled by `waveTimer` (default `3.0`), and enemy spawn pace depends on the `gap` calculation inside `nextWave()`.
