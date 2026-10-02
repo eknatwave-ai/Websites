@@ -20,6 +20,7 @@
   .stat{display:flex;align-items:baseline;gap:8px;font-size:13px;text-transform:uppercase}
   .stat .label{color:#6b5a8a;font-size:10px}
   .stat .val{font-size:22px;font-weight:bold;color:#7ef0ff;text-shadow:0 0 12px #22d3ee88}
+  .stat .val.small{font-size:14px;color:#9fe8ff;text-shadow:0 0 9px #22d3ee55}
   #levelVal{color:#f0a6ff;text-shadow:0 0 12px #c026d388}
   .val.best{font-size:15px;color:#a78bfa;text-shadow:0 0 10px #7c3aed66}
   .val.combo{color:#ffd166;text-shadow:0 0 16px #fbbf2499}
@@ -32,7 +33,7 @@
   .life{width:14px;height:14px;background:#ff5a9a;transform:rotate(45deg);border-radius:3px;
     filter:drop-shadow(0 0 7px #ff5a9aaa)}
   #pw{display:flex;gap:6px;margin-top:6px;font-size:9px;color:#9fe8ff;
-    flex-wrap:wrap;justify-content:flex-end;max-width:210px}
+    flex-wrap:wrap;justify-content:flex-end;max-width:230px}
   .pwtag{padding:3px 8px 5px;border:1px solid #4a3a6b;border-radius:9px;background:#140a26aa;
     text-transform:uppercase;opacity:0;transition:opacity .2s;min-width:62px;
     display:flex;flex-direction:column;gap:4px;letter-spacing:.06em}
@@ -41,6 +42,7 @@
   .pwtag b{display:block;height:100%;width:100%;border-radius:2px;
     background:linear-gradient(90deg,#7ef0ff,#c4a7ff);transition:width .1s linear}
   .pwtag.shield.on{border-color:#60a5fa;color:#dbeafe;box-shadow:0 0 12px #3b82f766}
+  .pwtag.pierce.on{border-color:#9df3ff;color:#eafcff;box-shadow:0 0 12px #22d3ee77}
 
   #odWrap{position:fixed;left:50%;bottom:9px;transform:translateX(-50%);
     width:min(320px,62vw);pointer-events:none;z-index:6}
@@ -82,6 +84,14 @@
     color:#c4a7ff;background:linear-gradient(180deg,#2a1b45,#150c28);
     border:1px solid #6d28d9;box-shadow:0 0 18px #7c3aed44}
   #ovBtn2:hover{transform:translateY(-2px);box-shadow:0 0 28px #a855f788}
+  .lvlsel{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:16px 0 2px}
+  .lvlsel button{margin:0;padding:9px 0;font-size:12px;border-radius:9px;letter-spacing:.05em;
+    color:#c4a7ff;background:linear-gradient(180deg,#241640,#120a22);border:1px solid #4c2f7a;
+    box-shadow:none;cursor:pointer}
+  .lvlsel button:hover{transform:translateY(-1px);box-shadow:0 0 14px #a855f755}
+  .lvlsel button:disabled{opacity:.3;cursor:default;color:#6b5a8a;border-color:#2a1d40;
+    transform:none;box-shadow:none}
+  .lvlsel button.cur{border-color:#ffd166;color:#ffd166;box-shadow:0 0 14px #fbbf2455}
   .hint{margin-top:14px;font-size:11px;color:#5c4a7a;letter-spacing:.06em;line-height:1.8}
   .keys{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:12px 0 2px}
   .kbox{border:1px solid #4c2f7a;border-radius:8px;padding:6px 10px;font-size:11px;color:#b79ce0;background:#120a22}
@@ -101,6 +111,7 @@
   <div class="col">
     <div class="stat"><span class="label">Очки</span><span class="val" id="scoreVal">0</span></div>
     <div class="stat"><span class="label">Уровень</span><span class="val" id="levelVal">1</span></div>
+    <div class="stat"><span class="label">Блоков</span><span class="val small" id="brickVal">0</span></div>
     <div class="col" id="comboWrap">
       <div class="stat"><span class="label">Комбо</span><span class="val combo" id="comboVal">×1</span></div>
       <span id="comboBar"><b id="comboFill"></b></span>
@@ -114,6 +125,7 @@
       <div class="pwtag" id="pwSlow"><span>ЗАМЕДЛЕНИЕ</span><i><b></b></i></div>
       <div class="pwtag" id="pwLaser"><span>ЛАЗЕР</span><i><b></b></i></div>
       <div class="pwtag" id="pwSticky"><span>ЛИПКАЯ</span><i><b></b></i></div>
+      <div class="pwtag pierce" id="pwPierce"><span>ПРОБИВНОЙ</span><i><b></b></i></div>
       <div class="pwtag shield" id="pwShield"><span id="pwShieldTxt">ЩИТ ×0</span></div>
     </div>
   </div>
@@ -130,6 +142,7 @@
     <div id="ovStats"></div>
     <button id="ovBtn">Играть</button>
     <button id="ovBtn2">Продолжить</button>
+    <div class="lvlsel" id="ovLevels"></div>
     <div class="keys">
       <span class="kbox">← → / A D</span>
       <span class="kbox">Мышь / палец</span>
@@ -144,6 +157,7 @@
       <div class="lg" style="color:#34d399"><i>≈</i>Замедление</div>
       <div class="lg" style="color:#ff7ba8"><i>↑</i>Лазер</div>
       <div class="lg" style="color:#ffd166"><i>▬</i>Липкая платформа</div>
+      <div class="lg" style="color:#9df3ff"><i>»</i>Пробивной мяч</div>
       <div class="lg" style="color:#60a5fa"><i>⬡</i>Щит (2 заряда)</div>
       <div class="lg" style="color:#fbbf24"><i>✚</i>Доп. жизнь</div>
       <div class="lg" style="color:#ff9a3c"><i>✹</i>Взрывной блок</div>
@@ -201,6 +215,7 @@ function sfx(kind){
   else if (kind === 'laser') tone('sawtooth', 1500, 640, 0.05, 0.014);
   else if (kind === 'combo') tone('sine',     880, 1600, 0.12, 0.035);
   else if (kind === 'shield'){ tone('sine', 400, 900, 0.1, 0.04); tone('sine', 900, 1400, 0.12, 0.03, 0.06); }
+  else if (kind === 'pierce'){ tone('triangle', 900, 1800, 0.14, 0.035); tone('sine', 1400, 2400, 0.18, 0.028, 0.07); }
   else if (kind === 'lose')  tone('sawtooth', 230, 45, 0.45, 0.07);
   else if (kind === 'bomb'){ tone('sawtooth', 190, 42, 0.3, 0.055); tone('square', 96, 34, 0.42, 0.045, 0.02); }
   else if (kind === 'plasma'){ tone('sawtooth', 260, 1900, 0.3, 0.05); tone('sine', 900, 2700, 0.36, 0.032, 0.05); }
@@ -213,7 +228,7 @@ function sfx(kind){
 }
 
 /* ==================== STATE ==================== */
-var PW_MAX = { wide: 16, slow: 10, laser: 10, sticky: 12 };
+var PW_MAX = { wide: 16, slow: 10, laser: 10, sticky: 12, pierce: 9 };
 
 var S = {
   mode: 'menu', phase: 'play',
@@ -221,11 +236,12 @@ var S = {
   combo: 0, comboT: 0, charge: 0,
   shake: 0, flash: 0, time: 0, levelTime: 0,
   banner: 0, bannerText: '', bannerMax: 1, clearT: 0,
-  power: { wide: 0, slow: 0, laser: 0, sticky: 0 },
-  shield: 0, laserT: 0
+  power: { wide: 0, slow: 0, laser: 0, sticky: 0, pierce: 0 },
+  shield: 0, laserT: 0,
+  stats: { broken: 0, maxCombo: 1, time: 0 }
 };
 
-var paddle = { x: 400, y: 500, w: 120, h: 14, baseW: 120, vx: 0 };
+var paddle = { x: 400, y: 500, w: 120, h: 14, baseW: 120, vx: 0, tilt: 0 };
 var balls = [], bricks = [], drops = [], parts = [], floats = [], shots = [], stars = [];
 var explosions = [], rings = [], plasma = null, wasReady = false;
 var levelDef = null;
@@ -358,7 +374,7 @@ function spawnBricks(){
       var hp = def.grid[r][c];
       if (hp > 0){
         bricks.push({
-          col: c, row: r, hp: hp, maxHp: hp, flash: 0, bomb: false, waveHit: false,
+          col: c, row: r, hp: hp, maxHp: hp, flash: 0, bomb: false, waveHit: false, hitT: -99,
           x: 0, y: 0, w: 0, h: 0, seed: Math.random() * TAU
         });
       }
@@ -391,7 +407,7 @@ function attachBall(){
   balls = [{
     x: paddle.x, y: paddle.y - paddle.h / 2 - ballR() - 3,
     r: ballR(), vx: 0, vy: 0, speed: ballSpeed(),
-    attached: true, launchT: 1.8, off: 0, trail: [], stall: 0
+    attached: true, launchT: 1.8, off: 0, trail: [], stall: 0, hot: 0
   }];
 }
 
@@ -430,7 +446,7 @@ function multiBall(){
       add.push({
         x: b.x, y: b.y, r: b.r,
         vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-        speed: sp, attached: false, launchT: 0, off: 0, trail: [], stall: 0
+        speed: sp, attached: false, launchT: 0, off: 0, trail: [], stall: 0, hot: 0
       });
     }
   }
@@ -463,6 +479,8 @@ function damageBrick(k, dmg){
   S.combo++;
   S.comboT = 3.0;
   S.charge = Math.min(1, S.charge + 0.028);
+  S.stats.broken++;
+  if (comboMult() > S.stats.maxCombo) S.stats.maxCombo = comboMult();
 
   var pal = PALETTE[k.row % PALETTE.length];
   var cx = k.x + k.w / 2, cy = k.y + k.h / 2;
@@ -516,23 +534,29 @@ var POW = {
   slow:   { c: '#34d399', s: '\u2248' },
   laser:  { c: '#ff7ba8', s: '\u2191' },
   sticky: { c: '#ffd166', s: '\u25ac' },
+  pierce: { c: '#9df3ff', s: '\u00bb' },
   shield: { c: '#60a5fa', s: '\u2b21' },
   life:   { c: '#fbbf24', s: '\u271a' }
 };
 
 function dropPower(x, y){
   var r = Math.random(), type;
-  if (r < 0.19) type = 'wide';
-  else if (r < 0.38) type = 'multi';
-  else if (r < 0.55) type = 'slow';
-  else if (r < 0.71) type = 'laser';
-  else if (r < 0.84) type = 'sticky';
+  if (r < 0.17) type = 'wide';
+  else if (r < 0.34) type = 'multi';
+  else if (r < 0.48) type = 'slow';
+  else if (r < 0.61) type = 'laser';
+  else if (r < 0.73) type = 'sticky';
+  else if (r < 0.84) type = 'pierce';
   else if (r < 0.95) type = 'shield';
   else type = 'life';
   drops.push({
     x: clamp(x, 24, W - 24), y: y, r: 15 * SC,
     vy: 140 * SC, type: type, t: 0
   });
+}
+
+function resetPowers(){
+  S.power = { wide: 0, slow: 0, laser: 0, sticky: 0, pierce: 0 };
 }
 
 function applyPower(type, x, y){
@@ -551,6 +575,10 @@ function applyPower(type, x, y){
   } else if (type === 'sticky'){
     S.power.sticky = PW_MAX.sticky;
     addFloater(x, y, 'ЛИПКАЯ', '#ffd166');
+  } else if (type === 'pierce'){
+    S.power.pierce = PW_MAX.pierce;
+    addFloater(x, y, 'ПРОБИВНОЙ', '#9df3ff');
+    sfx('pierce');
   } else if (type === 'multi'){
     multiBall();
     addFloater(x, y, 'ТРОЙНОЙ МЯЧ', '#c4a7ff');
@@ -620,8 +648,10 @@ var ovText = document.getElementById('ovText');
 var ovBtn = document.getElementById('ovBtn');
 var ovBtn2 = document.getElementById('ovBtn2');
 var ovStats = document.getElementById('ovStats');
+var ovLevels = document.getElementById('ovLevels');
 var scoreVal = document.getElementById('scoreVal');
 var levelVal = document.getElementById('levelVal');
+var brickVal = document.getElementById('brickVal');
 var bestVal = document.getElementById('bestVal');
 var livesEl = document.getElementById('lives');
 var comboWrap = document.getElementById('comboWrap');
@@ -631,6 +661,7 @@ var pwWide = document.getElementById('pwWide');
 var pwSlow = document.getElementById('pwSlow');
 var pwLaser = document.getElementById('pwLaser');
 var pwSticky = document.getElementById('pwSticky');
+var pwPierce = document.getElementById('pwPierce');
 var pwShield = document.getElementById('pwShield');
 var pwShieldTxt = document.getElementById('pwShieldTxt');
 var odWrap = document.getElementById('odWrap');
@@ -673,6 +704,7 @@ function updatePw(){
   setTag(pwSlow, S.power.slow, PW_MAX.slow);
   setTag(pwLaser, S.power.laser, PW_MAX.laser);
   setTag(pwSticky, S.power.sticky, PW_MAX.sticky);
+  setTag(pwPierce, S.power.pierce, PW_MAX.pierce);
   if (S.shield > 0){
     pwShield.classList.add('on');
     pwShieldTxt.textContent = 'ЩИТ ×' + S.shield;
@@ -692,6 +724,39 @@ function saveProgress(){
   try { localStorage.setItem('neonbreaker_unlocked', String(S.unlocked)); } catch(e){}
 }
 
+function fmtTime(sec){
+  var m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+/* ==================== LEVEL SELECT ==================== */
+function buildLevelSelect(){
+  if (ovLevels.childElementCount !== S.maxLevel){
+    ovLevels.innerHTML = '';
+    for (var i = 1; i <= S.maxLevel; i++){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = String(i);
+      b.setAttribute('data-lvl', String(i));
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        ensureAC();
+        var n = parseInt(this.getAttribute('data-lvl'), 10);
+        if (!isFinite(n) || n > S.unlocked) return;
+        startGame(n);
+      });
+      ovLevels.appendChild(b);
+    }
+  }
+  var kids = ovLevels.children;
+  for (var j = 0; j < kids.length; j++){
+    var n = j + 1;
+    kids[j].disabled = n > S.unlocked;
+    if (n === S.unlocked) kids[j].classList.add('cur');
+    else kids[j].classList.remove('cur');
+  }
+}
+
 /* ==================== FLOW ==================== */
 function showMenu(){
   S.mode = 'menu';
@@ -706,15 +771,19 @@ function showMenu(){
   } else {
     ovBtn2.style.display = 'none';
   }
+  ovLevels.style.display = 'grid';
+  buildLevelSelect();
   overlay.classList.add('show');
   updateOd();
 }
 function showPause(){
   ovText.innerHTML = 'Игра приостановлена.';
   ovStats.innerHTML = '<p class="big">' + S.score + ' очков</p>' +
-    '<p>Уровень: <b>' + Math.max(1, S.level) + '</b> &nbsp;·&nbsp; Жизни: <b>' + S.lives + '</b></p>';
+    '<p>Уровень: <b>' + Math.max(1, S.level) + '</b> &nbsp;·&nbsp; Жизни: <b>' + S.lives + '</b></p>' +
+    '<p style="font-size:12px;color:#8b6fb0">Разбито блоков: <b>' + S.stats.broken + '</b> · Время: <b>' + fmtTime(S.stats.time) + '</b></p>';
   ovBtn.textContent = 'Продолжить';
   ovBtn2.style.display = 'none';
+  ovLevels.style.display = 'none';
   overlay.classList.add('show');
   updateOd();
 }
@@ -722,9 +791,12 @@ function showGameOver(){
   saveBest();
   ovText.innerHTML = 'Платформа потеряла все мячи.';
   ovStats.innerHTML = '<p class="big">' + S.score + ' очков</p>' +
-    '<p>Уровень: <b>' + Math.max(1, S.level) + '</b> &nbsp;·&nbsp; Рекорд: <b>' + S.best + '</b></p>';
+    '<p>Уровень: <b>' + Math.max(1, S.level) + '</b> &nbsp;·&nbsp; Рекорд: <b>' + S.best + '</b></p>' +
+    '<p style="font-size:12px;color:#8b6fb0">Разбито блоков: <b>' + S.stats.broken +
+    '</b> · Лучший множитель: <b>×' + S.stats.maxCombo + '</b> · Время: <b>' + fmtTime(S.stats.time) + '</b></p>';
   ovBtn.textContent = 'Заново';
   ovBtn2.style.display = 'none';
+  ovLevels.style.display = 'none';
   overlay.classList.add('show');
   updateOd();
 }
@@ -732,9 +804,12 @@ function showWin(){
   saveBest();
   ovText.innerHTML = 'Все 12 уровней зачищены. Сетка стабильна!';
   ovStats.innerHTML = '<p class="big">' + S.score + ' очков</p>' +
-    '<p>Рекорд: <b>' + S.best + '</b></p>';
+    '<p>Рекорд: <b>' + S.best + '</b></p>' +
+    '<p style="font-size:12px;color:#8b6fb0">Разбито блоков: <b>' + S.stats.broken +
+    '</b> · Время: <b>' + fmtTime(S.stats.time) + '</b></p>';
   ovBtn.textContent = 'Ещё раз';
   ovBtn2.style.display = 'none';
+  ovLevels.style.display = 'none';
   overlay.classList.add('show');
   updateOd();
 }
@@ -744,7 +819,8 @@ function startGame(from){
   overlay.classList.remove('show');
   S.score = 0; S.lives = 3; S.phase = 'play';
   S.combo = 0; S.comboT = 0; S.shield = 0; S.charge = 0;
-  S.power = { wide: 0, slow: 0, laser: 0, sticky: 0 };
+  resetPowers();
+  S.stats = { broken: 0, maxCombo: 1, time: 0 };
   S.laserT = 0;
   drops = []; shots = []; parts = []; floats = [];
   explosions = []; rings = []; plasma = null; wasReady = false;
@@ -761,9 +837,10 @@ function startLevel(n){
   spawnBricks();
   paddle.x = W / 2;
   paddle.vx = 0;
+  paddle.tilt = 0;
   balls = []; drops = []; shots = [];
   explosions = []; rings = []; plasma = null;
-  S.power = { wide: 0, slow: 0, laser: 0, sticky: 0 };
+  resetPowers();
   S.laserT = 0;
   S.combo = 0; S.comboT = 0;
   comboFill.style.width = '0%';
@@ -793,10 +870,11 @@ function checkClear(){
   if (bricks.length === 0){
     S.phase = 'clear';
     S.clearT = 1.6;
-    S.bannerText = 'УРОВЕНЬ ' + S.level + ' ПРОЙДЕН';
+    var bonus = 100 * S.level;
+    S.bannerText = 'УРОВЕНЬ ' + S.level + ' ПРОЙДЕН  +' + bonus;
     S.bannerMax = 1.5;
     S.banner = 1.5;
-    S.score += 100 * S.level;
+    S.score += bonus;
     S.charge = Math.min(1, S.charge + 0.2);
     if (S.level % 3 === 0 && S.lives < 6){
       S.lives++;
@@ -815,7 +893,7 @@ function loseLife(){
   S.combo = 0;
   comboFill.style.width = '0%';
   sfx('lose');
-  S.power = { wide: 0, slow: 0, laser: 0, sticky: 0 };
+  resetPowers();
   updatePw();
   updateHUD();
   drops = []; shots = []; plasma = null;
@@ -824,6 +902,9 @@ function loseLife(){
     showGameOver();
     return;
   }
+  S.bannerText = 'МЯЧ ПОТЕРЯН · ОСТАЛОСЬ ' + S.lives;
+  S.bannerMax = 1.1;
+  S.banner = 1.1;
   attachBall();
 }
 
@@ -876,6 +957,7 @@ window.addEventListener('keyup', function(e){
 });
 window.addEventListener('blur', function(){
   keys.left = false; keys.right = false; pointerDown = false;
+  if (S.mode === 'playing') togglePause();
 });
 
 canvas.addEventListener('pointerdown', function(e){
@@ -948,7 +1030,9 @@ function updatePaddle(dt){
     paddle.x += (pointer.x - paddle.x) * Math.min(1, dt * 18);
   }
   paddle.x = clamp(paddle.x, paddle.w / 2, W - paddle.w / 2);
-  paddle.vx = (paddle.x - px) / Math.max(dt, 0.0001);
+  var nv = (paddle.x - px) / Math.max(dt, 0.0001);
+  paddle.vx = nv;
+  paddle.tilt += (clamp(-nv * 0.00035, -0.32, 0.32) - paddle.tilt) * Math.min(1, dt * 10);
 }
 
 function fireLaser(){
@@ -961,9 +1045,14 @@ function fireLaser(){
 function shieldY(){ return H - Math.max(14, H * 0.022); }
 
 function collideWalls(b){
-  if (b.x - b.r < 0){ b.x = b.r; b.vx = Math.abs(b.vx); sfx('wall'); }
-  else if (b.x + b.r > W){ b.x = W - b.r; b.vx = -Math.abs(b.vx); sfx('wall'); }
-  if (b.y - b.r < 0){ b.y = b.r; b.vy = Math.abs(b.vy); sfx('wall'); }
+  if (b.x - b.r < 0){
+    b.x = b.r; b.vx = Math.abs(b.vx); b.hot = 0.16; sfx('wall');
+  } else if (b.x + b.r > W){
+    b.x = W - b.r; b.vx = -Math.abs(b.vx); b.hot = 0.16; sfx('wall');
+  }
+  if (b.y - b.r < 0){
+    b.y = b.r; b.vy = Math.abs(b.vy); b.hot = 0.16; sfx('wall');
+  }
   if (b.y - b.r > H + 34) b.dead = true;
 }
 
@@ -998,6 +1087,7 @@ function collidePaddle(b){
   b.y = py - ph / 2 - b.r - 1;
   b.speed = sp;
   b.stall = 0;
+  b.hot = 0.2;
   sfx('paddle');
   burst(b.x, py - ph / 2, '#c4a7ff', 5, 140);
 
@@ -1010,20 +1100,30 @@ function collidePaddle(b){
 }
 
 function collideBricks(b){
+  var piercing = S.power.pierce > 0;
   for (var i = 0; i < bricks.length; i++){
     var k = bricks[i];
     if (k.hp <= 0) continue;
     var cx = k.x + k.w / 2, cy = k.y + k.h / 2;
     var dx = b.x - cx, dy = b.y - cy;
-    var px = (k.w / 2 + b.r) - Math.abs(dx);
-    var py = (k.h / 2 + b.r) - Math.abs(dy);
-    if (px <= 0 || py <= 0) continue;
+    var pxx = (k.w / 2 + b.r) - Math.abs(dx);
+    var pyy = (k.h / 2 + b.r) - Math.abs(dy);
+    if (pxx <= 0 || pyy <= 0) continue;
 
-    if (px < py){
-      b.x += dx > 0 ? px : -px;
+    if (piercing){
+      if (S.time - k.hitT < 0.1) continue;
+      k.hitT = S.time;
+      burst(b.x, b.y, '#9df3ff', 5, 135);
+      S.shake = Math.min(9, S.shake + 1.1);
+      damageBrick(k, 1);
+      continue;
+    }
+
+    if (pxx < pyy){
+      b.x += dx > 0 ? pxx : -pxx;
       b.vx = Math.abs(b.vx) * (dx > 0 ? 1 : -1);
     } else {
-      b.y += dy > 0 ? py : -py;
+      b.y += dy > 0 ? pyy : -pyy;
       b.vy = Math.abs(b.vy) * (dy > 0 ? 1 : -1);
     }
     damageBrick(k, 1);
@@ -1062,6 +1162,7 @@ function moveBalls(dt){
 
   for (var k = 0; k < balls.length; k++){
     var bb = balls[k];
+    if (bb.hot > 0) bb.hot -= dt;
     if (bb.attached){
       bb.x = clamp(paddle.x + bb.off * paddle.w, bb.r, W - bb.r);
       bb.y = paddle.y - paddle.h / 2 - bb.r - 3;
@@ -1094,9 +1195,18 @@ function moveBalls(dt){
   }
 }
 
+var lastBricks = -1;
+function updateBrickCount(){
+  if (bricks.length !== lastBricks){
+    lastBricks = bricks.length;
+    brickVal.textContent = bricks.length;
+  }
+}
+
 function update(dt){
   S.time += dt;
   updateStars(dt);
+  updateBrickCount();
 
   if (S.shake > 0){
     S.shake *= Math.pow(0.002, dt);
@@ -1125,11 +1235,13 @@ function update(dt){
   if (S.mode !== 'playing') return;
 
   S.levelTime += dt;
+  S.stats.time += dt;
 
   var pwChanged = false;
   if (S.power.wide > 0){ S.power.wide -= dt; if (S.power.wide <= 0){ S.power.wide = 0; pwChanged = true; } }
   if (S.power.slow > 0){ S.power.slow -= dt; if (S.power.slow <= 0){ S.power.slow = 0; pwChanged = true; } }
   if (S.power.laser > 0){ S.power.laser -= dt; if (S.power.laser <= 0){ S.power.laser = 0; pwChanged = true; } }
+  if (S.power.pierce > 0){ S.power.pierce -= dt; if (S.power.pierce <= 0){ S.power.pierce = 0; pwChanged = true; } }
   if (S.power.sticky > 0){
     S.power.sticky -= dt;
     if (S.power.sticky <= 0){ S.power.sticky = 0; pwChanged = true; launchAll(); }
@@ -1207,7 +1319,9 @@ function rr(x, y, w, h, r){
 
 function drawBG(){
   var g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#0c0722');
+  var hue = (S.level - 1) % 12;
+  var top = ['#0c0722','#0e0620','#120724','#0d0a26','#08111f','#100620','#0b0a24','#0f0718','#0a0a2a','#12051e','#080d22','#0e061f'][hue] || '#0c0722';
+  g.addColorStop(0, top);
   g.addColorStop(0.5, '#070413');
   g.addColorStop(1, '#03020a');
   ctx.fillStyle = g;
@@ -1362,6 +1476,11 @@ function drawPlasma(){
 }
 
 function drawPaddle(){
+  ctx.save();
+  ctx.translate(paddle.x, paddle.y);
+  ctx.rotate(paddle.tilt * 0.5);
+  ctx.translate(-paddle.x, -paddle.y);
+
   var x = paddle.x - paddle.w / 2;
   var y = paddle.y - paddle.h / 2;
 
@@ -1408,6 +1527,7 @@ function drawPaddle(){
     ctx.beginPath(); ctx.arc(paddle.x + off, y - 2, 4, 0, TAU); ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
   }
+  ctx.restore();
 }
 
 function drawBall(b){
@@ -1416,7 +1536,7 @@ function drawBall(b){
     for (var i = 0; i + 1 < b.trail.length; i += 2){
       var a = (i / b.trail.length) * 0.38;
       ctx.globalAlpha = a;
-      ctx.fillStyle = '#7ef0ff';
+      ctx.fillStyle = S.power.pierce > 0 ? '#bff7ff' : '#7ef0ff';
       ctx.beginPath();
       ctx.arc(b.trail[i], b.trail[i + 1], b.r * (0.4 + a), 0, TAU);
       ctx.fill();
@@ -1427,11 +1547,16 @@ function drawBall(b){
 
   ctx.globalCompositeOperation = 'lighter';
   var g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * 3.4);
-  g.addColorStop(0, 'rgba(150,245,255,0.9)');
-  g.addColorStop(1, 'rgba(34,211,238,0)');
+  if (b.hot > 0){
+    g.addColorStop(0, 'rgba(255,240,190,0.95)');
+    g.addColorStop(1, 'rgba(255,180,80,0)');
+  } else {
+    g.addColorStop(0, 'rgba(150,245,255,0.9)');
+    g.addColorStop(1, 'rgba(34,211,238,0)');
+  }
   ctx.fillStyle = g;
   ctx.beginPath();
-  ctx.arc(b.x, b.y, b.r * 3.4, 0, TAU);
+  ctx.arc(b.x, b.y, b.r * (b.hot > 0 ? 4.1 : 3.4), 0, TAU);
   ctx.fill();
   ctx.globalCompositeOperation = 'source-over';
 
@@ -1439,9 +1564,19 @@ function drawBall(b){
   ctx.beginPath();
   ctx.arc(b.x, b.y, b.r, 0, TAU);
   ctx.fill();
-  ctx.strokeStyle = b.attached ? '#fbbf24' : '#22d3ee';
+  ctx.strokeStyle = b.attached ? '#fbbf24' : (b.hot > 0 ? '#ffbe5c' : '#22d3ee');
   ctx.lineWidth = 1.4;
   ctx.stroke();
+
+  if (S.power.pierce > 0 && !b.attached){
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = 'rgba(157,243,255,' + (0.4 + 0.5 * Math.sin(S.time * 14 + b.x * 0.05)) + ')';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r * 1.95, 0, TAU);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+  }
 }
 
 function drawDrop(d){
@@ -1556,7 +1691,7 @@ function render(){
     ctx.globalAlpha = aa;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = 'bold ' + Math.round(Math.min(40, W / 15)) + 'px "Courier New",monospace';
+    ctx.font = 'bold ' + Math.round(Math.min(38, W / 16)) + 'px "Courier New",monospace';
     ctx.fillStyle = '#e9d5ff';
     ctx.shadowColor = '#a855f7';
     ctx.shadowBlur = 28;
