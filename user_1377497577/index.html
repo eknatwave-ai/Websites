@@ -3,32 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>АнимеХаб — мини-сайт: каталог аниме, топ, плеер и игра</title>
-<meta name="description" content="АнимеХаб — мини-сайт каталога аниме онлайн: популярные сериалы, топ рейтинга, жанры, поиск, подборка «продолжить просмотр», встроенный плеер и мини-игра «Знаток аниме».">
+<title>КосмоСфера — интерактивный гид по Солнечной системе</title>
+<meta name="description" content="КосмоСфера — интерактивный мини-сайт о Солнечной системе: живая орбитальная схема, сравнение размеров планет, каталог с фильтрами и поиском, карточки планет с данными и спутниками, подборка фактов и викторина «Космический экзамен».">
 <style>
 :root{
-  --bg:#0b0b14;
-  --panel:#15151f;
-  --panel2:#1d1d2b;
-  --line:rgba(255,255,255,.08);
-  --txt:#eaeaf3;
-  --muted:#9a9ab5;
-  --acc:#8b5cf6;
-  --acc2:#ec4899;
-  --ok:#22c55e;
+  --bg:#050a17;
+  --panel:#0e1730;
+  --panel2:#151f3f;
+  --line:rgba(255,255,255,.09);
+  --txt:#e9eefc;
+  --muted:#8ea0c9;
+  --acc:#22d3ee;
+  --acc2:#fbbf24;
+  --ok:#34d399;
+  --bad:#f87171;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   font-family:'Segoe UI',Roboto,Tahoma,sans-serif;
-  background:var(--bg);
-  color:var(--txt);
-  line-height:1.55;
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
+  background:var(--bg);color:var(--txt);line-height:1.55;
+  min-height:100vh;-webkit-font-smoothing:antialiased;
   background-image:
-    radial-gradient(900px 500px at 12% -8%, rgba(139,92,246,.20), transparent 70%),
-    radial-gradient(800px 500px at 92% 4%, rgba(236,72,153,.16), transparent 70%);
+    radial-gradient(950px 540px at 8% -12%,rgba(34,211,238,.16),transparent 70%),
+    radial-gradient(820px 500px at 96% -4%,rgba(251,191,36,.10),transparent 70%),
+    radial-gradient(760px 520px at 50% 112%,rgba(99,102,241,.18),transparent 70%);
   background-attachment:fixed;
 }
 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
@@ -36,424 +35,338 @@ body{
 /* ---------- Шапка ---------- */
 .topbar{
   position:sticky;top:0;z-index:60;
-  background:rgba(11,11,20,.82);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
+  background:rgba(5,10,23,.84);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
 }
 .bar{display:flex;align-items:center;gap:18px;height:64px}
 .logo{
-  display:flex;align-items:center;gap:9px;
-  font-weight:800;font-size:19px;letter-spacing:.4px;white-space:nowrap;
-  background:linear-gradient(90deg,#a78bfa,#ec4899);
+  display:flex;align-items:center;gap:9px;white-space:nowrap;
+  font-weight:800;font-size:19px;letter-spacing:.4px;
+  background:linear-gradient(90deg,#67e8f9,#fbbf24);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
-.logo span.mark{
-  -webkit-text-fill-color:#fff;
-  display:grid;place-items:center;
-  width:30px;height:30px;border-radius:9px;font-size:13px;
+.logo .mark{
+  -webkit-text-fill-color:#04121c;
+  display:grid;place-items:center;width:30px;height:30px;border-radius:9px;font-size:14px;
   background:linear-gradient(135deg,var(--acc),var(--acc2));
-  box-shadow:0 0 16px rgba(139,92,246,.55);
+  box-shadow:0 0 16px rgba(34,211,238,.55);
 }
 .nav{display:flex;gap:4px;margin-left:6px}
-.nav a{
-  color:var(--muted);text-decoration:none;font-size:14px;
-  padding:8px 13px;border-radius:9px;transition:.2s;
-}
+.nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:8px 13px;border-radius:9px;transition:.2s}
 .nav a:hover{color:#fff;background:rgba(255,255,255,.07)}
 .search{margin-left:auto;position:relative}
 .search input{
-  width:230px;max-width:46vw;
-  background:var(--panel);border:1px solid var(--line);
+  width:230px;max-width:46vw;background:var(--panel);border:1px solid var(--line);
   color:var(--txt);font-family:inherit;font-size:14px;
   padding:9px 14px 9px 36px;border-radius:11px;outline:none;transition:.25s;
 }
-.search input:focus{border-color:rgba(139,92,246,.75);box-shadow:0 0 0 3px rgba(139,92,246,.18);width:280px}
-.search::before{
-  content:"🔍";position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  font-size:13px;opacity:.65;pointer-events:none;
-}
+.search input:focus{border-color:rgba(34,211,238,.8);box-shadow:0 0 0 3px rgba(34,211,238,.18);width:280px}
+.search::before{content:"🔎";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.65;pointer-events:none}
 
 /* ---------- Герой ---------- */
 .hero{
-  margin:26px 0 8px;
-  border:1px solid var(--line);
-  border-radius:22px;overflow:hidden;position:relative;
-  background:linear-gradient(120deg,rgba(139,92,246,.30),rgba(236,72,153,.16) 55%,rgba(30,30,50,.5));
-  padding:38px 34px;
-  display:flex;gap:30px;align-items:center;flex-wrap:wrap;
+  margin:26px 0 8px;border:1px solid var(--line);border-radius:22px;
+  overflow:hidden;position:relative;
+  background:linear-gradient(125deg,rgba(34,211,238,.16),rgba(99,102,241,.12) 50%,rgba(20,28,54,.6));
+  padding:36px 32px;display:flex;gap:30px;align-items:center;flex-wrap:wrap;
 }
 .hero::after{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(500px 260px at 85% 15%, rgba(255,255,255,.10), transparent 70%);
+  background:radial-gradient(520px 280px at 88% 12%,rgba(255,255,255,.10),transparent 70%);
 }
-.hero .info{flex:1 1 340px;min-width:260px;position:relative;z-index:2}
-.hero .badge{
-  display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.4px;
-  text-transform:uppercase;color:#fff;
+.hinfo{flex:1 1 360px;min-width:260px;position:relative;z-index:2}
+.badge{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:#03151c;
   background:linear-gradient(135deg,var(--acc),var(--acc2));
   padding:5px 12px;border-radius:999px;margin-bottom:14px;
 }
-.hero h1{font-size:clamp(24px,4.4vw,40px);line-height:1.15;margin-bottom:12px}
-.hero p{color:#c9c9dd;font-size:15px;max-width:560px;margin-bottom:20px}
-.hero .actions{display:flex;gap:10px;flex-wrap:wrap}
-.hero .poster-big{
-  flex:0 0 190px;width:190px;aspect-ratio:2/3;border-radius:16px;
-  display:grid;place-items:center;font-size:64px;
-  box-shadow:0 22px 50px rgba(0,0,0,.55);
+.hero h1{font-size:clamp(24px,4.4vw,40px);line-height:1.14;margin-bottom:12px}
+.hero h1 .grad{
+  background:linear-gradient(90deg,#67e8f9,#fbbf24);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p.lead{color:#c3cee6;font-size:15px;max-width:560px;margin-bottom:20px}
+.hact{display:flex;gap:10px;flex-wrap:wrap}
+.hvis{flex:0 0 250px;width:250px;position:relative;z-index:2;text-align:center}
+.planet-big{
+  width:200px;height:200px;margin:0 auto 14px;border-radius:50%;
+  display:grid;place-items:center;font-size:80px;
+  background:radial-gradient(circle at 32% 28%,var(--c1),var(--c2));
+  box-shadow:0 0 60px -8px var(--c1),inset -22px -14px 44px rgba(0,0,0,.6);
   border:1px solid rgba(255,255,255,.14);
-  position:relative;z-index:2;
+  transition:background .5s,box-shadow .5s;
 }
-.hero .poster-big small{
-  position:absolute;bottom:10px;left:0;right:0;text-align:center;
-  font-size:12px;color:rgba(255,255,255,.85);letter-spacing:.5px;
-}
+.hname{font-size:17px;font-weight:700;margin-bottom:5px}
+.hfact{font-size:12.8px;color:var(--muted);min-height:56px}
 
 /* ---------- Кнопки ---------- */
 .btn{
-  display:inline-flex;align-items:center;gap:9px;
-  font-family:inherit;font-size:15px;font-weight:600;
-  padding:12px 26px;border-radius:12px;border:none;cursor:pointer;
-  color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));
-  transition:.25s;box-shadow:0 8px 26px rgba(139,92,246,.35);
-  text-decoration:none;
+  display:inline-flex;align-items:center;gap:9px;font-family:inherit;
+  font-size:15px;font-weight:600;padding:12px 24px;border-radius:12px;
+  border:none;cursor:pointer;color:#04121c;text-decoration:none;
+  background:linear-gradient(135deg,var(--acc),#60a5fa);
+  transition:.25s;box-shadow:0 8px 26px rgba(34,211,238,.28);
 }
-.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(236,72,153,.45)}
-.btn.ghost{
-  background:rgba(255,255,255,.08);box-shadow:none;
-  border:1px solid rgba(255,255,255,.16);
-}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(34,211,238,.42)}
+.btn.amber{background:linear-gradient(135deg,var(--acc2),#fb923c);color:#231400}
+.btn.amber:hover{box-shadow:0 12px 32px rgba(251,191,36,.42)}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--txt);box-shadow:none;border:1px solid rgba(255,255,255,.16)}
 .btn.ghost:hover{background:rgba(255,255,255,.16)}
-.btn.small{font-size:13.5px;padding:9px 18px;border-radius:10px}
+.btn.small{font-size:13.5px;padding:9px 17px;border-radius:10px}
 
 /* ---------- Секции ---------- */
-section.blk{margin:38px 0}
-.sec-head{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:14px;margin-bottom:16px;flex-wrap:wrap;
-}
+section.blk{margin:40px 0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap}
 .sec-head h2{font-size:clamp(18px,2.6vw,23px);letter-spacing:.3px}
 .sec-head .count{font-size:13px;color:var(--muted)}
-.sec-head .tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 select.sort{
-  font-family:inherit;font-size:13px;color:var(--txt);
-  background:var(--panel);border:1px solid var(--line);
-  padding:8px 12px;border-radius:10px;outline:none;cursor:pointer;transition:.2s;
+  font-family:inherit;font-size:13px;color:var(--txt);background:var(--panel);
+  border:1px solid var(--line);padding:8px 12px;border-radius:10px;outline:none;cursor:pointer;transition:.2s;
 }
-select.sort:hover{border-color:rgba(139,92,246,.5)}
-select.sort:focus{border-color:rgba(139,92,246,.75);box-shadow:0 0 0 3px rgba(139,92,246,.18)}
+select.sort:hover{border-color:rgba(34,211,238,.55)}
+select.sort:focus{border-color:rgba(34,211,238,.8);box-shadow:0 0 0 3px rgba(34,211,238,.18)}
 
-/* ---------- Фильтры ---------- */
+/* ---------- Оррери ---------- */
+.orrery-shell{
+  border:1px solid var(--line);border-radius:20px;background:var(--panel);
+  padding:22px;display:flex;gap:26px;align-items:center;flex-wrap:wrap;justify-content:center;
+}
+.orrery{position:relative;width:min(100%,600px);aspect-ratio:1/1;flex:1 1 380px}
+.orb{
+  position:absolute;left:50%;top:50%;width:var(--d);height:var(--d);
+  border:1px dashed rgba(255,255,255,.12);border-radius:50%;
+  transform:translate(-50%,-50%);animation:spin var(--sp) linear infinite;
+}
+.orb .body{
+  position:absolute;top:50%;left:100%;width:var(--ps);height:var(--ps);
+  border-radius:50%;background:radial-gradient(circle at 32% 30%,var(--c1),var(--c2));
+  transform:translate(-50%,-50%);box-shadow:0 0 14px -2px var(--c1);
+}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.orrery.paused .orb{animation-play-state:paused}
+.sun{
+  position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;
+  transform:translate(-50%,-50%);z-index:3;
+  background:radial-gradient(circle at 34% 32%,#fff5c2,#ffb703 48%,#f97316);
+  box-shadow:0 0 42px rgba(251,191,36,.9),0 0 100px rgba(249,115,22,.45);
+}
+.orrery-side{flex:1 1 240px;min-width:230px}
+.orrery-side h3{font-size:17px;margin-bottom:9px}
+.orrery-side p{font-size:13.6px;color:var(--muted);margin-bottom:16px}
+.legend{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.legend span{display:flex;align-items:center;gap:9px;font-size:13px;color:#c3cee6}
+.legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+/* ---------- Сравнение размеров ---------- */
+.sizerow{
+  display:grid;grid-template-columns:120px 1fr 118px;gap:12px;align-items:center;
+  padding:9px 12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent;
+}
+.sizerow:hover{background:rgba(255,255,255,.05);border-color:var(--line)}
+.sizename{font-size:13.6px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.szbar{height:14px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden}
+.szbar i{
+  display:block;height:100%;border-radius:9px;min-width:6px;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  transition:width .7s cubic-bezier(.2,.8,.3,1);
+}
+.szval{font-size:12.4px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+
+/* ---------- Фильтры и каталог ---------- */
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .filters button{
-  font-family:inherit;font-size:13px;cursor:pointer;
-  color:var(--muted);background:var(--panel);
-  border:1px solid var(--line);padding:7px 15px;border-radius:999px;transition:.2s;
+  font-family:inherit;font-size:13px;cursor:pointer;color:var(--muted);
+  background:var(--panel);border:1px solid var(--line);
+  padding:7px 15px;border-radius:999px;transition:.2s;
 }
-.filters button:hover{color:#fff;border-color:rgba(139,92,246,.5)}
+.filters button:hover{color:#fff;border-color:rgba(34,211,238,.55)}
 .filters button.active{
-  color:#fff;border-color:transparent;
+  color:#04121c;border-color:transparent;font-weight:600;
   background:linear-gradient(135deg,var(--acc),var(--acc2));
-  box-shadow:0 4px 18px rgba(139,92,246,.4);
+  box-shadow:0 4px 18px rgba(34,211,238,.35);
 }
-
-/* ---------- Сетка карточек ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:18px}
 .card{
-  background:var(--panel);border:1px solid var(--line);border-radius:15px;
-  overflow:hidden;cursor:pointer;transition:.28s;position:relative;
-  display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;cursor:pointer;transition:.28s;display:flex;flex-direction:column;
 }
-.card:hover{transform:translateY(-6px);border-color:rgba(139,92,246,.55);box-shadow:0 16px 36px rgba(0,0,0,.5)}
+.card:hover{transform:translateY(-6px);border-color:rgba(34,211,238,.55);box-shadow:0 18px 38px rgba(0,0,0,.55)}
 .card:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
-.poster{
-  aspect-ratio:2/3;position:relative;display:grid;place-items:center;
-  font-size:46px;background:linear-gradient(150deg,var(--a),var(--b));
+.disc{
+  aspect-ratio:16/10;display:grid;place-items:center;font-size:44px;position:relative;
+  background:radial-gradient(circle at 60% 120%,var(--c1),transparent 62%),linear-gradient(150deg,#0a1226,#060c1a);
+  overflow:hidden;
 }
-.poster::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.65));
+.disc span{
+  width:76px;height:76px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 32% 28%,var(--c1),var(--c2));
+  box-shadow:0 0 34px -6px var(--c1),inset -14px -10px 26px rgba(0,0,0,.55);
 }
-.poster .rate{
-  position:absolute;top:9px;left:9px;z-index:2;
-  font-size:11.5px;font-weight:700;color:#fff;
-  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);
-  padding:3px 9px;border-radius:999px;backdrop-filter:blur(4px);
-}
-.poster .ep{
-  position:absolute;top:9px;right:9px;z-index:2;
-  font-size:11px;color:#fff;background:rgba(0,0,0,.55);
-  padding:3px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.15);
-}
-.poster .hover-play{
-  position:absolute;z-index:3;width:52px;height:52px;border-radius:50%;
-  display:grid;place-items:center;font-size:19px;color:#fff;
-  background:rgba(139,92,246,.92);
-  box-shadow:0 0 26px rgba(139,92,246,.75);
-  opacity:0;transform:scale(.7);transition:.25s;
-}
-.card:hover .poster .hover-play{opacity:1;transform:scale(1)}
-.card .body{padding:11px 12px 14px}
-.card h3{font-size:14.5px;font-weight:600;line-height:1.3;margin-bottom:5px}
-.card .meta{font-size:12px;color:var(--muted)}
-.card .tags{font-size:11.5px;color:#8f8fae;margin-top:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-
+.cbody{padding:12px 13px 15px}
+.cbody h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.ct{font-size:11.5px;color:var(--acc);letter-spacing:.4px;margin-bottom:5px}
+.cm{font-size:12px;color:var(--muted)}
 .empty{
   display:none;text-align:center;color:var(--muted);font-size:15px;
   padding:50px 20px;border:1px dashed var(--line);border-radius:16px;
 }
 .empty.show{display:block}
 
-/* ---------- Горизонтальные ленты ---------- */
-.rail{
-  display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;
-  scrollbar-width:thin;
-}
+/* ---------- Лента фактов ---------- */
+.rail{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:thin}
 .rail::-webkit-scrollbar{height:8px}
-.rail::-webkit-scrollbar-thumb{background:rgba(139,92,246,.45);border-radius:9px}
+.rail::-webkit-scrollbar-thumb{background:rgba(34,211,238,.45);border-radius:9px}
 .rail::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:9px}
+.fact{
+  flex:0 0 288px;background:var(--panel);border:1px solid var(--line);
+  border-radius:15px;padding:16px 17px;transition:.25s;
+}
+.fact:hover{border-color:rgba(251,191,36,.5);transform:translateY(-4px)}
+.fact b{display:block;font-size:13.5px;margin-bottom:7px;color:var(--acc2)}
+.fact p{font-size:13.4px;color:#c3cee6}
 
-.mini{
-  flex:0 0 268px;display:flex;gap:12px;align-items:center;cursor:pointer;
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:11px;transition:.25s;
-}
-.mini:hover{border-color:rgba(139,92,246,.55);transform:translateY(-3px)}
-.mini .thumb{
-  flex:0 0 62px;width:62px;height:62px;border-radius:11px;
-  display:grid;place-items:center;font-size:26px;
-  background:linear-gradient(140deg,var(--a),var(--b));
-}
-.mini .t{font-size:13.8px;font-weight:600;margin-bottom:2px}
-.mini .s{font-size:11.5px;color:var(--muted);margin-bottom:8px}
-.mini .prog{height:5px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}
-.mini .prog i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
-
-/* ---------- Топ рейтинга ---------- */
-.top-item{
-  flex:0 0 320px;display:flex;gap:13px;align-items:center;cursor:pointer;
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:12px 14px;transition:.25s;
-}
-.top-item:hover{border-color:rgba(236,72,153,.55);transform:translateY(-3px)}
-.top-item .rank{
-  font-size:27px;font-weight:800;line-height:1;min-width:34px;
-  background:linear-gradient(135deg,#a78bfa,#ec4899);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-}
-.top-item .thumb{
-  flex:0 0 54px;width:54px;height:74px;border-radius:10px;
-  display:grid;place-items:center;font-size:24px;
-  background:linear-gradient(140deg,var(--a),var(--b));
-}
-.top-item .tt{font-size:14px;font-weight:600;margin-bottom:3px}
-.top-item .ts{font-size:11.5px;color:var(--muted)}
-
-/* ---------- Игра ---------- */
+/* ---------- Викторина ---------- */
 .game{
-  position:relative;overflow:hidden;
-  background:var(--panel);border:1px solid var(--line);border-radius:18px;
-  padding:22px;
+  position:relative;overflow:hidden;background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;padding:22px;
 }
 .game::after{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(620px 320px at 88% -25%, rgba(139,92,246,.22), transparent 70%),
-             radial-gradient(520px 300px at 5% 120%, rgba(236,72,153,.16), transparent 70%);
+  background:radial-gradient(620px 320px at 88% -25%,rgba(34,211,238,.18),transparent 70%),
+             radial-gradient(520px 300px at 5% 120%,rgba(251,191,36,.12),transparent 70%);
 }
 .game-hud{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:2}
-.hud-item{
-  flex:1 1 108px;background:var(--panel2);border:1px solid var(--line);
-  border-radius:12px;padding:9px 13px;
-}
+.hud-item{flex:1 1 112px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
 .hud-l{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted)}
 .hud-item b{font-size:18px;font-variant-numeric:tabular-nums}
-.timerbar{
-  height:7px;border-radius:9px;background:rgba(255,255,255,.1);
-  overflow:hidden;margin-bottom:18px;position:relative;z-index:2;
-}
-.timerbar i{
-  display:block;height:100%;width:0;border-radius:9px;
-  background:linear-gradient(90deg,var(--acc),var(--acc2));
-  transition:width .18s linear,background .3s;
-}
+.timerbar{height:7px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:18px;position:relative;z-index:2}
+.timerbar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--acc),#60a5fa);transition:width .18s linear,background .3s}
 .timerbar i.low{background:linear-gradient(90deg,#f59e0b,#ef4444)}
-.q-text{
-  position:relative;z-index:2;min-height:56px;
-  font-size:17px;font-weight:600;line-height:1.45;margin-bottom:18px;
-}
-.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:11px;position:relative;z-index:2}
+.q-text{position:relative;z-index:2;min-height:58px;font-size:17px;font-weight:600;line-height:1.45;margin-bottom:18px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px;position:relative;z-index:2}
 .opt{
-  display:flex;align-items:center;gap:11px;
-  font-family:inherit;font-size:14.5px;text-align:left;cursor:pointer;
-  color:var(--txt);background:var(--panel2);
-  border:1px solid var(--line);border-radius:12px;
-  padding:13px 15px;transition:.2s;
+  display:flex;align-items:center;gap:11px;font-family:inherit;font-size:14.5px;
+  text-align:left;cursor:pointer;color:var(--txt);background:var(--panel2);
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;transition:.2s;
 }
 .opt .ol{
-  display:grid;place-items:center;flex:0 0 26px;
-  width:26px;height:26px;border-radius:8px;
-  font-size:12px;font-weight:700;
-  background:rgba(255,255,255,.09);color:var(--muted);
-  transition:.2s;
+  display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;
+  font-size:12px;font-weight:700;background:rgba(255,255,255,.09);color:var(--muted);transition:.2s;
 }
-.opt:hover:not(:disabled){
-  border-color:rgba(139,92,246,.65);background:rgba(139,92,246,.12);
-  transform:translateY(-2px);
-}
+.opt:hover:not(:disabled){border-color:rgba(34,211,238,.7);background:rgba(34,211,238,.12);transform:translateY(-2px)}
 .opt:disabled{cursor:default}
-.opt.correct{
-  background:linear-gradient(135deg,rgba(34,197,94,.30),rgba(14,165,233,.18));
-  border-color:rgba(34,197,94,.75);
-}
-.opt.correct .ol{background:rgba(34,197,94,.75);color:#fff}
-.opt.wrong{
-  background:linear-gradient(135deg,rgba(239,68,68,.30),rgba(236,72,153,.18));
-  border-color:rgba(239,68,68,.75);
-}
-.opt.wrong .ol{background:rgba(239,68,68,.75);color:#fff}
+.opt.correct{background:linear-gradient(135deg,rgba(52,211,153,.28),rgba(34,211,238,.16));border-color:rgba(52,211,153,.75)}
+.opt.correct .ol{background:rgba(52,211,153,.8);color:#04121c}
+.opt.wrong{background:linear-gradient(135deg,rgba(248,113,113,.28),rgba(251,191,36,.14));border-color:rgba(248,113,113,.75)}
+.opt.wrong .ol{background:rgba(248,113,113,.8);color:#1a0404}
 .opt.dim{opacity:.42}
-.game-foot{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  margin-top:18px;position:relative;z-index:2;
-}
-.feedback{flex:1 1 200px;font-size:14px;color:var(--muted)}
-.feedback.ok{color:#4ade80}
-.feedback.no{color:#f87171}
-
+.game-foot{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:2}
+.feedback{flex:1 1 220px;font-size:14px;color:var(--muted)}
+.feedback.ok{color:#6ee7b7}
+.feedback.no{color:#fca5a5}
 .gresult{display:none}
 .gresult.show{display:block;position:relative;z-index:2;text-align:center;padding:6px 0 4px}
 .res-emoji{font-size:56px;line-height:1;margin-bottom:8px}
 .res-title{
   font-size:23px;font-weight:800;margin-bottom:6px;
-  background:linear-gradient(90deg,#a78bfa,#ec4899);
+  background:linear-gradient(90deg,#67e8f9,#fbbf24);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 .res-score{font-size:15px;color:var(--muted);margin-bottom:18px}
 .res-rows{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.res-row{
-  background:var(--panel2);border:1px solid var(--line);
-  border-radius:12px;padding:10px 16px;min-width:148px;
-}
+.res-row{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:152px}
 .res-row span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);margin-bottom:3px}
 .res-row b{font-size:17px}
 
 /* ---------- Модальное окно ---------- */
 .modal{
-  position:fixed;inset:0;z-index:200;
-  display:none;align-items:center;justify-content:center;padding:18px;
-  background:rgba(5,5,12,.82);backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(3,6,14,.84);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
 .modal.open{display:flex;animation:fade .22s ease}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 .sheet{
-  width:100%;max-width:880px;max-height:92vh;overflow-y:auto;
-  background:var(--panel2);border:1px solid rgba(255,255,255,.1);
-  border-radius:20px;position:relative;
-  box-shadow:0 30px 90px rgba(0,0,0,.7);
-  animation:up .3s cubic-bezier(.2,.8,.3,1);
+  width:100%;max-width:840px;max-height:92vh;overflow-y:auto;background:var(--panel2);
+  border:1px solid rgba(255,255,255,.12);border-radius:20px;position:relative;
+  box-shadow:0 30px 90px rgba(0,0,0,.75);animation:up .3s cubic-bezier(.2,.8,.3,1);
 }
 @keyframes up{from{transform:translateY(26px) scale(.97);opacity:0}to{transform:none;opacity:1}}
 .sheet .close{
-  position:absolute;top:14px;right:14px;z-index:5;
-  width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
-  background:rgba(0,0,0,.5);color:#fff;font-size:19px;line-height:1;
+  position:absolute;top:14px;right:14px;z-index:6;width:38px;height:38px;border-radius:50%;
+  border:none;cursor:pointer;background:rgba(0,0,0,.45);color:#fff;font-size:19px;
   display:grid;place-items:center;transition:.2s;
 }
-.sheet .close:hover{background:rgba(236,72,153,.85);transform:rotate(90deg)}
-
-.player{
-  position:relative;aspect-ratio:16/9;width:100%;
-  display:grid;place-items:center;overflow:hidden;
-  border-radius:20px 20px 0 0;
-  background:linear-gradient(140deg,var(--a,#4c1d95),var(--b,#831843));
+.sheet .close:hover{background:rgba(34,211,238,.85);color:#04121c;transform:rotate(90deg)}
+.mhead{
+  position:relative;overflow:hidden;padding:26px 26px 22px;
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+  background:linear-gradient(130deg,var(--c1),var(--c2));border-radius:20px 20px 0 0;
 }
-.player::before{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(420px 240px at 50% 40%, rgba(255,255,255,.14), transparent 70%);
+.mhead::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,10,23,.15),rgba(5,10,23,.72))}
+.morb{
+  position:relative;z-index:2;width:96px;height:96px;border-radius:50%;flex:0 0 96px;
+  display:grid;place-items:center;font-size:44px;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.9),rgba(255,255,255,.25));
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
 }
-.player .big-glyph{font-size:74px;opacity:.85;z-index:2}
-.player .player-btn{
-  position:absolute;z-index:4;width:74px;height:74px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.35);cursor:pointer;
-  background:rgba(0,0,0,.45);color:#fff;font-size:26px;
-  display:grid;place-items:center;transition:.25s;backdrop-filter:blur(5px);
-}
-.player .player-btn:hover{background:rgba(139,92,246,.9);transform:scale(1.08)}
-.player .now{
-  position:absolute;left:18px;bottom:52px;z-index:3;
-  font-size:12.5px;color:rgba(255,255,255,.9);
-  background:rgba(0,0,0,.45);padding:4px 11px;border-radius:999px;
-}
-.timeline{
-  position:absolute;left:0;right:0;bottom:0;z-index:3;
-  display:flex;align-items:center;gap:12px;padding:10px 18px;
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));
-}
-.timeline .track{flex:1;height:6px;border-radius:9px;background:rgba(255,255,255,.22);overflow:hidden;cursor:pointer}
-.timeline .track i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .15s linear}
-.timeline .time{font-size:12px;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;white-space:nowrap}
-
-.sheet .content{padding:24px 26px 30px}
-.sheet h2{font-size:clamp(20px,3vw,27px);margin-bottom:10px;line-height:1.2}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.mhead-info{position:relative;z-index:2;flex:1 1 240px;min-width:200px}
+.mhead-info h2{font-size:clamp(21px,3vw,28px);margin-bottom:9px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{
-  font-size:11.5px;color:#cfcfe6;background:rgba(255,255,255,.08);
-  border:1px solid var(--line);padding:4px 11px;border-radius:999px;
+  font-size:11.5px;color:#e6ecff;background:rgba(0,0,0,.42);
+  border:1px solid rgba(255,255,255,.2);padding:4px 11px;border-radius:999px;
 }
-.chip.acc{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff;font-weight:600}
-.sheet p.desc{color:#bcbcd2;font-size:14.5px;margin-bottom:18px}
-.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
-.ep-title{
-  font-size:14px;color:var(--muted);margin-bottom:11px;
-  display:flex;align-items:center;gap:10px;
+.sheet .content{padding:24px 26px 30px}
+.table{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px;margin-bottom:20px}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.cell span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);margin-bottom:3px}
+.cell b{font-size:15px;font-weight:600}
+.sheet p.desc{color:#c3cee6;font-size:14.5px;margin-bottom:20px}
+.sub{font-size:14px;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:10px}
+.sub::after{content:"";flex:1;height:1px;background:var(--line)}
+.cmp{margin-bottom:8px}
+.cmp-lab{font-size:12.4px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between;gap:10px}
+.cmp-bar{height:11px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden}
+.cmp-bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--acc),var(--acc2));min-width:5px}
+.moons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.moons span{
+  font-size:12.5px;color:#cfd9f2;background:var(--panel);
+  border:1px solid var(--line);padding:6px 13px;border-radius:999px;
 }
-.ep-title::after{content:"";flex:1;height:1px;background:var(--line)}
-.eps{display:flex;flex-wrap:wrap;gap:8px;max-height:190px;overflow-y:auto;padding-right:4px}
-.eps button{
-  font-family:inherit;font-size:13px;cursor:pointer;
-  min-width:46px;padding:9px 0;border-radius:10px;
-  color:#d6d6ea;background:var(--panel);
-  border:1px solid var(--line);transition:.2s;
-}
-.eps button:hover{border-color:rgba(139,92,246,.6);color:#fff}
-.eps button.active{
-  color:#fff;border-color:transparent;font-weight:700;
-  background:linear-gradient(135deg,var(--acc),var(--acc2));
-  box-shadow:0 5px 18px rgba(139,92,246,.45);
-}
-.eps::-webkit-scrollbar{width:7px}
-.eps::-webkit-scrollbar-thumb{background:rgba(139,92,246,.45);border-radius:9px}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap}
 
 /* ---------- Подвал ---------- */
-footer{
-  margin-top:56px;border-top:1px solid var(--line);
-  padding:30px 0 44px;color:var(--muted);font-size:13px;
-}
+footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;color:var(--muted);font-size:13px}
 .fgrid{display:flex;gap:26px;flex-wrap:wrap;justify-content:space-between;align-items:center}
 .fgrid a{color:var(--muted);text-decoration:none;margin-right:16px;transition:.2s}
 .fgrid a:hover{color:#fff}
 
-@media(max-width:820px){
+@media(max-width:860px){
   .nav{display:none}
   .hero{padding:26px 20px;gap:20px}
-  .hero .poster-big{flex:0 0 120px;width:120px;font-size:44px}
-  .sheet .content{padding:20px 18px 26px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:13px}
-  .top-item{flex:0 0 280px}
+  .hvis{flex:0 0 180px;width:180px}
+  .planet-big{width:150px;height:150px;font-size:58px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:13px}
+  .orrery{padding:0}
   .game{padding:18px 15px}
   .q-text{font-size:15.5px}
+  .mhead{padding:20px 18px 18px}
+  .sheet .content{padding:20px 18px 26px}
 }
-@media(max-width:520px){
+@media(max-width:540px){
   .search input{width:150px;padding-left:32px}
   .search input:focus{width:180px}
   .bar{gap:10px}
   .logo{font-size:16px}
-  .mini{flex:0 0 240px}
-  .top-item{flex:0 0 250px}
-  .player .player-btn{width:60px;height:60px;font-size:22px}
   .opts{grid-template-columns:1fr}
   .hud-item{flex:1 1 44%}
+  .sizerow{grid-template-columns:88px 1fr 92px;gap:8px;padding:7px 6px}
+  .sizename{font-size:12.4px}
+  .szval{font-size:11.4px}
+  .fact{flex:0 0 250px}
 }
 </style>
 </head>
@@ -461,17 +374,17 @@ footer{
 
 <header class="topbar">
   <div class="wrap bar">
-    <div class="logo"><span class="mark">▶</span> АнимеХаб</div>
+    <div class="logo"><span class="mark">✦</span> КосмоСфера</div>
     <nav class="nav">
+      <a href="#system">Система</a>
+      <a href="#sizes">Размеры</a>
       <a href="#catalog">Каталог</a>
-      <a href="#top">Топ</a>
-      <a href="#watching">Продолжить</a>
-      <a href="#game">Игра</a>
+      <a href="#facts">Факты</a>
+      <a href="#quiz">Викторина</a>
       <a href="#about">О проекте</a>
-      <a href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener">Профиль</a>
     </nav>
     <div class="search">
-      <input id="q" type="search" placeholder="Поиск аниме..." aria-label="Поиск аниме">
+      <input id="q" type="search" placeholder="Поиск планеты..." aria-label="Поиск планеты">
     </div>
   </div>
 </header>
@@ -479,90 +392,115 @@ footer{
 <main class="wrap">
 
   <section class="hero">
-    <div class="info">
-      <span class="badge">Мини-сайт · сейчас в тренде</span>
-      <h1 id="heroTitle">Небесный клинок</h1>
-      <p id="heroDesc">Описание тайтла.</p>
-      <div class="actions">
-        <button class="btn" id="heroPlay">▶ Смотреть 1 серию</button>
-        <button class="btn ghost" id="heroRandom">🎲 Случайное аниме</button>
-        <button class="btn ghost" id="heroGame">🎮 Играть в викторину</button>
+    <div class="hinfo">
+      <span class="badge">Интерактивный гид</span>
+      <h1>Солнечная система <span class="grad">без скучных учебников</span></h1>
+      <p class="lead">Солнце, восемь планет и карликовый Плутон: размеры, температуры, длина суток и года,
+      количество спутников и любопытные факты. Всё интерактивно — нажимайте на карточки, сравнивайте
+      масштабы и проверяйте себя в викторине.</p>
+      <div class="hact">
+        <button class="btn" id="heroGo">Смотреть каталог</button>
+        <button class="btn amber" id="heroRandom">🎲 Случайное тело</button>
+        <button class="btn ghost" id="heroQuiz">🧠 Пройти викторину</button>
       </div>
     </div>
-    <div class="poster-big" id="heroPoster" style="background:linear-gradient(150deg,#6a11cb,#2575fc)">
-      ⚔️
-      <small>★ 9.1 · 24 серии</small>
+    <div class="hvis">
+      <div class="planet-big" id="heroPlanet" style="--c1:#6ec6ff;--c2:#0b3d91"><span id="heroIcon">🌍</span></div>
+      <p class="hname" id="heroName">Земля</p>
+      <p class="hfact" id="heroFact">Единственная известная планета с жидкой водой на поверхности и жизнью.</p>
     </div>
   </section>
 
-  <section class="blk" id="watching">
+  <section class="blk" id="system">
     <div class="sec-head">
-      <h2>Продолжить просмотр</h2>
-      <span class="count" id="watchingCount">3 тайтла</span>
+      <h2>Солнечная система в движении</h2>
+      <span class="count">схема условная: расстояния и скорости искажены для наглядности</span>
     </div>
-    <div class="rail" id="rail"></div>
+    <div class="orrery-shell">
+      <div class="orrery" id="orrery">
+        <div class="sun" title="Солнце"></div>
+      </div>
+      <div class="orrery-side">
+        <h3>Орбитальный механизм</h3>
+        <p>Каждая точка — планета, которая обращается вокруг Солнца с собственной скоростью:
+        Меркурий успевает обойти звезду почти в десять раз быстрее Плутона.</p>
+        <div class="legend" id="legend"></div>
+        <button class="btn small ghost" id="orreryToggle">⏸ Пауза</button>
+      </div>
+    </div>
   </section>
 
-  <section class="blk" id="top">
+  <section class="blk" id="sizes">
     <div class="sec-head">
-      <h2>Топ рейтинга</h2>
-      <span class="count">по оценке пользователей</span>
+      <h2>Сравнение размеров</h2>
+      <span class="count">шкала нелинейная — иначе Земля была бы точкой</span>
     </div>
-    <div class="rail" id="topRail"></div>
+    <div id="sizes"></div>
   </section>
 
   <section class="blk" id="catalog">
     <div class="sec-head">
-      <h2>Каталог аниме</h2>
+      <h2>Каталог тел Солнечной системы</h2>
       <div class="tools">
-        <span class="count" id="counter">12 тайтлов</span>
+        <span class="count" id="counter">10 объектов</span>
         <select class="sort" id="sort" aria-label="Сортировка">
-          <option value="rating">Сначала рейтинг</option>
-          <option value="year">Сначала новые</option>
-          <option value="title">По названию (А–Я)</option>
+          <option value="order">От Солнца наружу</option>
+          <option value="size">По размеру</option>
+          <option value="name">По названию (А–Я)</option>
         </select>
       </div>
     </div>
     <div class="filters" id="filters"></div>
     <div class="grid" id="grid"></div>
-    <div class="empty" id="empty">😕 Ничего не найдено. Попробуйте изменить запрос или жанр.</div>
+    <div class="empty" id="empty">🛰 Ничего не найдено. Измените запрос или выберите другую категорию.</div>
   </section>
 
-  <section class="blk" id="game">
+  <section class="blk" id="facts">
     <div class="sec-head">
-      <h2>Мини-игра «Знаток аниме»</h2>
-      <span class="count">10 вопросов · 15 секунд на ответ · клавиши 1–4</span>
+      <h2>Короткие факты</h2>
+      <span class="count">листайте вбок →</span>
+    </div>
+    <div class="rail" id="rail"></div>
+  </section>
+
+  <section class="blk" id="quiz">
+    <div class="sec-head">
+      <h2>Викторина «Космический экзамен»</h2>
+      <span class="count">10 вопросов · 20 секунд · клавиши 1–4</span>
     </div>
     <div class="game" id="gameBox">
-      <div class="game-hud" id="gHud">
+      <div class="game-hud">
         <div class="hud-item"><span class="hud-l">Вопрос</span><b id="gQNum">0 / 10</b></div>
         <div class="hud-item"><span class="hud-l">Очки</span><b id="gScore">0</b></div>
         <div class="hud-item"><span class="hud-l">Серия</span><b id="gStreak">0</b></div>
         <div class="hud-item"><span class="hud-l">Лучшая серия</span><b id="gBest">0</b></div>
       </div>
       <div class="timerbar"><i id="gTimer" style="width:0%"></i></div>
-      <div class="q-text" id="gText">Проверьте, насколько хорошо вы знаете каталог АнимеХаба: жанры, годы, количество серий, рейтинги и описания. Нажмите «Начать игру».</div>
+      <div class="q-text" id="gText">Десять вопросов о планетах, спутниках и рекордах Солнечной системы.
+      Отвечайте быстро: чем больше останется времени и чем длиннее серия верных ответов, тем больше очков.
+      Нажмите «Начать экзамен».</div>
       <div class="opts" id="gOpts"></div>
       <div class="gresult" id="gResult"></div>
       <div class="game-foot">
-        <div class="feedback" id="gFb">Отвечайте быстро — за скорость и серию правильных ответов начисляются бонусные очки.</div>
-        <button class="btn small" id="gStart">▶ Начать игру</button>
+        <div class="feedback" id="gFb">Готовы? Вопросы каждый раз выбираются заново из общей базы.</div>
+        <button class="btn small amber" id="gStart">▶ Начать экзамен</button>
       </div>
     </div>
   </section>
 
   <section class="blk" id="about">
     <div class="sec-head"><h2>О проекте</h2></div>
-    <p style="color:var(--muted);font-size:14.5px;max-width:780px">
-      АнимеХаб — это мини-сайт: демонстрационный каталог аниме, собранный в одном HTML-файле
-      без внешних библиотек и фреймворков. Здесь есть поиск по названию и жанрам, фильтр по категориям,
-      сортировка каталога, топ рейтинга, подборка «продолжить просмотр», встроенный плеер-заглушка
-      с выбором серии, управлением воспроизведением и кликабельной шкалой времени, а также мини-игра
-      «Знаток аниме» — викторина на 10 вопросов с таймером, серией правильных ответов и итоговой оценкой.
-      Все данные хранятся прямо в коде страницы.
+    <p style="color:var(--muted);font-size:14.5px;max-width:820px">
+      КосмоСфера — демонстрационный мини-сайт, собранный в одном HTML-файле без внешних библиотек.
+      Он показывает, как из одного массива данных можно получить сразу несколько интерфейсов:
+      орбитальную анимацию, диаграмму сравнения размеров, каталог с фильтрами, сортировкой и поиском,
+      подробные карточки объектов в модальном окне и викторину с таймером и системой очков.
+      Данные о планетах приближены к реальным, а расстояния и скорости на схеме сознательно искажены —
+      иначе внутренние планеты слились бы с Солнцем, а Нептун улетел бы за пределы экрана.
     </p>
-    <div style="margin-top:18px">
-      <a class="btn small ghost" href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener">👤 Профиль user_1377497577</a>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn small ghost" id="aboutRandom">🎲 Открыть случайную карточку</button>
+      <a class="btn small ghost" href="#quiz">🧠 Перейти к викторине</a>
     </div>
   </section>
 
@@ -570,42 +508,47 @@ footer{
 
 <footer>
   <div class="wrap fgrid">
-    <div>© 2025 АнимеХаб — мини-сайт на чистых HTML, CSS и JavaScript.</div>
-    <div class="flinks">
+    <div>© 2025 КосмоСфера — учебный мини-сайт на чистых HTML, CSS и JavaScript.</div>
+    <div>
+      <a href="#system">Система</a>
+      <a href="#sizes">Размеры</a>
       <a href="#catalog">Каталог</a>
-      <a href="#top">Топ</a>
-      <a href="#watching">Продолжить</a>
-      <a href="#game">Игра</a>
-      <a href="#about">О проекте</a>
-      <a href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener" id="user_1377497577">user_1377497577</a>
+      <a href="#facts">Факты</a>
+      <a href="#quiz">Викторина</a>
     </div>
   </div>
 </footer>
 
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mName">
   <div class="sheet" id="sheet">
     <button class="close" id="closeBtn" aria-label="Закрыть">✕</button>
-    <div class="player" id="player">
-      <span class="big-glyph" id="pGlyph">🎬</span>
-      <button class="player-btn" id="playToggle" aria-label="Воспроизведение">▶</button>
-      <span class="now" id="nowEp">Серия 1</span>
-      <div class="timeline">
-        <span class="time" id="tCur">00:00</span>
-        <div class="track" id="track" role="slider" aria-label="Позиция воспроизведения"><i id="bar"></i></div>
-        <span class="time" id="tDur">24:00</span>
+    <div class="mhead" id="mHead">
+      <div class="morb" id="mOrb">🌍</div>
+      <div class="mhead-info">
+        <h2 id="mName">Земля</h2>
+        <div class="chips" id="mChips"></div>
       </div>
     </div>
     <div class="content">
-      <h2 id="mTitle">Название</h2>
-      <div class="chips" id="mChips"></div>
+      <div class="table" id="mTable"></div>
       <p class="desc" id="mDesc"></p>
-      <div class="row-actions">
-        <button class="btn small" id="mFav">♡ В список</button>
-        <button class="btn small ghost" id="mRandom">🎲 Другое аниме</button>
-        <a class="btn small ghost" href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener">👤 Профиль</a>
+      <div class="sub">Соотношение с Землёй</div>
+      <div class="cmp">
+        <div class="cmp-lab"><span>Диаметр</span><span id="cmpD">—</span></div>
+        <div class="cmp-bar"><i id="barD" style="width:0"></i></div>
       </div>
-      <div class="ep-title">Серии</div>
-      <div class="eps" id="mEps"></div>
+      <div class="cmp" style="margin-bottom:22px">
+        <div class="cmp-lab"><span>Масса</span><span id="cmpM">—</span></div>
+        <div class="cmp-bar"><i id="barM" style="width:0"></i></div>
+      </div>
+      <div id="moonsBlock">
+        <div class="sub">Спутники</div>
+        <div class="moons" id="mMoons"></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn small amber" id="mRandom">🎲 Другое тело</button>
+        <button class="btn small ghost" id="mClose2">Закрыть</button>
+      </div>
     </div>
   </div>
 </div>
@@ -614,57 +557,26 @@ footer{
 (function(){
   "use strict";
 
-  /* ================= Данные ================= */
-  var ANIME = [
-    {t:"Небесный клинок", y:2023, r:9.1, g:["Фэнтези","Экшен"], e:24, i:"⚔️", c:["#6a11cb","#2575fc"],
-     d:"Юный мечник Акира отправляется в путь, чтобы вернуть украденный Небесный Клинок и остановить войну кланов. Эпичное фэнтези с постановкой боёв на уровне полнометражного кино."},
-    {t:"Тихий океан звёзд", y:2022, r:8.7, g:["Фантастика","Драма"], e:12, i:"🌌", c:["#0f2027","#2c5364"],
-     d:"После исчезновения Земли экипаж исследовательского корабля ищет новый дом среди звёзд. Медленная, атмосферная история о надежде и потере."},
-    {t:"Школа магии Авалон", y:2021, r:8.4, g:["Фэнтези","Комедия"], e:26, i:"✨", c:["#f7971e","#ffd200"],
-     d:"Обычная школьница случайно попадает в академию магии и оказывается единственной, кто способен пробудить древний артефакт. Учебные будни, дуэли и много юмора."},
-    {t:"Хроники последнего героя", y:2020, r:8.9, g:["Экшен","Фэнтези"], e:36, i:"🛡️", c:["#141e30","#243b55"],
-     d:"Королевство на грани гибели, и только один наёмник соглашается встать на его защиту. Большая сага о чести, предательстве и цене победы."},
-    {t:"Сакура и летний дождь", y:2023, r:8.2, g:["Романтика","Драма"], e:13, i:"🌸", c:["#ee9ca7","#ffdde1"],
-     d:"Тринадцать дней одного лета, которые изменят жизни двух старшеклассников. Тёплая и немного грустная история о первой любви."},
-    {t:"Кибер-Токио 2099", y:2024, r:8.8, g:["Фантастика","Триллер"], e:10, i:"🤖", c:["#00c6ff","#0072ff"],
-     d:"Детектив с имплантированной памятью расследует убийство, которое официально не существует. Неоновый киберпанк с плотным сюжетом."},
-    {t:"Кулинарные приключения Юки", y:2022, r:7.9, g:["Комедия","Слайс-оф-лайф"], e:12, i:"🍜", c:["#f83600","#f9d423"],
-     d:"Маленькая закусочная на окраине города собирает самых разных гостей — и каждое блюдо здесь рассказывает свою историю."},
-    {t:"Легенда о трёх драконах", y:2019, r:9.0, g:["Фэнтези","Экшен"], e:48, i:"🐉", c:["#870000","#190a05"],
-     d:"Три королевства, три дракона и один пророческий свиток. Масштабная эпопея о судьбе, власти и настоящей дружбе."},
-    {t:"Волейбол: Новый сезон", y:2023, r:8.6, g:["Спорт","Драма"], e:25, i:"🏐", c:["#11998e","#38ef7d"],
-     d:"Команда провинциальной школы пробивается в национальный турнир. Динамичные матчи и история о том, что значит быть частью команды."},
-    {t:"Тайна заброшенной станции", y:2024, r:8.3, g:["Триллер","Детектив"], e:11, i:"🕵️", c:["#3a1c71","#d76d77"],
-     d:"Группа студентов находит в лесу станцию, которой нет ни на одной карте. Каждая серия раскрывает новую часть мрачной головоломки."},
-    {t:"Пилоты звёздного флота", y:2021, r:8.1, g:["Фантастика","Экшен"], e:24, i:"🚀", c:["#1f4037","#99f2c8"],
-     d:"Курсанты лётной академии впервые выходят на настоящие боевые задания. Космические бои, дисциплина и дружба, проверенная на прочность."},
-    {t:"Дневник ведьмы", y:2022, r:8.5, g:["Фэнтези","Романтика"], e:12, i:"🧙", c:["#654ea3","#eaafc8"],
-     d:"Молодая ведьма ведёт дневник о своих первых шагах в магии — и не замечает, как в её жизни появляется тот, кого она не должна была встречать."}
-  ];
-
-  var CONTINUE = [
-    {idx:0, ep:7,  pr:42},
-    {idx:5, ep:3,  pr:78},
-    {idx:8, ep:12, pr:25}
-  ];
-
   /* ================= Утилиты ================= */
   function $(id){ return document.getElementById(id); }
-  function pad(n){ return n < 10 ? "0" + n : "" + n; }
-  function fmt(s){
-    s = Math.max(0, Math.floor(s));
-    return pad(Math.floor(s / 60)) + ":" + pad(s % 60);
-  }
-  function esc(str){
-    return String(str).replace(/[&<>"']/g, function(m){
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(m){
       return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
     });
   }
   function plural(n, one, few, many){
-    var m10 = n % 10, m100 = n % 100;
-    if (m10 === 1 && m100 !== 11) return one;
-    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+    var a = n % 10, b = n % 100;
+    if (a === 1 && b !== 11) return one;
+    if (a >= 2 && a <= 4 && (b < 10 || b >= 20)) return few;
     return many;
+  }
+  function shuffle(arr){
+    var a = arr.slice(), i, j, t;
+    for (i = a.length - 1; i > 0; i--){
+      j = Math.floor(Math.random() * (i + 1));
+      t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
   }
   function closest(el, sel){
     if (!el) return null;
@@ -675,114 +587,205 @@ footer{
     }
     return null;
   }
-  function shuffle(arr){
-    var a = arr.slice(), i, j, t;
-    for (i = a.length - 1; i > 0; i--){
-      j = Math.floor(Math.random() * (i + 1));
-      t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-  }
+  function comma(n){ return String(n).replace(".", ","); }
+  function num(n){ return n.toLocaleString("ru-RU"); }
 
-  /* ================= Жанры и фильтры ================= */
-  var genres = ["Все"];
-  ANIME.forEach(function(a){
-    a.g.forEach(function(g){
-      if (genres.indexOf(g) === -1) genres.push(g);
-    });
+  /* ================= Данные ================= */
+  var TYPES = {
+    star:  { l:"Звезда",            c:"#fbbf24" },
+    rock:  { l:"Каменистая планета", c:"#22d3ee" },
+    gas:   { l:"Газовый гигант",     c:"#818cf8" },
+    ice:   { l:"Ледяной гигант",     c:"#38bdf8" },
+    dwarf: { l:"Карликовая планета", c:"#a3a3a3" }
+  };
+
+  var PLANETS = [
+    {
+      n:"Солнце", t:"star", d:1392700, m:333000, day:"25,4 земных суток", year:"—",
+      moons:0, mt:"8 планет вокруг", mlist:[],
+      temp:"5 500 °C на поверхности", dist:0, ic:"☀️", c:["#fff3b0","#f97316"],
+      hf:"Содержит 99,86 % всей массы Солнечной системы.",
+      desc:"Звезда спектрального класса G, в ядре которой водород превращается в гелий. Каждую секунду Солнце теряет около 4 миллионов тонн массы, превращая её в свет, а этот свет добирается до Земли за 8 минут 20 секунд. Именно солнечное излучение держит планеты на орбитах и делает возможной жизнь на нашей планете."
+    },
+    {
+      n:"Меркурий", t:"rock", d:4879, m:0.055, day:"58,6 земных суток", year:"88 земных суток",
+      moons:0, mt:"нет спутников", mlist:[],
+      temp:"−173…+427 °C", dist:0.39, ic:"🌑", c:["#b8b8b8","#4a4a4a"],
+      hf:"Самая маленькая планета и самая близкая к Солнцу.",
+      desc:"Меркурий почти лишён атмосферы, поэтому перепады температур здесь самые резкие в Солнечной системе: от испепеляющей жары на дневной стороне до сильного мороза на ночной. Планета медленно вращается, а один её оборот вокруг Солнца занимает всего 88 земных суток."
+    },
+    {
+      n:"Венера", t:"rock", d:12104, m:0.815, day:"243 земных суток", year:"225 земных суток",
+      moons:0, mt:"нет спутников", mlist:[],
+      temp:"+464 °C", dist:0.72, ic:"🟠", c:["#f3d59a","#c2803a"],
+      hf:"Сутки здесь длиннее года, а облака — из серной кислоты.",
+      desc:"Венера — самая горячая планета Солнечной системы: плотная атмосфера из углекислого газа создаёт мощнейший парниковый эффект. Давление у поверхности примерно в 92 раза выше земного, а вращается планета в обратную сторону и так медленно, что сутки на ней длиннее года."
+    },
+    {
+      n:"Земля", t:"rock", d:12756, m:1, day:"23 ч 56 мин", year:"365,25 суток",
+      moons:1, mt:"1 спутник", mlist:["Луна"],
+      temp:"+15 °C в среднем", dist:1, ic:"🌍", c:["#6ec6ff","#0b3d91"],
+      hf:"Единственная планета с жидкой водой на поверхности и жизнью.",
+      desc:"Земля — крупнейшая из каменистых планет и единственная, где известна жизнь. Ось наклонена на 23,4°, поэтому на планете сменяются времена года. Магнитное поле защищает атмосферу и всё живое от солнечного ветра, а Луна стабилизирует наклон оси и вызывает приливы."
+    },
+    {
+      n:"Марс", t:"rock", d:6792, m:0.107, day:"24 ч 37 мин", year:"687 земных суток",
+      moons:2, mt:"2 спутника", mlist:["Фобос","Деймос"],
+      temp:"−63 °C в среднем", dist:1.52, ic:"🔴", c:["#ff8a6b","#8a2b12"],
+      hf:"Здесь находится Олимп — вулкан высотой около 22 км.",
+      desc:"Марс называют красной планетой из-за оксида железа в грунте. Здесь стоит самая высокая гора и самый протяжённый каньон в Солнечной системе, а на полюсах лежат шапки водяного и углекислотного льда. У Марса два маленьких спутника — Фобос и Деймос, похожие на захваченные астероиды."
+    },
+    {
+      n:"Юпитер", t:"gas", d:142984, m:317.8, day:"9 ч 56 мин", year:"11,9 земных лет",
+      moons:95, mt:"95 известных спутников", mlist:["Ио","Европа","Ганимед","Каллисто","Амальтея"],
+      temp:"−108 °C", dist:5.2, ic:"🪐", c:["#f6d9a8","#b4763c"],
+      hf:"Массивнее всех остальных планет вместе взятых в 2,5 раза.",
+      desc:"Юпитер — газовый гигант и самая большая планета системы. Он вращается так быстро, что заметно сплюснут у полюсов, а его полосы облаков образуют Большое красное пятно — гигантский вихрь, наблюдаемый уже более трёхсот лет. У Юпитера больше всего спутников, и один из них, Ганимед, крупнее Меркурия."
+    },
+    {
+      n:"Сатурн", t:"gas", d:120536, m:95.2, day:"10 ч 42 мин", year:"29,5 земных лет",
+      moons:146, mt:"146 известных спутников", mlist:["Титан","Энцелад","Мимас","Рея","Япет"],
+      temp:"−139 °C", dist:9.58, ic:"🪐", c:["#f7e3b0","#c2a25f"],
+      hf:"Кольца из льда и пыли, а толщина местами — десятки метров.",
+      desc:"Сатурн известен своими кольцами из водяного льда, камня и пыли. Средняя плотность планеты меньше плотности воды — гигант буквально плавал бы в огромном океане. Крупнейший спутник, Титан, обладает плотной атмосферой и озёрами из жидкого метана."
+    },
+    {
+      n:"Уран", t:"ice", d:51118, m:14.5, day:"17 ч 14 мин", year:"84 земных года",
+      moons:28, mt:"28 известных спутников", mlist:["Титания","Оберон","Ариэль","Умбриэль","Миранда"],
+      temp:"−197 °C", dist:19.2, ic:"🔵", c:["#a8f0f0","#2b7a9b"],
+      hf:"Наклон оси почти 98° — планета катится на боку.",
+      desc:"Уран вращается «лёжа»: его ось наклонена почти на 98°, поэтому полюса поочерёдно подставляются Солнцу, а смена сезонов длится десятилетиями. Метан в атмосфере поглощает красный свет и придаёт планете характерный бирюзовый оттенок."
+    },
+    {
+      n:"Нептун", t:"ice", d:49528, m:17.1, day:"16 ч 6 мин", year:"165 земных лет",
+      moons:16, mt:"16 известных спутников", mlist:["Тритон","Протей","Нереида","Ларисса"],
+      temp:"−201 °C", dist:30.05, ic:"🔷", c:["#8ab6ff","#123a8a"],
+      hf:"Самый далёкий гигант, открытый расчётами, а не наблюдением.",
+      desc:"Нептун — последняя планета системы и рекордсмен по скорости ветра: порывы разгоняются почти до 2000 км/ч. Его открыли «на кончике пера»: сначала астрономы вычислили положение неизвестной планеты по возмущениям орбиты Урана, и только потом её увидели в телескоп."
+    },
+    {
+      n:"Плутон", t:"dwarf", d:2376, m:0.0022, day:"6,4 земных суток", year:"248 земных лет",
+      moons:5, mt:"5 спутников", mlist:["Харон","Никта","Гидра","Кербер","Стикс"],
+      temp:"−229 °C", dist:39.5, ic:"⚪", c:["#d8d8e0","#6b6b7d"],
+      hf:"С 2006 года считается карликовой планетой.",
+      desc:"Плутон меньше Луны и состоит из камня и льда. В 2006 году Международный астрономический союз перевёл его в разряд карликовых планет, поэтому планет в системе снова восемь. Крупнейший спутник, Харон, настолько велик, что Плутон и он обращаются вокруг общего центра масс."
+    }
+  ];
+
+  var FACTS = [
+    {h:"День длиннее года", p:"На Венере планета оборачивается вокруг оси за 243 земных суток, а вокруг Солнца — за 225. Сутки здесь действительно длиннее года."},
+    {h:"Рекорд массы", p:"Юпитер тяжелее всех остальных планет Солнечной системы вместе взятых примерно в 2,5 раза."},
+    {h:"Вулкан-гигант", p:"Гора Олимп на Марсе поднимается почти на 22 км — это втрое выше Эвереста."},
+    {h:"Тонкие кольца", p:"Кольца Сатурна тянутся на сотни тысяч километров, но по толщине местами сравнимы с высотным домом."},
+    {h:"Планета на боку", p:"Наклон оси Урана около 98°, поэтому он вращается почти «лёжа» и катится по орбите."},
+    {h:"Открытие по расчётам", p:"Нептун сначала вычислили математически по возмущениям Урана и лишь потом нашли в телескопе."},
+    {h:"Восемь минут света", p:"Солнечный свет доходит до Земли примерно за 8 минут 20 секунд."},
+    {h:"Метановые моря", p:"На Титане, спутнике Сатурна, идут дожди из метана и существуют целые моря жидкого метана."},
+    {h:"Почти вся масса", p:"Солнце содержит 99,86 % массы всей Солнечной системы."},
+    {h:"Почему Плутон не планета", p:"Он меньше Луны, а рядом есть пояс Койпера с похожими объектами — с 2006 года это карликовая планета."}
+  ];
+
+  var QUESTIONS = [
+    {q:"Какая планета расположена ближе всех к Солнцу?", a:["Меркурий","Венера","Земля","Марс"]},
+    {q:"Какая планета Солнечной системы самая большая?", a:["Юпитер","Сатурн","Нептун","Земля"]},
+    {q:"На какой планете зафиксирована самая высокая температура поверхности?", a:["Венера","Меркурий","Марс","Юпитер"]},
+    {q:"У какой планеты больше всего подтверждённых спутников?", a:["Сатурн","Юпитер","Уран","Нептун"]},
+    {q:"Какая планета вращается «лёжа на боку»?", a:["Уран","Нептун","Сатурн","Марс"]},
+    {q:"Сколько спутников у Марса?", a:["2","1","4","Ни одного"]},
+    {q:"Как называется крупнейший спутник Сатурна?", a:["Титан","Европа","Тритон","Ганимед"]},
+    {q:"Какую планету открыли сначала расчётами, а потом увидели в телескоп?", a:["Нептун","Уран","Плутон","Сатурн"]},
+    {q:"Из чего в основном состоят кольца Сатурна?", a:["Из льда и камня","Из газа","Из жидкого металла","Из вулканического пепла"]},
+    {q:"Какая каменистая планета самая большая?", a:["Земля","Венера","Марс","Меркурий"]},
+    {q:"Сколько планет в Солнечной системе по современной классификации?", a:["8","9","7","10"]},
+    {q:"Какую планету называют красной?", a:["Марс","Меркурий","Юпитер","Венера"]},
+    {q:"Чему примерно равно расстояние от Земли до Солнца?", a:["150 млн км","1,5 млн км","15 млн км","1,5 млрд км"]},
+    {q:"В каком году Плутон перестали считать планетой?", a:["2006","1998","2015","1979"]},
+    {q:"Какая планета обладает самой плотной атмосферой?", a:["Венера","Земля","Юпитер","Марс"]},
+    {q:"Сколько примерно длится день на Юпитере?", a:["Около 10 часов","Около 24 часов","Около 5 часов","Около 36 часов"]},
+    {q:"Как называется высочайший вулкан Солнечной системы?", a:["Олимп","Эверест","Мауна-Кеа","Кракатау"]},
+    {q:"Сколько земных лет длится один год на Нептуне?", a:["165 лет","84 года","29 лет","248 лет"]},
+    {q:"Какой газ преобладает в атмосфере Юпитера?", a:["Водород","Кислород","Азот","Метан"]},
+    {q:"Как называется спутник Земли?", a:["Луна","Фобос","Титан","Харон"]}
+  ];
+
+  /* ================= Опрери: орбитальная схема ================= */
+  var ORBITS = [
+    {i:1, d:15, sp:6,  ps:8},
+    {i:2, d:22, sp:9,  ps:13},
+    {i:3, d:29, sp:13, ps:14},
+    {i:4, d:37, sp:17, ps:11},
+    {i:5, d:53, sp:26, ps:24},
+    {i:6, d:68, sp:36, ps:21},
+    {i:7, d:82, sp:48, ps:16},
+    {i:8, d:95, sp:62, ps:16}
+  ];
+
+  var orrery = $("orrery");
+  orrery.innerHTML = '<div class="sun" title="Солнце"></div>' + ORBITS.map(function(o){
+    var p = PLANETS[o.i];
+    return '<div class="orb" style="--d:' + o.d + '%;--sp:' + o.sp + 's">' +
+      '<span class="body" title="' + esc(p.n) + '" ' +
+      'style="--ps:' + o.ps + 'px;--c1:' + p.c[0] + ';--c2:' + p.c[1] + '"></span>' +
+    '</div>';
+  }).join("");
+
+  $("legend").innerHTML = ORBITS.map(function(o){
+    var p = PLANETS[o.i];
+    return '<span><i style="background:' + p.c[0] + '"></i>' + esc(p.n) + ' — ' + o.sp + ' с на оборот</span>';
+  }).join("");
+
+  $("orreryToggle").addEventListener("click", function(){
+    var paused = orrery.classList.toggle("paused");
+    this.textContent = paused ? "▶ Запустить" : "⏸ Пауза";
   });
 
-  var activeGenre = "Все";
-  var activeSort = "rating";
-  var query = "";
+  /* ================= Сравнение размеров ================= */
+  var MAXD = 1392700;
+  var sizes = PLANETS.map(function(p, i){ return {p:p, i:i}; })
+    .sort(function(a, b){ return b.p.d - a.p.d; });
+
+  $("sizes").innerHTML = sizes.map(function(o){
+    var p = o.p;
+    var w = Math.max(4, Math.sqrt(p.d / MAXD) * 100);
+    return '<div class="sizerow" data-id="' + o.i + '" tabindex="0" role="button">' +
+      '<span class="sizename">' + esc(p.n) + '</span>' +
+      '<span class="szbar"><i style="width:' + w.toFixed(1) + '%;--c1:' + p.c[0] + ';--c2:' + p.c[1] + '"></i></span>' +
+      '<span class="szval">' + num(p.d) + ' км</span>' +
+    '</div>';
+  }).join("");
+
+  $("sizes").addEventListener("click", function(ev){
+    var row = closest(ev.target, ".sizerow");
+    if (row) openModal(parseInt(row.getAttribute("data-id"), 10));
+  });
+  $("sizes").addEventListener("keydown", function(ev){
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    var row = closest(ev.target, ".sizerow");
+    if (row){ ev.preventDefault(); openModal(parseInt(row.getAttribute("data-id"), 10)); }
+  });
+
+  /* ================= Каталог ================= */
+  var grid = $("grid"), empty = $("empty"), counter = $("counter");
+  var activeType = "all", activeSort = "order", query = "";
   var favs = {};
 
+  var typeKeys = ["all"].concat(Object.keys(TYPES));
   var filtersBox = $("filters");
-  genres.forEach(function(g, i){
-    var b = document.createElement("button");
-    b.type = "button";
-    b.textContent = g;
-    if (i === 0) b.className = "active";
-    b.addEventListener("click", function(){
-      Array.prototype.forEach.call(filtersBox.children, function(x){
-        x.classList.remove("active");
-      });
-      b.classList.add("active");
-      activeGenre = g;
-      render();
-    });
-    filtersBox.appendChild(b);
-  });
+  filtersBox.innerHTML = shuffle(["all","rock","gas","ice","dwarf","star"]).map(function(k, idx){
+    var label = k === "all" ? "Все объекты" : TYPES[k].l;
+    return '<button type="button" data-type="' + k + '"' + (k === "all" ? ' class="active"' : '') + '>' + esc(label) + '</button>';
+  }).join("");
+  /* вернуть кнопку «Все объекты» на первое место */
+  var allBtn = filtersBox.querySelector('[data-type="all"]');
+  if (allBtn) filtersBox.insertBefore(allBtn, filtersBox.firstChild);
 
-  /* ================= Рендер каталога ================= */
-  var grid = $("grid");
-  var empty = $("empty");
-  var counter = $("counter");
-
-  function matches(a){
-    var okGenre = (activeGenre === "Все") || a.g.indexOf(activeGenre) !== -1;
-    var q = query.trim().toLowerCase();
-    var okQuery = !q ||
-      a.t.toLowerCase().indexOf(q) !== -1 ||
-      a.g.join(" ").toLowerCase().indexOf(q) !== -1;
-    return okGenre && okQuery;
-  }
-
-  function sortList(list){
-    list.sort(function(x, y){
-      var a = x.a, b = y.a;
-      if (activeSort === "year"){
-        if (b.y !== a.y) return b.y - a.y;
-        return b.r - a.r;
-      }
-      if (activeSort === "title"){
-        return a.t.localeCompare(b.t, "ru");
-      }
-      if (b.r !== a.r) return b.r - a.r;
-      return b.y - a.y;
-    });
-    return list;
-  }
-
-  function render(){
-    var list = [];
-    ANIME.forEach(function(a, i){
-      if (matches(a)) list.push({a:a, i:i});
-    });
-    sortList(list);
-
-    grid.innerHTML = list.map(function(o){
-      var a = o.a;
-      return '<article class="card" data-id="' + o.i + '" tabindex="0">' +
-        '<div class="poster" style="--a:' + a.c[0] + ';--b:' + a.c[1] + '">' +
-          '<span class="rate">★ ' + a.r.toFixed(1) + '</span>' +
-          '<span class="ep">' + a.e + ' эп.</span>' +
-          '<span class="hover-play">▶</span>' +
-          a.i +
-        '</div>' +
-        '<div class="body">' +
-          '<h3>' + esc(a.t) + '</h3>' +
-          '<p class="meta">' + a.y + ' · ' + esc(a.g[0]) + '</p>' +
-          '<p class="tags">' + esc(a.g.join(" · ")) + '</p>' +
-        '</div>' +
-      '</article>';
-    }).join("");
-
-    counter.textContent = list.length + " " + plural(list.length, "тайтл", "тайтла", "тайтлов");
-    empty.classList.toggle("show", list.length === 0);
-  }
-
-  grid.addEventListener("click", function(ev){
-    var card = closest(ev.target, ".card");
-    if (card) openModal(parseInt(card.getAttribute("data-id"), 10));
-  });
-  grid.addEventListener("keydown", function(ev){
-    if (ev.key !== "Enter" && ev.key !== " ") return;
-    var card = closest(ev.target, ".card");
-    if (card){
-      ev.preventDefault();
-      openModal(parseInt(card.getAttribute("data-id"), 10));
-    }
+  filtersBox.addEventListener("click", function(ev){
+    var b = closest(ev.target, "button");
+    if (!b) return;
+    Array.prototype.forEach.call(filtersBox.children, function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    activeType = b.getAttribute("data-type");
+    render();
   });
 
   $("sort").addEventListener("change", function(ev){
@@ -790,247 +793,58 @@ footer{
     render();
   });
 
-  /* ================= Продолжить просмотр ================= */
-  var rail = $("rail");
-  rail.innerHTML = CONTINUE.map(function(c){
-    var a = ANIME[c.idx];
-    return '<div class="mini" data-id="' + c.idx + '" tabindex="0">' +
-      '<div class="thumb" style="--a:' + a.c[0] + ';--b:' + a.c[1] + '">' + a.i + '</div>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div class="t">' + esc(a.t) + '</div>' +
-        '<div class="s">Серия ' + c.ep + ' · ' + c.pr + '%</div>' +
-        '<div class="prog"><i style="width:' + c.pr + '%"></i></div>' +
-      '</div>' +
-    '</div>';
-  }).join("");
-  $("watchingCount").textContent = CONTINUE.length + " " +
-    plural(CONTINUE.length, "тайтл", "тайтла", "тайтлов");
-
-  rail.addEventListener("click", function(ev){
-    var m = closest(ev.target, ".mini");
-    if (m) openModal(parseInt(m.getAttribute("data-id"), 10));
-  });
-  rail.addEventListener("keydown", function(ev){
-    if (ev.key !== "Enter" && ev.key !== " ") return;
-    var m = closest(ev.target, ".mini");
-    if (m){
-      ev.preventDefault();
-      openModal(parseInt(m.getAttribute("data-id"), 10));
-    }
-  });
-
-  /* ================= Топ рейтинга ================= */
-  var topRail = $("topRail");
-  var topList = ANIME.map(function(a, i){ return {a:a, i:i}; })
-    .sort(function(x, y){ return y.a.r - x.a.r; })
-    .slice(0, 6);
-
-  topRail.innerHTML = topList.map(function(o, n){
-    var a = o.a;
-    return '<div class="top-item" data-id="' + o.i + '" tabindex="0">' +
-      '<div class="rank">' + (n + 1) + '</div>' +
-      '<div class="thumb" style="--a:' + a.c[0] + ';--b:' + a.c[1] + '">' + a.i + '</div>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div class="tt">' + esc(a.t) + '</div>' +
-        '<div class="ts">★ ' + a.r.toFixed(1) + ' · ' + a.y + ' · ' + a.e + ' эп.</div>' +
-      '</div>' +
-    '</div>';
-  }).join("");
-
-  topRail.addEventListener("click", function(ev){
-    var t = closest(ev.target, ".top-item");
-    if (t) openModal(parseInt(t.getAttribute("data-id"), 10));
-  });
-  topRail.addEventListener("keydown", function(ev){
-    if (ev.key !== "Enter" && ev.key !== " ") return;
-    var t = closest(ev.target, ".top-item");
-    if (t){
-      ev.preventDefault();
-      openModal(parseInt(t.getAttribute("data-id"), 10));
-    }
-  });
-
-  /* ================= Герой ================= */
-  var featured = 0;
-  function paintHero(){
-    var a = ANIME[featured];
-    $("heroTitle").textContent = a.t;
-    $("heroDesc").textContent = a.d;
-    var hp = $("heroPoster");
-    hp.style.background = "linear-gradient(150deg," + a.c[0] + "," + a.c[1] + ")";
-    hp.innerHTML = a.i + '<small>★ ' + a.r.toFixed(1) + ' · ' + a.e + ' серий</small>';
+  function matchType(p){
+    if (activeType === "all") return true;
+    return p.t === activeType;
   }
-  paintHero();
+  function matchQuery(p){
+    var q = query.trim().toLowerCase();
+    if (!q) return true;
+    return p.n.toLowerCase().indexOf(q) !== -1 ||
+           TYPES[p.t].l.toLowerCase().indexOf(q) !== -1 ||
+           p.desc.toLowerCase().indexOf(q) !== -1;
+  }
 
-  $("heroPlay").addEventListener("click", function(){ openModal(featured); });
-  $("heroRandom").addEventListener("click", function(){
-    featured = Math.floor(Math.random() * ANIME.length);
-    paintHero();
-    var el = document.querySelector(".hero");
-    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
-  });
+  function render(){
+    var list = [];
+    PLANETS.forEach(function(p, i){
+      if (matchType(p) && matchQuery(p)) list.push({p:p, i:i});
+    });
 
-  /* ================= Модальное окно и плеер ================= */
-  var modal = $("modal");
-  var mTitle = $("mTitle");
-  var mChips = $("mChips");
-  var mDesc = $("mDesc");
-  var mEps = $("mEps");
-  var mFav = $("mFav");
-  var pGlyph = $("pGlyph");
-  var player = $("player");
-  var playToggle = $("playToggle");
-  var nowEp = $("nowEp");
-  var bar = $("bar");
-  var track = $("track");
-  var tCur = $("tCur");
-  var tDur = $("tDur");
-
-  var current = null;
-  var currentEp = 1;
-  var playing = false;
-  var pos = 0;
-  var DURATION = 24 * 60;
-  var timer = null;
-
-  function paintFav(){
-    if (current === null) return;
-    if (favs[current]){
-      mFav.textContent = "♥ В списке";
-      mFav.style.background = "linear-gradient(135deg,#22c55e,#0ea5e9)";
+    if (activeSort === "size"){
+      list.sort(function(a, b){ return b.p.d - a.p.d; });
+    } else if (activeSort === "name"){
+      list.sort(function(a, b){ return a.p.n.localeCompare(b.p.n, "ru"); });
     } else {
-      mFav.textContent = "♡ В список";
-      mFav.style.background = "";
+      list.sort(function(a, b){ return a.i - b.i; });
     }
-  }
 
-  function openModal(id){
-    var a = ANIME[id];
-    if (!a) return;
-    current = id;
-    currentEp = 1;
-
-    mTitle.textContent = a.t;
-    mChips.innerHTML =
-      '<span class="chip acc">★ ' + a.r.toFixed(1) + '</span>' +
-      '<span class="chip">' + a.y + '</span>' +
-      '<span class="chip">' + a.e + ' серий</span>' +
-      a.g.map(function(g){ return '<span class="chip">' + esc(g) + '</span>'; }).join("");
-    mDesc.textContent = a.d;
-
-    var eps = [];
-    var limit = Math.min(a.e, 60);
-    for (var i = 1; i <= limit; i++) eps.push(i);
-    mEps.innerHTML = eps.map(function(n){
-      return '<button type="button" data-ep="' + n + '"' +
-        (n === 1 ? ' class="active"' : '') + '>' + n + '</button>';
+    grid.innerHTML = list.map(function(o){
+      var p = o.p;
+      return '<article class="card" data-id="' + o.i + '" tabindex="0">' +
+        '<div class="disc" style="--c1:' + p.c[0] + ';--c2:' + p.c[1] + '"><span>' + p.ic + '</span></div>' +
+        '<div class="cbody">' +
+          '<h3>' + esc(p.n) + '</h3>' +
+          '<p class="ct">' + esc(TYPES[p.t].l) + '</p>' +
+          '<p class="cm">' + num(p.d) + ' км · ' + esc(p.mt) + '</p>' +
+        '</div>' +
+      '</article>';
     }).join("");
 
-    player.style.setProperty("--a", a.c[0]);
-    player.style.setProperty("--b", a.c[1]);
-    pGlyph.textContent = a.i;
-
-    paintFav();
-    resetPlayer(1);
-    modal.classList.add("open");
-    document.body.style.overflow = "hidden";
-    $("closeBtn").focus();
+    counter.textContent = list.length + " " + plural(list.length, "объект", "объекта", "объектов");
+    empty.classList.toggle("show", list.length === 0);
   }
 
-  function closeModal(){
-    pause();
-    modal.classList.remove("open");
-    document.body.style.overflow = "";
-  }
-
-  function resetPlayer(ep){
-    currentEp = ep;
-    pause();
-    pos = 0;
-    bar.style.width = "0%";
-    tCur.textContent = "00:00";
-    tDur.textContent = fmt(DURATION);
-    nowEp.textContent = "Серия " + ep;
-    var buttons = mEps.querySelectorAll("button");
-    Array.prototype.forEach.call(buttons, function(b){
-      b.classList.toggle("active", parseInt(b.getAttribute("data-ep"), 10) === ep);
-    });
-  }
-
-  function play(){
-    if (playing) return;
-    playing = true;
-    playToggle.textContent = "❚❚";
-    timer = setInterval(function(){
-      pos += 1;
-      if (pos >= DURATION){
-        pos = DURATION;
-        renderTime();
-        pause();
-        return;
-      }
-      renderTime();
-    }, 100);
-  }
-
-  function pause(){
-    playing = false;
-    playToggle.textContent = "▶";
-    if (timer){ clearInterval(timer); timer = null; }
-  }
-
-  function renderTime(){
-    bar.style.width = ((pos / DURATION) * 100).toFixed(2) + "%";
-    tCur.textContent = fmt(pos);
-  }
-
-  playToggle.addEventListener("click", function(){
-    if (playing) pause(); else play();
+  grid.addEventListener("click", function(ev){
+    var c = closest(ev.target, ".card");
+    if (c) openModal(parseInt(c.getAttribute("data-id"), 10));
+  });
+  grid.addEventListener("keydown", function(ev){
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    var c = closest(ev.target, ".card");
+    if (c){ ev.preventDefault(); openModal(parseInt(c.getAttribute("data-id"), 10)); }
   });
 
-  track.addEventListener("click", function(ev){
-    var rect = track.getBoundingClientRect();
-    if (!rect.width) return;
-    var ratio = (ev.clientX - rect.left) / rect.width;
-    ratio = Math.min(1, Math.max(0, ratio));
-    pos = ratio * DURATION;
-    renderTime();
-  });
-
-  mEps.addEventListener("click", function(ev){
-    var b = closest(ev.target, "button");
-    if (!b) return;
-    resetPlayer(parseInt(b.getAttribute("data-ep"), 10));
-  });
-
-  mFav.addEventListener("click", function(){
-    if (current === null) return;
-    if (favs[current]) delete favs[current];
-    else favs[current] = true;
-    paintFav();
-  });
-
-  $("mRandom").addEventListener("click", function(){
-    var id = Math.floor(Math.random() * ANIME.length);
-    if (ANIME.length > 1 && id === current) id = (id + 1) % ANIME.length;
-    openModal(id);
-  });
-
-  $("closeBtn").addEventListener("click", closeModal);
-  modal.addEventListener("click", function(ev){
-    if (ev.target === modal) closeModal();
-  });
-  document.addEventListener("keydown", function(ev){
-    if (!modal.classList.contains("open")) return;
-    if (ev.key === "Escape"){ closeModal(); return; }
-    var tag = ev.target && ev.target.tagName ? ev.target.tagName.toLowerCase() : "";
-    if (ev.key === " " && tag !== "button" && tag !== "input" && tag !== "select" && tag !== "textarea"){
-      ev.preventDefault();
-      if (playing) pause(); else play();
-    }
-  });
-
-  /* ================= Поиск ================= */
   var searchTimer = null;
   $("q").addEventListener("input", function(ev){
     var val = ev.target.value;
@@ -1041,109 +855,145 @@ footer{
     }, 120);
   });
 
-  /* ================= Мини-игра «Знаток аниме» ================= */
-  var gText = $("gText");
-  var gOpts = $("gOpts");
-  var gFb = $("gFb");
-  var gStart = $("gStart");
-  var gTimerEl = $("gTimer");
-  var gResult = $("gResult");
-  var gQNum = $("gQNum");
-  var gScoreEl = $("gScore");
-  var gStreakEl = $("gStreak");
-  var gBestEl = $("gBest");
+  /* ================= Факты ================= */
+  $("rail").innerHTML = FACTS.map(function(f){
+    return '<div class="fact"><b>' + esc(f.h) + '</b><p>' + esc(f.p) + '</p></div>';
+  }).join("");
 
-  var GAME_LEN = 10;
-  var GAME_TIME = 15;
+  /* ================= Герой ================= */
+  var featured = 3; /* Земля */
+  function paintHero(){
+    var p = PLANETS[featured];
+    var el = $("heroPlanet");
+    el.style.setProperty("--c1", p.c[0]);
+    el.style.setProperty("--c2", p.c[1]);
+    $("heroIcon").textContent = p.ic;
+    $("heroName").textContent = p.n + " · " + TYPES[p.t].l;
+    $("heroFact").textContent = p.hf;
+  }
+  paintHero();
+
+  $("heroGo").addEventListener("click", function(){
+    var el = $("catalog");
+    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  $("heroQuiz").addEventListener("click", function(){
+    var el = $("quiz");
+    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    if (!gState) startGame();
+  });
+  $("heroRandom").addEventListener("click", function(){
+    var id = Math.floor(Math.random() * PLANETS.length);
+    if (PLANETS.length > 1 && id === featured) id = (id + 1) % PLANETS.length;
+    featured = id;
+    paintHero();
+    var el = document.querySelector(".hero");
+    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  $("aboutRandom").addEventListener("click", function(){
+    openModal(Math.floor(Math.random() * PLANETS.length));
+  });
+
+  /* ================= Модальное окно ================= */
+  var modal = $("modal"), mHead = $("mHead"), mOrb = $("mOrb"), mName = $("mName");
+  var mChips = $("mChips"), mTable = $("mTable"), mDesc = $("mDesc");
+  var mMoons = $("mMoons"), moonsBlock = $("moonsBlock");
+  var current = null;
+
+  function massText(m){
+    if (m >= 1000) return num(m) + " масс Земли";
+    if (m >= 1) return comma(m) + " масс Земли";
+    return comma(m.toFixed(m < 0.01 ? 4 : 3)) + " масс Земли";
+  }
+
+  function openModal(id){
+    var p = PLANETS[id];
+    if (!p) return;
+    current = id;
+
+    mHead.style.setProperty("--c1", p.c[0]);
+    mHead.style.setProperty("--c2", p.c[1]);
+    mOrb.textContent = p.ic;
+    mName.textContent = p.n;
+
+    mChips.innerHTML =
+      '<span class="chip">' + esc(TYPES[p.t].l) + '</span>' +
+      '<span class="chip">' + (p.dist ? esc(comma(p.dist)) + " а.е. от Солнца" : "центр системы") + '</span>' +
+      '<span class="chip">' + esc(p.mt) + '</span>';
+
+    mTable.innerHTML =
+      '<div class="cell"><span>Диаметр</span><b>' + num(p.d) + ' км</b></div>' +
+      '<div class="cell"><span>Масса</span><b>' + esc(massText(p.m)) + '</b></div>' +
+      '<div class="cell"><span>Сутки</span><b>' + esc(p.day) + '</b></div>' +
+      '<div class="cell"><span>Год</span><b>' + esc(p.year) + '</b></div>' +
+      '<div class="cell"><span>Спутники</span><b>' + esc(p.mt) + '</b></div>' +
+      '<div class="cell"><span>Температура</span><b>' + esc(p.temp) + '</b></div>';
+
+    mDesc.textContent = p.desc;
+
+    var dRatio = p.d / 12756;
+    var mRatio = p.m / 1;
+    $("cmpD").textContent = dRatio >= 1
+      ? "×" + comma(dRatio.toFixed(1)) + " к Земле"
+      : comma((dRatio * 100).toFixed(1)) + "% от Земли";
+    $("cmpM").textContent = mRatio >= 1
+      ? "×" + comma(mRatio.toFixed(mRatio >= 100 ? 0 : 1)) + " к Земле"
+      : comma((mRatio * 100).toFixed(mRatio < 0.01 ? 2 : 1)) + "% от Земли";
+    $("barD").style.width = Math.max(3, Math.sqrt(p.d / MAXD) * 100).toFixed(1) + "%";
+    $("barM").style.width = Math.max(3, Math.sqrt(p.m / 333000) * 100).toFixed(1) + "%";
+
+    if (p.mlist.length){
+      moonsBlock.style.display = "";
+      mMoons.innerHTML = p.mlist.map(function(m){
+        return '<span>' + esc(m) + '</span>';
+      }).join("");
+    } else {
+      moonsBlock.style.display = "none";
+      mMoons.innerHTML = "";
+    }
+
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("closeBtn").focus();
+  }
+
+  function closeModal(){
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  $("closeBtn").addEventListener("click", closeModal);
+  $("mClose2").addEventListener("click", closeModal);
+  modal.addEventListener("click", function(ev){
+    if (ev.target === modal) closeModal();
+  });
+  $("mRandom").addEventListener("click", function(){
+    var id = Math.floor(Math.random() * PLANETS.length);
+    if (PLANETS.length > 1 && id === current) id = (id + 1) % PLANETS.length;
+    openModal(id);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (ev.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  /* ================= Викторина ================= */
+  var GAME_LEN = 10, GAME_TIME = 20;
   var LETTERS = ["А","Б","В","Г"];
 
-  var gState = null;
-  var gPool = [];
-  var gTimerId = null;
+  var gText = $("gText"), gOpts = $("gOpts"), gFb = $("gFb"), gStart = $("gStart");
+  var gTimerEl = $("gTimer"), gResult = $("gResult");
+  var gQNum = $("gQNum"), gScoreEl = $("gScore"), gStreakEl = $("gStreak"), gBestEl = $("gBest");
 
-  /* Сборка пула вопросов: по одному варианту вопроса на каждый тайтл */
-  function buildQuestions(){
-    var years = [], eps = [], gList = [], ratings = [], titles = [];
+  var gState = null, gPool = [], gTimerId = null;
 
-    ANIME.forEach(function(a){
-      if (years.indexOf(a.y) === -1) years.push(a.y);
-      if (eps.indexOf(a.e) === -1) eps.push(a.e);
-      if (ratings.indexOf(a.r) === -1) ratings.push(a.r);
-      titles.push(a.t);
-      a.g.forEach(function(g){
-        if (gList.indexOf(g) === -1) gList.push(g);
-      });
-    });
-
-    var packs = ANIME.map(function(a){
-      var list = [];
-
-      /* жанр */
-      var wrongG = shuffle(gList.filter(function(g){ return a.g.indexOf(g) === -1; })).slice(0, 3);
-      if (wrongG.length === 3){
-        list.push({
-          q: "Какой жанр у аниме «" + a.t + "»?",
-          correct: a.g[0],
-          opts: shuffle([a.g[0]].concat(wrongG))
-        });
-      }
-
-      /* количество серий */
-      var rightE = a.e + " " + plural(a.e, "серия", "серии", "серий");
-      var wrongE = shuffle(eps.filter(function(e){ return e !== a.e; })).slice(0, 3)
-        .map(function(e){ return e + " " + plural(e, "серия", "серии", "серий"); });
-      if (wrongE.length === 3){
-        list.push({
-          q: "Сколько серий в аниме «" + a.t + "»?",
-          correct: rightE,
-          opts: shuffle([rightE].concat(wrongE))
-        });
-      }
-
-      /* год выхода */
-      var wrongY = shuffle(years.filter(function(y){ return y !== a.y; })).slice(0, 3).map(String);
-      if (wrongY.length === 3){
-        list.push({
-          q: "В каком году вышло аниме «" + a.t + "»?",
-          correct: String(a.y),
-          opts: shuffle([String(a.y)].concat(wrongY))
-        });
-      }
-
-      /* описание → название */
-      var wrongT = shuffle(titles.filter(function(t){ return t !== a.t; })).slice(0, 3);
-      if (wrongT.length === 3){
-        var desc = a.d.length > 118 ? a.d.slice(0, 118) + "…" : a.d;
-        list.push({
-          q: "О каком аниме идёт речь? «" + desc + "»",
-          correct: a.t,
-          opts: shuffle([a.t].concat(wrongT))
-        });
-      }
-
-      /* рейтинг */
-      var rightR = "★ " + a.r.toFixed(1);
-      var wrongR = shuffle(ratings.filter(function(r){ return r !== a.r; })).slice(0, 3)
-        .map(function(r){ return "★ " + r.toFixed(1); });
-      if (wrongR.length === 3){
-        list.push({
-          q: "Какой рейтинг у аниме «" + a.t + "»?",
-          correct: rightR,
-          opts: shuffle([rightR].concat(wrongR))
-        });
-      }
-
-      return list;
-    }).filter(function(l){ return l.length > 0; });
-
-    var n = Math.min(GAME_LEN, packs.length);
-    return shuffle(packs).slice(0, n).map(function(list){
-      return list[Math.floor(Math.random() * list.length)];
+  function buildQuiz(){
+    return shuffle(QUESTIONS).slice(0, Math.min(GAME_LEN, QUESTIONS.length)).map(function(item){
+      return { q: item.q, correct: item.a[0], opts: shuffle(item.a) };
     });
   }
 
   function updateHud(){
-    if (!gState) {
+    if (!gState){
       gQNum.textContent = "0 / 0";
       gScoreEl.textContent = "0";
       gStreakEl.textContent = "0";
@@ -1164,8 +1014,7 @@ footer{
     stopTimer();
     gTimerEl.classList.remove("low");
     gTimerEl.style.width = "100%";
-    var ticks = 0;
-    var total = GAME_TIME * 20;
+    var ticks = 0, total = GAME_TIME * 20;
     gTimerId = setInterval(function(){
       if (!gState || gState.locked){ stopTimer(); return; }
       ticks++;
@@ -1179,15 +1028,15 @@ footer{
       }
       gState.left = left;
       gTimerEl.style.width = (left / GAME_TIME * 100).toFixed(2) + "%";
-      if (left <= 5) gTimerEl.classList.add("low");
+      if (left <= 6) gTimerEl.classList.add("low");
     }, 50);
   }
 
   function startGame(){
     stopTimer();
-    gPool = buildQuestions();
+    gPool = buildQuiz();
     if (!gPool.length) return;
-    gState = {i:0, score:0, streak:0, best:0, correct:0, left:GAME_TIME, locked:true};
+    gState = { i:0, score:0, streak:0, best:0, correct:0, left:GAME_TIME, locked:true };
     gResult.classList.remove("show");
     gResult.innerHTML = "";
     gStart.textContent = "↻ Начать заново";
@@ -1238,8 +1087,7 @@ footer{
       gState.correct++;
       gState.streak++;
       if (gState.streak > gState.best) gState.best = gState.streak;
-      var bonus = (gState.streak - 1) * 25 + Math.round(gState.left * 8);
-      var gain = 100 + bonus;
+      var gain = 100 + (gState.streak - 1) * 25 + Math.round(gState.left * 6);
       gState.score += gain;
       gFb.className = "feedback ok";
       gFb.textContent = "Верно! +" + gain + " очков" +
@@ -1254,7 +1102,7 @@ footer{
 
     gState.i++;
     updateHud();
-    setTimeout(nextQuestion, good ? 900 : 1550);
+    setTimeout(nextQuestion, good ? 900 : 1600);
   }
 
   function finishGame(){
@@ -1262,31 +1110,31 @@ footer{
     gState.locked = true;
     gTimerEl.style.width = "0%";
     gTimerEl.classList.remove("low");
-    gText.textContent = "Игра завершена!";
+    gText.textContent = "Экзамен завершён!";
     gOpts.innerHTML = "";
 
     var total = gPool.length;
     var pct = total ? gState.correct / total : 0;
     var title, emo;
-    if (pct === 1){ title = "Легенда АнимеХаба"; emo = "👑"; }
-    else if (pct >= 0.8){ title = "Настоящий отаку"; emo = "🏆"; }
-    else if (pct >= 0.6){ title = "Уверенный зритель"; emo = "🎯"; }
-    else if (pct >= 0.4){ title = "Начинающий фанат"; emo = "🌱"; }
-    else { title = "Новичок"; emo = "🍿"; }
+    if (pct === 1){ title = "Астроном-профессионал"; emo = "🛰"; }
+    else if (pct >= 0.8){ title = "Знаток космоса"; emo = "🏆"; }
+    else if (pct >= 0.6){ title = "Уверенный наблюдатель"; emo = "🔭"; }
+    else if (pct >= 0.4){ title = "Начинающий исследователь"; emo = "🚀"; }
+    else { title = "Первые шаги"; emo = "🌠"; }
 
     gResult.innerHTML =
       '<div class="res-emoji">' + emo + '</div>' +
       '<div class="res-title">' + title + '</div>' +
       '<div class="res-score">' + gState.score + ' очков</div>' +
       '<div class="res-rows">' +
-        '<div class="res-row"><span>Правильных ответов</span><b>' + gState.correct + ' из ' + total + '</b></div>' +
+        '<div class="res-row"><span>Верных ответов</span><b>' + gState.correct + ' из ' + total + '</b></div>' +
         '<div class="res-row"><span>Лучшая серия</span><b>×' + gState.best + '</b></div>' +
         '<div class="res-row"><span>Точность</span><b>' + Math.round(pct * 100) + '%</b></div>' +
       '</div>';
     gResult.classList.add("show");
     gFb.className = "feedback";
-    gFb.textContent = "Хотите лучше? Нажмите «Играть снова» — вопросы каждый раз новые.";
-    gStart.textContent = "↻ Играть снова";
+    gFb.textContent = "Хотите улучшить результат? Нажмите «Начать заново» — набор вопросов будет другим.";
+    gStart.textContent = "↻ Пройти снова";
     updateHud();
   }
 
@@ -1310,12 +1158,6 @@ footer{
     if (buttons[idx]) answer(idx, false);
   });
 
-  $("heroGame").addEventListener("click", function(){
-    var sec = $("game");
-    if (sec) sec.scrollIntoView({behavior:"smooth", block:"start"});
-    if (!gState) startGame();
-  });
-
   updateHud();
 
   /* ================= Старт ================= */
@@ -1324,16 +1166,3 @@ footer{
 </script>
 </body>
 </html>
-
-### Как работает викторина «Знаток аниме»
-
-Все вопросы строятся динамически на основе данных каталога: жанры, годы, количество серий, рейтинги и описания.
-
-- **Игровой процесс**: 10 вопросов по 4 варианта ответа, на каждый даётся 15 секунд.
-- **Начисление очков**: за правильный ответ начисляется базовое вознаграждение, плюс бонус за оставшееся время и серию правильных ответов.
-- **Обратная связь**: после ответа правильный вариант подсвечивается зелёным, неверный — красным, появляется подсказка.
-- **Итоги**: в конце показывается точность, количество правильных ответов, лучшая серия и звание в зависимости от результата.
-- **Управление**: кнопка «Начать игру», клики по вариантам или клавиши 1–4, в шапке и в первом экране есть быстрый переход к секции игры.
----
-
-**Оптимизацию можно начать с блока `ANIME`** — именно из него генерируются вопросы, варианты ответов и данные карточек. Если вы захотите добавить или заменить тайтл, достаточно отредактировать этот массив: игра, каталог и топ автоматически подхватят изменения.
