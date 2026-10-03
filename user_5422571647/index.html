@@ -10,9 +10,20 @@
   html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#06040f;
     font-family:"Trebuchet MS",Verdana,system-ui,sans-serif;color:#f2e9ff;
     user-select:none;-webkit-user-select:none;touch-action:none}
-  canvas{position:fixed;inset:0;display:block;cursor:crosshair}
+  canvas{position:fixed;left:0;right:0;bottom:0;top:46px;display:block;cursor:crosshair}
 
-  #hud{position:fixed;inset:0;pointer-events:none;padding:12px 16px;
+  #siteHeader{position:fixed;top:0;left:0;right:0;height:46px;z-index:12;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:0 14px;background:linear-gradient(180deg,#0d0722,#09051af2);
+    border-bottom:1px solid #3a2460;font-family:"Courier New",monospace;
+    letter-spacing:.14em;pointer-events:none}
+  #siteHeader .brand{font-size:14px;font-weight:bold;color:#e9d5ff;
+    text-shadow:0 0 14px #a855f7aa;white-space:nowrap}
+  #siteHeader .brand span{color:#7ef0ff;text-shadow:0 0 14px #22d3eeaa}
+  #siteHeader .tag{font-size:9.5px;color:#6b5a8a;text-transform:uppercase;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  #hud{position:fixed;left:0;right:0;bottom:0;top:46px;pointer-events:none;padding:12px 16px;
     display:flex;justify-content:space-between;align-items:flex-start;
     font-family:"Courier New",monospace;letter-spacing:.08em}
   .col{display:flex;flex-direction:column;gap:6px}
@@ -62,8 +73,8 @@
   #odBtn.on{display:block}
   @keyframes odpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
-  #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    background:radial-gradient(circle at 50% 45%,#1a0d33ee,#05030ccc 70%);
+  #overlay{position:fixed;left:0;right:0;bottom:0;top:46px;display:flex;align-items:center;
+    justify-content:center;background:radial-gradient(circle at 50% 45%,#1a0d33ee,#05030ccc 70%);
     opacity:0;pointer-events:none;transition:opacity .25s;padding:18px;z-index:10;overflow:auto}
   #overlay.show{opacity:1;pointer-events:auto}
   .panel{max-width:560px;width:100%;text-align:center;padding:26px 22px;
@@ -105,6 +116,11 @@
 </style>
 </head>
 <body>
+<header id="siteHeader">
+  <div class="brand">NEON<span>BREAKER</span></div>
+  <div class="tag">Арканоид · 12 уровней · 8 усилителей · ПЕРЕГРУЗ</div>
+</header>
+
 <canvas id="game"></canvas>
 
 <div id="hud">
@@ -173,6 +189,7 @@
 'use strict';
 
 /* ==================== SETUP ==================== */
+var HEADER = 46;
 var canvas = document.getElementById('game');
 var ctx = canvas.getContext('2d');
 var W = 800, H = 600, DPR = 1, SC = 1;
@@ -275,7 +292,7 @@ function initStars(){
 function resize(){
   DPR = Math.min(window.devicePixelRatio || 1, 2);
   W = Math.max(320, window.innerWidth);
-  H = Math.max(420, window.innerHeight);
+  H = Math.max(340, window.innerHeight - HEADER);
   canvas.width = Math.floor(W * DPR);
   canvas.height = Math.floor(H * DPR);
   canvas.style.width = W + 'px';
@@ -963,13 +980,13 @@ window.addEventListener('blur', function(){
 canvas.addEventListener('pointerdown', function(e){
   pointerDown = true;
   pointerUse = true;
-  pointer.x = e.clientX; pointer.y = e.clientY;
+  pointer.x = e.clientX; pointer.y = e.clientY - HEADER;
   ensureAC();
   if (S.mode === 'menu' || S.mode === 'over' || S.mode === 'win'){ startGame(1); return; }
   if (S.mode === 'playing') launchAll();
 });
 canvas.addEventListener('pointermove', function(e){
-  pointer.x = e.clientX; pointer.y = e.clientY;
+  pointer.x = e.clientX; pointer.y = e.clientY - HEADER;
   if (e.pointerType === 'mouse' || pointerDown) pointerUse = true;
 });
 window.addEventListener('pointerup', function(){ pointerDown = false; });
@@ -1751,3 +1768,15 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+
+### Gameplay and Interface Design
+
+The page presents a neon-themed brick breaker with responsive play area and touch-friendly controls. You’ll move the paddle using the mouse, touch, or keyboard and clear all blocks to advance.
+
+- **Controls & feedback** — Use arrow keys, A/D, mouse, or finger to move the paddle. Press Space to launch the ball, E to trigger a charged shockwave. Visual and audio cues respond instantly, including screen shake and particle bursts.
+- **Power-ups & progression** — Destroying blocks can drop power-ups like wide paddle, multiball, slow-motion, laser, sticky paddle, piercing ball, shield, and extra life. Each has a timed duration shown in the HUD.
+- **Special blocks & overdrive** — From level 2 onward, explosive blocks appear; breaking them sets off chain reactions. Fully charging the bottom bar enables the Overdrive wave that sweeps the board and clears multiple rows.
+- **Levels & persistence** — There are 12 unlockable levels selectable from the menu, and your best score plus unlocked progress are saved in your browser’s local storage.
+---
+
+**Optimization Tip:** You can tweak difficulty and pacing by adjusting the values inside the `S` object (e.g., `lives: 3`, `maxLevel: 12`) or the `ballSpeed()` and `PW_MAX` definitions to change ball speed and power-up durations.
