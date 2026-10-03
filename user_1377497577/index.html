@@ -166,6 +166,7 @@ select.sort:focus{border-color:rgba(34,211,238,.8);box-shadow:0 0 0 3px rgba(34,
   padding:9px 12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent;
 }
 .sizerow:hover{background:rgba(255,255,255,.05);border-color:var(--line)}
+.sizerow:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .sizename{font-size:13.6px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .szbar{height:14px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden}
 .szbar i{
@@ -767,17 +768,12 @@ footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;colo
   /* ================= Каталог ================= */
   var grid = $("grid"), empty = $("empty"), counter = $("counter");
   var activeType = "all", activeSort = "order", query = "";
-  var favs = {};
 
-  var typeKeys = ["all"].concat(Object.keys(TYPES));
   var filtersBox = $("filters");
-  filtersBox.innerHTML = shuffle(["all","rock","gas","ice","dwarf","star"]).map(function(k, idx){
+  filtersBox.innerHTML = ["all","rock","gas","ice","dwarf","star"].map(function(k){
     var label = k === "all" ? "Все объекты" : TYPES[k].l;
     return '<button type="button" data-type="' + k + '"' + (k === "all" ? ' class="active"' : '') + '>' + esc(label) + '</button>';
   }).join("");
-  /* вернуть кнопку «Все объекты» на первое место */
-  var allBtn = filtersBox.querySelector('[data-type="all"]');
-  if (allBtn) filtersBox.insertBefore(allBtn, filtersBox.firstChild);
 
   filtersBox.addEventListener("click", function(ev){
     var b = closest(ev.target, "button");
@@ -887,8 +883,6 @@ footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;colo
     if (PLANETS.length > 1 && id === featured) id = (id + 1) % PLANETS.length;
     featured = id;
     paintHero();
-    var el = document.querySelector(".hero");
-    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
   });
   $("aboutRandom").addEventListener("click", function(){
     openModal(Math.floor(Math.random() * PLANETS.length));
@@ -1014,7 +1008,7 @@ footer{margin-top:56px;border-top:1px solid var(--line);padding:30px 0 46px;colo
     stopTimer();
     gTimerEl.classList.remove("low");
     gTimerEl.style.width = "100%";
-    var ticks = 0, total = GAME_TIME * 20;
+    var ticks = 0;
     gTimerId = setInterval(function(){
       if (!gState || gState.locked){ stopTimer(); return; }
       ticks++;
