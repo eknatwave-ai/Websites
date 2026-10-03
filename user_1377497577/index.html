@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>АнимеХаб — мини-сайт: каталог аниме, топ и плеер</title>
-<meta name="description" content="АнимеХаб — мини-сайт каталога аниме онлайн: популярные сериалы, топ рейтинга, жанры, поиск, подборка «продолжить просмотр» и встроенный плеер.">
+<title>АнимеХаб — мини-сайт: каталог аниме, топ, плеер и игра</title>
+<meta name="description" content="АнимеХаб — мини-сайт каталога аниме онлайн: популярные сериалы, топ рейтинга, жанры, поиск, подборка «продолжить просмотр», встроенный плеер и мини-игра «Знаток аниме».">
 <style>
 :root{
   --bg:#0b0b14;
@@ -249,6 +249,94 @@ select.sort:focus{border-color:rgba(139,92,246,.75);box-shadow:0 0 0 3px rgba(13
 .top-item .tt{font-size:14px;font-weight:600;margin-bottom:3px}
 .top-item .ts{font-size:11.5px;color:var(--muted)}
 
+/* ---------- Игра ---------- */
+.game{
+  position:relative;overflow:hidden;
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:22px;
+}
+.game::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(620px 320px at 88% -25%, rgba(139,92,246,.22), transparent 70%),
+             radial-gradient(520px 300px at 5% 120%, rgba(236,72,153,.16), transparent 70%);
+}
+.game-hud{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:2}
+.hud-item{
+  flex:1 1 108px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:12px;padding:9px 13px;
+}
+.hud-l{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted)}
+.hud-item b{font-size:18px;font-variant-numeric:tabular-nums}
+.timerbar{
+  height:7px;border-radius:9px;background:rgba(255,255,255,.1);
+  overflow:hidden;margin-bottom:18px;position:relative;z-index:2;
+}
+.timerbar i{
+  display:block;height:100%;width:0;border-radius:9px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));
+  transition:width .18s linear,background .3s;
+}
+.timerbar i.low{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+.q-text{
+  position:relative;z-index:2;min-height:56px;
+  font-size:17px;font-weight:600;line-height:1.45;margin-bottom:18px;
+}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:11px;position:relative;z-index:2}
+.opt{
+  display:flex;align-items:center;gap:11px;
+  font-family:inherit;font-size:14.5px;text-align:left;cursor:pointer;
+  color:var(--txt);background:var(--panel2);
+  border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;transition:.2s;
+}
+.opt .ol{
+  display:grid;place-items:center;flex:0 0 26px;
+  width:26px;height:26px;border-radius:8px;
+  font-size:12px;font-weight:700;
+  background:rgba(255,255,255,.09);color:var(--muted);
+  transition:.2s;
+}
+.opt:hover:not(:disabled){
+  border-color:rgba(139,92,246,.65);background:rgba(139,92,246,.12);
+  transform:translateY(-2px);
+}
+.opt:disabled{cursor:default}
+.opt.correct{
+  background:linear-gradient(135deg,rgba(34,197,94,.30),rgba(14,165,233,.18));
+  border-color:rgba(34,197,94,.75);
+}
+.opt.correct .ol{background:rgba(34,197,94,.75);color:#fff}
+.opt.wrong{
+  background:linear-gradient(135deg,rgba(239,68,68,.30),rgba(236,72,153,.18));
+  border-color:rgba(239,68,68,.75);
+}
+.opt.wrong .ol{background:rgba(239,68,68,.75);color:#fff}
+.opt.dim{opacity:.42}
+.game-foot{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  margin-top:18px;position:relative;z-index:2;
+}
+.feedback{flex:1 1 200px;font-size:14px;color:var(--muted)}
+.feedback.ok{color:#4ade80}
+.feedback.no{color:#f87171}
+
+.gresult{display:none}
+.gresult.show{display:block;position:relative;z-index:2;text-align:center;padding:6px 0 4px}
+.res-emoji{font-size:56px;line-height:1;margin-bottom:8px}
+.res-title{
+  font-size:23px;font-weight:800;margin-bottom:6px;
+  background:linear-gradient(90deg,#a78bfa,#ec4899);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.res-score{font-size:15px;color:var(--muted);margin-bottom:18px}
+.res-rows{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.res-row{
+  background:var(--panel2);border:1px solid var(--line);
+  border-radius:12px;padding:10px 16px;min-width:148px;
+}
+.res-row span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);margin-bottom:3px}
+.res-row b{font-size:17px}
+
 /* ---------- Модальное окно ---------- */
 .modal{
   position:fixed;inset:0;z-index:200;
@@ -353,6 +441,8 @@ footer{
   .sheet .content{padding:20px 18px 26px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:13px}
   .top-item{flex:0 0 280px}
+  .game{padding:18px 15px}
+  .q-text{font-size:15.5px}
 }
 @media(max-width:520px){
   .search input{width:150px;padding-left:32px}
@@ -362,6 +452,8 @@ footer{
   .mini{flex:0 0 240px}
   .top-item{flex:0 0 250px}
   .player .player-btn{width:60px;height:60px;font-size:22px}
+  .opts{grid-template-columns:1fr}
+  .hud-item{flex:1 1 44%}
 }
 </style>
 </head>
@@ -374,6 +466,7 @@ footer{
       <a href="#catalog">Каталог</a>
       <a href="#top">Топ</a>
       <a href="#watching">Продолжить</a>
+      <a href="#game">Игра</a>
       <a href="#about">О проекте</a>
       <a href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener">Профиль</a>
     </nav>
@@ -393,6 +486,7 @@ footer{
       <div class="actions">
         <button class="btn" id="heroPlay">▶ Смотреть 1 серию</button>
         <button class="btn ghost" id="heroRandom">🎲 Случайное аниме</button>
+        <button class="btn ghost" id="heroGame">🎮 Играть в викторину</button>
       </div>
     </div>
     <div class="poster-big" id="heroPoster" style="background:linear-gradient(150deg,#6a11cb,#2575fc)">
@@ -434,13 +528,37 @@ footer{
     <div class="empty" id="empty">😕 Ничего не найдено. Попробуйте изменить запрос или жанр.</div>
   </section>
 
+  <section class="blk" id="game">
+    <div class="sec-head">
+      <h2>Мини-игра «Знаток аниме»</h2>
+      <span class="count">10 вопросов · 15 секунд на ответ · клавиши 1–4</span>
+    </div>
+    <div class="game" id="gameBox">
+      <div class="game-hud" id="gHud">
+        <div class="hud-item"><span class="hud-l">Вопрос</span><b id="gQNum">0 / 10</b></div>
+        <div class="hud-item"><span class="hud-l">Очки</span><b id="gScore">0</b></div>
+        <div class="hud-item"><span class="hud-l">Серия</span><b id="gStreak">0</b></div>
+        <div class="hud-item"><span class="hud-l">Лучшая серия</span><b id="gBest">0</b></div>
+      </div>
+      <div class="timerbar"><i id="gTimer" style="width:0%"></i></div>
+      <div class="q-text" id="gText">Проверьте, насколько хорошо вы знаете каталог АнимеХаба: жанры, годы, количество серий, рейтинги и описания. Нажмите «Начать игру».</div>
+      <div class="opts" id="gOpts"></div>
+      <div class="gresult" id="gResult"></div>
+      <div class="game-foot">
+        <div class="feedback" id="gFb">Отвечайте быстро — за скорость и серию правильных ответов начисляются бонусные очки.</div>
+        <button class="btn small" id="gStart">▶ Начать игру</button>
+      </div>
+    </div>
+  </section>
+
   <section class="blk" id="about">
     <div class="sec-head"><h2>О проекте</h2></div>
     <p style="color:var(--muted);font-size:14.5px;max-width:780px">
       АнимеХаб — это мини-сайт: демонстрационный каталог аниме, собранный в одном HTML-файле
       без внешних библиотек и фреймворков. Здесь есть поиск по названию и жанрам, фильтр по категориям,
-      сортировка каталога, топ рейтинга, подборка «продолжить просмотр» и встроенный плеер-заглушка
-      с выбором серии, управлением воспроизведением и кликабельной шкалой времени.
+      сортировка каталога, топ рейтинга, подборка «продолжить просмотр», встроенный плеер-заглушка
+      с выбором серии, управлением воспроизведением и кликабельной шкалой времени, а также мини-игра
+      «Знаток аниме» — викторина на 10 вопросов с таймером, серией правильных ответов и итоговой оценкой.
       Все данные хранятся прямо в коде страницы.
     </p>
     <div style="margin-top:18px">
@@ -457,6 +575,7 @@ footer{
       <a href="#catalog">Каталог</a>
       <a href="#top">Топ</a>
       <a href="#watching">Продолжить</a>
+      <a href="#game">Игра</a>
       <a href="#about">О проекте</a>
       <a href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener" id="user_1377497577">user_1377497577</a>
     </div>
@@ -555,6 +674,14 @@ footer{
       el = el.parentNode;
     }
     return null;
+  }
+  function shuffle(arr){
+    var a = arr.slice(), i, j, t;
+    for (i = a.length - 1; i > 0; i--){
+      j = Math.floor(Math.random() * (i + 1));
+      t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
   }
 
   /* ================= Жанры и фильтры ================= */
@@ -914,6 +1041,283 @@ footer{
     }, 120);
   });
 
+  /* ================= Мини-игра «Знаток аниме» ================= */
+  var gText = $("gText");
+  var gOpts = $("gOpts");
+  var gFb = $("gFb");
+  var gStart = $("gStart");
+  var gTimerEl = $("gTimer");
+  var gResult = $("gResult");
+  var gQNum = $("gQNum");
+  var gScoreEl = $("gScore");
+  var gStreakEl = $("gStreak");
+  var gBestEl = $("gBest");
+
+  var GAME_LEN = 10;
+  var GAME_TIME = 15;
+  var LETTERS = ["А","Б","В","Г"];
+
+  var gState = null;
+  var gPool = [];
+  var gTimerId = null;
+
+  /* Сборка пула вопросов: по одному варианту вопроса на каждый тайтл */
+  function buildQuestions(){
+    var years = [], eps = [], gList = [], ratings = [], titles = [];
+
+    ANIME.forEach(function(a){
+      if (years.indexOf(a.y) === -1) years.push(a.y);
+      if (eps.indexOf(a.e) === -1) eps.push(a.e);
+      if (ratings.indexOf(a.r) === -1) ratings.push(a.r);
+      titles.push(a.t);
+      a.g.forEach(function(g){
+        if (gList.indexOf(g) === -1) gList.push(g);
+      });
+    });
+
+    var packs = ANIME.map(function(a){
+      var list = [];
+
+      /* жанр */
+      var wrongG = shuffle(gList.filter(function(g){ return a.g.indexOf(g) === -1; })).slice(0, 3);
+      if (wrongG.length === 3){
+        list.push({
+          q: "Какой жанр у аниме «" + a.t + "»?",
+          correct: a.g[0],
+          opts: shuffle([a.g[0]].concat(wrongG))
+        });
+      }
+
+      /* количество серий */
+      var rightE = a.e + " " + plural(a.e, "серия", "серии", "серий");
+      var wrongE = shuffle(eps.filter(function(e){ return e !== a.e; })).slice(0, 3)
+        .map(function(e){ return e + " " + plural(e, "серия", "серии", "серий"); });
+      if (wrongE.length === 3){
+        list.push({
+          q: "Сколько серий в аниме «" + a.t + "»?",
+          correct: rightE,
+          opts: shuffle([rightE].concat(wrongE))
+        });
+      }
+
+      /* год выхода */
+      var wrongY = shuffle(years.filter(function(y){ return y !== a.y; })).slice(0, 3).map(String);
+      if (wrongY.length === 3){
+        list.push({
+          q: "В каком году вышло аниме «" + a.t + "»?",
+          correct: String(a.y),
+          opts: shuffle([String(a.y)].concat(wrongY))
+        });
+      }
+
+      /* описание → название */
+      var wrongT = shuffle(titles.filter(function(t){ return t !== a.t; })).slice(0, 3);
+      if (wrongT.length === 3){
+        var desc = a.d.length > 118 ? a.d.slice(0, 118) + "…" : a.d;
+        list.push({
+          q: "О каком аниме идёт речь? «" + desc + "»",
+          correct: a.t,
+          opts: shuffle([a.t].concat(wrongT))
+        });
+      }
+
+      /* рейтинг */
+      var rightR = "★ " + a.r.toFixed(1);
+      var wrongR = shuffle(ratings.filter(function(r){ return r !== a.r; })).slice(0, 3)
+        .map(function(r){ return "★ " + r.toFixed(1); });
+      if (wrongR.length === 3){
+        list.push({
+          q: "Какой рейтинг у аниме «" + a.t + "»?",
+          correct: rightR,
+          opts: shuffle([rightR].concat(wrongR))
+        });
+      }
+
+      return list;
+    }).filter(function(l){ return l.length > 0; });
+
+    var n = Math.min(GAME_LEN, packs.length);
+    return shuffle(packs).slice(0, n).map(function(list){
+      return list[Math.floor(Math.random() * list.length)];
+    });
+  }
+
+  function updateHud(){
+    if (!gState) {
+      gQNum.textContent = "0 / 0";
+      gScoreEl.textContent = "0";
+      gStreakEl.textContent = "0";
+      gBestEl.textContent = "0";
+      return;
+    }
+    gQNum.textContent = Math.min(gState.i + 1, gPool.length) + " / " + gPool.length;
+    gScoreEl.textContent = gState.score;
+    gStreakEl.textContent = gState.streak;
+    gBestEl.textContent = gState.best;
+  }
+
+  function stopTimer(){
+    if (gTimerId){ clearInterval(gTimerId); gTimerId = null; }
+  }
+
+  function startTimer(){
+    stopTimer();
+    gTimerEl.classList.remove("low");
+    gTimerEl.style.width = "100%";
+    var ticks = 0;
+    var total = GAME_TIME * 20;
+    gTimerId = setInterval(function(){
+      if (!gState || gState.locked){ stopTimer(); return; }
+      ticks++;
+      var left = GAME_TIME - ticks / 20;
+      if (left <= 0){
+        gState.left = 0;
+        gTimerEl.style.width = "0%";
+        stopTimer();
+        answer(-1, true);
+        return;
+      }
+      gState.left = left;
+      gTimerEl.style.width = (left / GAME_TIME * 100).toFixed(2) + "%";
+      if (left <= 5) gTimerEl.classList.add("low");
+    }, 50);
+  }
+
+  function startGame(){
+    stopTimer();
+    gPool = buildQuestions();
+    if (!gPool.length) return;
+    gState = {i:0, score:0, streak:0, best:0, correct:0, left:GAME_TIME, locked:true};
+    gResult.classList.remove("show");
+    gResult.innerHTML = "";
+    gStart.textContent = "↻ Начать заново";
+    gFb.className = "feedback";
+    gFb.textContent = "Удачи! Клавиши 1–4 выбирают вариант ответа.";
+    updateHud();
+    nextQuestion();
+  }
+
+  function nextQuestion(){
+    if (!gState) return;
+    if (gState.i >= gPool.length){ finishGame(); return; }
+
+    var q = gPool[gState.i];
+    gState.locked = false;
+    gState.left = GAME_TIME;
+    gText.textContent = q.q;
+    gFb.className = "feedback";
+    gFb.textContent = "";
+    gOpts.innerHTML = q.opts.map(function(o, n){
+      return '<button type="button" class="opt" data-n="' + n + '">' +
+        '<span class="ol">' + LETTERS[n] + '</span><span>' + esc(o) + '</span>' +
+      '</button>';
+    }).join("");
+    updateHud();
+    startTimer();
+  }
+
+  function answer(n, timeout){
+    if (!gState || gState.locked) return;
+    gState.locked = true;
+    stopTimer();
+
+    var q = gPool[gState.i];
+    var picked = timeout ? null : q.opts[n];
+    var good = (!timeout && picked === q.correct);
+    var buttons = gOpts.querySelectorAll(".opt");
+
+    Array.prototype.forEach.call(buttons, function(b){
+      var val = q.opts[parseInt(b.getAttribute("data-n"), 10)];
+      b.disabled = true;
+      if (val === q.correct) b.classList.add("correct");
+      else if (val === picked) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+
+    if (good){
+      gState.correct++;
+      gState.streak++;
+      if (gState.streak > gState.best) gState.best = gState.streak;
+      var bonus = (gState.streak - 1) * 25 + Math.round(gState.left * 8);
+      var gain = 100 + bonus;
+      gState.score += gain;
+      gFb.className = "feedback ok";
+      gFb.textContent = "Верно! +" + gain + " очков" +
+        (gState.streak >= 3 ? " · серия ×" + gState.streak + " 🔥" : "");
+    } else {
+      gState.streak = 0;
+      gFb.className = "feedback no";
+      gFb.textContent = timeout
+        ? "⏱ Время вышло! Правильный ответ: " + q.correct
+        : "✕ Неверно. Правильный ответ: " + q.correct;
+    }
+
+    gState.i++;
+    updateHud();
+    setTimeout(nextQuestion, good ? 900 : 1550);
+  }
+
+  function finishGame(){
+    stopTimer();
+    gState.locked = true;
+    gTimerEl.style.width = "0%";
+    gTimerEl.classList.remove("low");
+    gText.textContent = "Игра завершена!";
+    gOpts.innerHTML = "";
+
+    var total = gPool.length;
+    var pct = total ? gState.correct / total : 0;
+    var title, emo;
+    if (pct === 1){ title = "Легенда АнимеХаба"; emo = "👑"; }
+    else if (pct >= 0.8){ title = "Настоящий отаку"; emo = "🏆"; }
+    else if (pct >= 0.6){ title = "Уверенный зритель"; emo = "🎯"; }
+    else if (pct >= 0.4){ title = "Начинающий фанат"; emo = "🌱"; }
+    else { title = "Новичок"; emo = "🍿"; }
+
+    gResult.innerHTML =
+      '<div class="res-emoji">' + emo + '</div>' +
+      '<div class="res-title">' + title + '</div>' +
+      '<div class="res-score">' + gState.score + ' очков</div>' +
+      '<div class="res-rows">' +
+        '<div class="res-row"><span>Правильных ответов</span><b>' + gState.correct + ' из ' + total + '</b></div>' +
+        '<div class="res-row"><span>Лучшая серия</span><b>×' + gState.best + '</b></div>' +
+        '<div class="res-row"><span>Точность</span><b>' + Math.round(pct * 100) + '%</b></div>' +
+      '</div>';
+    gResult.classList.add("show");
+    gFb.className = "feedback";
+    gFb.textContent = "Хотите лучше? Нажмите «Играть снова» — вопросы каждый раз новые.";
+    gStart.textContent = "↻ Играть снова";
+    updateHud();
+  }
+
+  gStart.addEventListener("click", function(){
+    stopTimer();
+    startGame();
+  });
+
+  gOpts.addEventListener("click", function(ev){
+    var b = closest(ev.target, ".opt");
+    if (!b || !gState || gState.locked) return;
+    answer(parseInt(b.getAttribute("data-n"), 10), false);
+  });
+
+  document.addEventListener("keydown", function(ev){
+    if (!gState || gState.locked) return;
+    if (modal.classList.contains("open")) return;
+    var idx = "1234".indexOf(ev.key);
+    if (idx === -1) return;
+    var buttons = gOpts.querySelectorAll(".opt");
+    if (buttons[idx]) answer(idx, false);
+  });
+
+  $("heroGame").addEventListener("click", function(){
+    var sec = $("game");
+    if (sec) sec.scrollIntoView({behavior:"smooth", block:"start"});
+    if (!gState) startGame();
+  });
+
+  updateHud();
+
   /* ================= Старт ================= */
   render();
 })();
@@ -921,21 +1325,15 @@ footer{
 </body>
 </html>
 
-### Catalog, Player & Mini-Site Features
+### Как работает викторина «Знаток аниме»
 
-This one-page anime hub packs several interactive tools that make browsing and watching feel smooth.
+Все вопросы строятся динамически на основе данных каталога: жанры, годы, количество серий, рейтинги и описания.
 
-- **Dynamic catalog & filters**  
-  Cards render from a built-in data array. You can filter by genre, sort by rating/year/title, or type in the search box — all updates happen instantly without reloading.
-
-- **Continue watching & top rating**  
-  A horizontal rail shows your ongoing series with progress bars, while a ranked top-6 list highlights the highest-rated titles in the collection.
-
-- **Modal player with episode picker**  
-  Clicking any card opens a modal with a custom player: play/pause, a clickable timeline, and episode buttons. You can also favorite titles and jump to a random anime.
-
-- **Hero section & profile link**  
-  The hero banner displays a featured title with a random pick button, and a profile link is consistently available in the header, footer, and modal.
+- **Игровой процесс**: 10 вопросов по 4 варианта ответа, на каждый даётся 15 секунд.
+- **Начисление очков**: за правильный ответ начисляется базовое вознаграждение, плюс бонус за оставшееся время и серию правильных ответов.
+- **Обратная связь**: после ответа правильный вариант подсвечивается зелёным, неверный — красным, появляется подсказка.
+- **Итоги**: в конце показывается точность, количество правильных ответов, лучшая серия и звание в зависимости от результата.
+- **Управление**: кнопка «Начать игру», клики по вариантам или клавиши 1–4, в шапке и в первом экране есть быстрый переход к секции игры.
 ---
 
-**Optimization Tip:** You can customize the anime list by editing the `ANIME` array (titles, ratings, genres, episode counts) and the `CONTINUE` array’s `idx` values to match your own “continue watching” entries. The player duration is hardcoded at 24 minutes per episode in `DURATION`.
+**Оптимизацию можно начать с блока `ANIME`** — именно из него генерируются вопросы, варианты ответов и данные карточек. Если вы захотите добавить или заменить тайтл, достаточно отредактировать этот массив: игра, каталог и топ автоматически подхватят изменения.
