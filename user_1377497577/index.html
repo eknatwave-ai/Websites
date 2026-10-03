@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>АнимеХаб — смотреть аниме онлайн: каталог, топ и плеер</title>
-<meta name="description" content="АнимеХаб — каталог аниме онлайн: популярные сериалы, топ рейтинга, жанры, поиск, подборка «продолжить просмотр» и встроенный плеер.">
+<title>АнимеХаб — мини-сайт: каталог аниме, топ и плеер</title>
+<meta name="description" content="АнимеХаб — мини-сайт каталога аниме онлайн: популярные сериалы, топ рейтинга, жанры, поиск, подборка «продолжить просмотр» и встроенный плеер.">
 <style>
 :root{
   --bg:#0b0b14;
@@ -387,7 +387,7 @@ footer{
 
   <section class="hero">
     <div class="info">
-      <span class="badge">Сейчас в тренде</span>
+      <span class="badge">Мини-сайт · сейчас в тренде</span>
       <h1 id="heroTitle">Небесный клинок</h1>
       <p id="heroDesc">Описание тайтла.</p>
       <div class="actions">
@@ -437,10 +437,11 @@ footer{
   <section class="blk" id="about">
     <div class="sec-head"><h2>О проекте</h2></div>
     <p style="color:var(--muted);font-size:14.5px;max-width:780px">
-      АнимеХаб — демонстрационный каталог аниме, собранный в одном HTML-файле без внешних библиотек
-      и фреймворков. Здесь есть поиск по названию и жанрам, фильтр по категориям, сортировка каталога,
-      топ рейтинга, подборка «продолжить просмотр» и встроенный плеер-заглушка с выбором серии,
-      управлением воспроизведением и кликабельной шкалой времени. Все данные хранятся прямо в коде страницы.
+      АнимеХаб — это мини-сайт: демонстрационный каталог аниме, собранный в одном HTML-файле
+      без внешних библиотек и фреймворков. Здесь есть поиск по названию и жанрам, фильтр по категориям,
+      сортировка каталога, топ рейтинга, подборка «продолжить просмотр» и встроенный плеер-заглушка
+      с выбором серии, управлением воспроизведением и кликабельной шкалой времени.
+      Все данные хранятся прямо в коде страницы.
     </p>
     <div style="margin-top:18px">
       <a class="btn small ghost" href="https://c19fd5be.websites-dzg.pages.dev/user_1377497577/" target="_blank" rel="noopener">👤 Профиль user_1377497577</a>
@@ -451,7 +452,7 @@ footer{
 
 <footer>
   <div class="wrap fgrid">
-    <div>© 2025 АнимеХаб — учебный проект на чистых HTML, CSS и JavaScript.</div>
+    <div>© 2025 АнимеХаб — мини-сайт на чистых HTML, CSS и JavaScript.</div>
     <div class="flinks">
       <a href="#catalog">Каталог</a>
       <a href="#top">Топ</a>
@@ -919,3 +920,22 @@ footer{
 </script>
 </body>
 </html>
+
+### Catalog, Player & Mini-Site Features
+
+This one-page anime hub packs several interactive tools that make browsing and watching feel smooth.
+
+- **Dynamic catalog & filters**  
+  Cards render from a built-in data array. You can filter by genre, sort by rating/year/title, or type in the search box — all updates happen instantly without reloading.
+
+- **Continue watching & top rating**  
+  A horizontal rail shows your ongoing series with progress bars, while a ranked top-6 list highlights the highest-rated titles in the collection.
+
+- **Modal player with episode picker**  
+  Clicking any card opens a modal with a custom player: play/pause, a clickable timeline, and episode buttons. You can also favorite titles and jump to a random anime.
+
+- **Hero section & profile link**  
+  The hero banner displays a featured title with a random pick button, and a profile link is consistently available in the header, footer, and modal.
+---
+
+**Optimization Tip:** You can customize the anime list by editing the `ANIME` array (titles, ratings, genres, episode counts) and the `CONTINUE` array’s `idx` values to match your own “continue watching” entries. The player duration is hardcoded at 24 minutes per episode in `DURATION`.
